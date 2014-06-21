@@ -14,6 +14,8 @@ namespace TopEditor
     {
         Analyzer testAnalyzer = new Analyzer();
         Module testModule;
+        string path = @"d:\Test.txt";
+        Module[] listofModules = new Module[100];
 
         public Form1()
         {
@@ -22,10 +24,11 @@ namespace TopEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string path = @"d:\Test.txt";
-
-            testAnalyzer.openFile(path);
-
+          int i = 0;
+          
+          listofModules = testAnalyzer.analizeFile(path);
+          for (i = 0; i < listofModules.Length; i++)
+            if (listofModules[i] != null) listofModules[i].showModDeclaration();
         }
 
         private void button2_Click(object sender, EventArgs e)

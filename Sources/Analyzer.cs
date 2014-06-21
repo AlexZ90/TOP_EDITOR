@@ -11,6 +11,7 @@ namespace TopEditor
       private FileStream fs = null;
       private int start_pos = 0;
       private char[] id = null;
+      Module[] listOfModules = new Module[100];
 
       public struct port
       {
@@ -68,7 +69,7 @@ namespace TopEditor
             {
               if ((read_res = fs.ReadByte()) == -1)
               {
-                Console.Write ("End of fs has been reached\n\r");
+                Console.Write("search_ID: End of fs has been reached\n\r");
                 return (-1);
               }
               buf[0] = (char)read_res;
@@ -89,7 +90,7 @@ namespace TopEditor
             {
               if ((read_res = fs.ReadByte()) == -1)
               {
-                Console.Write("End of fs has been reached\n\r");
+                Console.Write("search_ID: End of fs has been reached\n\r");
                 return 1;
               }
               buf[0] = (char)read_res;
@@ -124,7 +125,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine ("End of fs has been reached\n\r");
+          Console.WriteLine("search_SQBR: End of fs has been reached\n\r");
           return (-1);
         }
         buf[0] = (char)read_res;
@@ -152,7 +153,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine ("End of fs has been reached\n\r");
+          Console.WriteLine("search_COLON: End of fs has been reached\n\r");
           return (-1);
         }
         
@@ -186,7 +187,7 @@ namespace TopEditor
 
           if ((read_res = fs.ReadByte()) == -1)
           {
-            Console.WriteLine ("End of fs has been reached\n\r");
+            Console.WriteLine("search_NUM: End of fs has been reached\n\r");
             if (id_ind > 0) return 1;
             else return (-1);
           }
@@ -224,7 +225,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine ("End of fs has been reached\n\r");
+          Console.WriteLine("search_BR: End of fs has been reached\n\r");
           return (-1);
         }
         
@@ -253,7 +254,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine ("End of fs has been reached\n\r");
+          Console.WriteLine("search_SEMICOLON: End of fs has been reached\n\r");
           return (-1);
         }
         buf[0] = (char)read_res;
@@ -281,7 +282,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine ("End of fs has been reached\n\r");
+          Console.WriteLine ("Search comma: End of fs has been reached\n\r");
           return (-1);
         }
         
@@ -328,7 +329,7 @@ namespace TopEditor
                 fs.Seek ((long)start_pos, SeekOrigin.Begin);
                 if ((read_res = fs.ReadByte()) == -1)
                 {
-                  Console.WriteLine ("End of fs has been reached\n\r");
+                  Console.WriteLine ("next token: End of fs has been reached\n\r");
                   return (-1);
                 }
                 buf[0] = (char)read_res;
@@ -826,7 +827,50 @@ namespace TopEditor
                 break;
             }
           }
-      }      
+      }
+
+      public Module[] analizeFile(string path)
+      {
+        string id = "";
+        int func_res = 0;
+        int i = 0;
+        Module newModule;
+        for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
+        i = 0;
+        start_pos = 0;
+          try
+          {
+            fs = new FileStream(path, FileMode.Open);
+            fs.Seek(0, SeekOrigin.Begin);
+            while (true)
+            {
+              newModule = new Module();
+              func_res = this.search_module(ref newModule);
+              if (func_res == -2 || func_res == -1)
+              {
+                Console.WriteLine("analizeFile: End of file");
+
+                break;
+              }
+              else
+              {
+                listOfModules[i] = newModule;
+                //listOfModules[i].showModDeclaration();
+                Console.WriteLine("Found module");
+                i++;
+              }
+              
+            }
+            fs.Close();
+            return listOfModules;
+          }
+          catch (Exception ex)
+          {
+            Console.WriteLine("The open file process failed: {0}", ex.ToString());
+            return listOfModules;
+          }  
+
+      }
       
       public void show_1 ()
       {
