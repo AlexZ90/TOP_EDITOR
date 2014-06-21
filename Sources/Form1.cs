@@ -15,7 +15,7 @@ namespace TopEditor
         Analyzer testAnalyzer = new Analyzer();
         Module testModule;
         string path = @"d:\Test.txt";
-        Module[] listofModules = new Module[100];
+        Module[] listofModules;
 
         public Form1()
         {
