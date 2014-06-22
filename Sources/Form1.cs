@@ -20,6 +20,7 @@ namespace TopEditor
         int curModNumber = 0;
         int curInstNumber = 0;
         DataTable dt1 = new DataTable();
+        DataTable dt2 = new DataTable();
         Instance [] listOfInstances = new Instance [100];
         
       
@@ -32,6 +33,13 @@ namespace TopEditor
             dt1.Columns.Add("Name");
             dataGridView1.DataSource = dt1;
             listOfModuleLB.Click += new EventHandler(showPortsBtn_Click);
+
+            dt2.Columns.Add("Dir");
+            dt2.Columns.Add("Data type");
+            dt2.Columns.Add("Size");
+            dt2.Columns.Add("Name");
+            dataGridView2.DataSource = dt2;
+            listOfInstLB.Click += new EventHandler(listOfInstLB_Click);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -85,18 +93,18 @@ namespace TopEditor
             }
         }
 
-        private void showModPorts(string modName)
+        private void showModPorts(string modName, DataTable dt)
         {
           int i = 0;
           int j = 0;
-          dt1.Clear();
+          dt.Clear();
 
           for (i = 0; i < listOfModules.Length; i++)
           {
             if (listOfModules[i] != null && listOfModules[i].getModName() == modName)
               for (j = 0; j < listOfModules[i].listOfPorts.Length; j++)
                 if (listOfModules[i].listOfPorts[j] != null)
-                  dt1.Rows.Add(listOfModules[i].listOfPorts[j].dir, listOfModules[i].listOfPorts[j].data_type, listOfModules[i].listOfPorts[j].dim, listOfModules[i].listOfPorts[j].name);
+                  dt.Rows.Add(listOfModules[i].listOfPorts[j].dir, listOfModules[i].listOfPorts[j].data_type, listOfModules[i].listOfPorts[j].dim, listOfModules[i].listOfPorts[j].name);
           }
         }
 
@@ -120,7 +128,12 @@ namespace TopEditor
 
         private void showPortsBtn_Click(object sender, EventArgs e)
         {
-          showModPorts(listOfModuleLB.SelectedItem.ToString());
+          showModPorts(listOfModuleLB.SelectedItem.ToString(), dt1);
+        }
+
+        private void listOfInstLB_Click(object sender, EventArgs e)
+        {
+          showInstPorts(listOfInstLB.SelectedItem.ToString(), dt2);
         }
 
         private void createInstBtn_Click(object sender, EventArgs e)
@@ -186,5 +199,15 @@ namespace TopEditor
           deleteInstance(listOfInstLB.SelectedItem.ToString());
         }
 
+        private void showInstPorts(string InstName, DataTable dt)
+        {
+          int i = 0;
+          int j = 0;
+          for (i = 0; i < listOfInstances.Length; i++)
+          {
+            if (listOfInstances[i] != null && listOfInstances[i].Name == InstName)
+              showModPorts(listOfInstances[i].BaseModule.modName, dt);
+          }
+        }
     }
 }

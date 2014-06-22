@@ -41,7 +41,9 @@
           this.instNameTB = new System.Windows.Forms.TextBox();
           this.createInstBtn = new System.Windows.Forms.Button();
           this.delInstBtn = new System.Windows.Forms.Button();
+          this.dataGridView2 = new System.Windows.Forms.DataGridView();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
           this.SuspendLayout();
           // 
           // button1
@@ -67,7 +69,7 @@
           // listOfModuleLB
           // 
           this.listOfModuleLB.FormattingEnabled = true;
-          this.listOfModuleLB.Location = new System.Drawing.Point(111, 33);
+          this.listOfModuleLB.Location = new System.Drawing.Point(227, 36);
           this.listOfModuleLB.Name = "listOfModuleLB";
           this.listOfModuleLB.Size = new System.Drawing.Size(120, 186);
           this.listOfModuleLB.TabIndex = 2;
@@ -75,7 +77,7 @@
           // 
           // textBox1
           // 
-          this.textBox1.Location = new System.Drawing.Point(111, 7);
+          this.textBox1.Location = new System.Drawing.Point(227, 10);
           this.textBox1.Name = "textBox1";
           this.textBox1.Size = new System.Drawing.Size(288, 20);
           this.textBox1.TabIndex = 3;
@@ -83,7 +85,7 @@
           // 
           // browseBtn
           // 
-          this.browseBtn.Location = new System.Drawing.Point(418, 3);
+          this.browseBtn.Location = new System.Drawing.Point(534, 6);
           this.browseBtn.Name = "browseBtn";
           this.browseBtn.Size = new System.Drawing.Size(75, 23);
           this.browseBtn.TabIndex = 4;
@@ -111,7 +113,7 @@
           this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
           this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
           this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-          this.dataGridView1.Location = new System.Drawing.Point(237, 32);
+          this.dataGridView1.Location = new System.Drawing.Point(353, 35);
           this.dataGridView1.Name = "dataGridView1";
           this.dataGridView1.Size = new System.Drawing.Size(337, 186);
           this.dataGridView1.TabIndex = 6;
@@ -129,21 +131,21 @@
           // listOfInstLB
           // 
           this.listOfInstLB.FormattingEnabled = true;
-          this.listOfInstLB.Location = new System.Drawing.Point(111, 226);
+          this.listOfInstLB.Location = new System.Drawing.Point(227, 229);
           this.listOfInstLB.Name = "listOfInstLB";
           this.listOfInstLB.Size = new System.Drawing.Size(120, 160);
           this.listOfInstLB.TabIndex = 8;
           // 
           // instNameTB
           // 
-          this.instNameTB.Location = new System.Drawing.Point(238, 226);
+          this.instNameTB.Location = new System.Drawing.Point(12, 229);
           this.instNameTB.Name = "instNameTB";
-          this.instNameTB.Size = new System.Drawing.Size(149, 20);
+          this.instNameTB.Size = new System.Drawing.Size(209, 20);
           this.instNameTB.TabIndex = 9;
           // 
           // createInstBtn
           // 
-          this.createInstBtn.Location = new System.Drawing.Point(394, 226);
+          this.createInstBtn.Location = new System.Drawing.Point(12, 261);
           this.createInstBtn.Name = "createInstBtn";
           this.createInstBtn.Size = new System.Drawing.Size(75, 23);
           this.createInstBtn.TabIndex = 10;
@@ -153,7 +155,7 @@
           // 
           // delInstBtn
           // 
-          this.delInstBtn.Location = new System.Drawing.Point(394, 256);
+          this.delInstBtn.Location = new System.Drawing.Point(12, 291);
           this.delInstBtn.Name = "delInstBtn";
           this.delInstBtn.Size = new System.Drawing.Size(75, 23);
           this.delInstBtn.TabIndex = 11;
@@ -161,16 +163,28 @@
           this.delInstBtn.UseVisualStyleBackColor = true;
           this.delInstBtn.Click += new System.EventHandler(this.delInstBtn_Click);
           // 
+          // dataGridView2
+          // 
+          this.dataGridView2.AllowUserToAddRows = false;
+          this.dataGridView2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+          this.dataGridView2.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+          this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+          this.dataGridView2.Location = new System.Drawing.Point(353, 229);
+          this.dataGridView2.Name = "dataGridView2";
+          this.dataGridView2.Size = new System.Drawing.Size(337, 160);
+          this.dataGridView2.TabIndex = 6;
+          // 
           // Form1
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.ClientSize = new System.Drawing.Size(619, 408);
+          this.ClientSize = new System.Drawing.Size(713, 408);
           this.Controls.Add(this.delInstBtn);
           this.Controls.Add(this.createInstBtn);
           this.Controls.Add(this.instNameTB);
           this.Controls.Add(this.listOfInstLB);
           this.Controls.Add(this.showPortsBtn);
+          this.Controls.Add(this.dataGridView2);
           this.Controls.Add(this.dataGridView1);
           this.Controls.Add(this.delModBtn);
           this.Controls.Add(this.browseBtn);
@@ -181,6 +195,7 @@
           this.Name = "Form1";
           this.Text = "Form1";
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -201,6 +216,7 @@
         private System.Windows.Forms.TextBox instNameTB;
         private System.Windows.Forms.Button createInstBtn;
         private System.Windows.Forms.Button delInstBtn;
+        private System.Windows.Forms.DataGridView dataGridView2;
     }
 }
 
