@@ -8,8 +8,8 @@ namespace TopEditor
 {
   class Module
   {
-    string modName;
-    Port[] listOfPorts = new Port [100];
+    public string modName;
+    public Port[] listOfPorts = new Port [100];
     int numOfPorts;
 
 

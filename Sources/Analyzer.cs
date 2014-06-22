@@ -722,6 +722,7 @@ namespace TopEditor
 
           while (true)
           {
+            Console.WriteLine("State = " + state.ToString());
             switch (state)
             {
               case 0:
@@ -746,6 +747,7 @@ namespace TopEditor
                 if (token == 6) state = 2;
                 else if (token == 7)
                 {
+                  newModule.setModName(mod_name);
                   Console.WriteLine ("End\n\r");
                   return 1;
                 }
