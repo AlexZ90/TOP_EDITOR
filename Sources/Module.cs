@@ -30,11 +30,10 @@ namespace TopEditor
     }
 
 
-
     public void addPort(Port newPort)
     {
       int i = 0;
-      for (i = 0; i < 100; i++)
+      for (i = 0; i < listOfPorts.Length; i++)
         if (listOfPorts[i] == null)
         {
           listOfPorts[i] = newPort;
@@ -48,12 +47,23 @@ namespace TopEditor
       listOfPorts[portNum] = null;
     }
 
+    public Port getPort(string portName)
+    {
+      int i = 0;
+      for (i = 0; i < listOfPorts.Length; i++)
+        if (listOfPorts[i] != null && listOfPorts[i].name == portName)
+        {
+          return listOfPorts[i];
+        }
+      return null;
+    }
+
     public void showModDeclaration()
     {
       string ports = "";
       int i = 0;
 
-      for (i = 0; i < 100; i++)
+      for (i = 0; i < listOfPorts.Length; i++)
         if (listOfPorts[i] != null)
         {
           ports = ports + " port № " + i.ToString() + " " + listOfPorts[i].getPortDeclaration() + "\n";

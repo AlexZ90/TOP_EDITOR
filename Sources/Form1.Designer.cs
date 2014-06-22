@@ -42,8 +42,17 @@
           this.createInstBtn = new System.Windows.Forms.Button();
           this.delInstBtn = new System.Windows.Forms.Button();
           this.dataGridView2 = new System.Windows.Forms.DataGridView();
+          this.dataGridView3 = new System.Windows.Forms.DataGridView();
+          this.listOfInstLB2 = new System.Windows.Forms.ListBox();
+          this.connectionTB = new System.Windows.Forms.TextBox();
+          this.delConnBtn = new System.Windows.Forms.Button();
+          this.listOfConnLB = new System.Windows.Forms.ListBox();
+          this.dataGridView4 = new System.Windows.Forms.DataGridView();
+          this.createConnBtn = new System.Windows.Forms.Button();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).BeginInit();
           this.SuspendLayout();
           // 
           // button1
@@ -174,16 +183,88 @@
           this.dataGridView2.Size = new System.Drawing.Size(337, 160);
           this.dataGridView2.TabIndex = 6;
           // 
+          // dataGridView3
+          // 
+          this.dataGridView3.AllowUserToAddRows = false;
+          this.dataGridView3.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+          this.dataGridView3.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+          this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+          this.dataGridView3.Location = new System.Drawing.Point(696, 229);
+          this.dataGridView3.Name = "dataGridView3";
+          this.dataGridView3.Size = new System.Drawing.Size(337, 160);
+          this.dataGridView3.TabIndex = 6;
+          // 
+          // listOfInstLB2
+          // 
+          this.listOfInstLB2.FormattingEnabled = true;
+          this.listOfInstLB2.Location = new System.Drawing.Point(1039, 229);
+          this.listOfInstLB2.Name = "listOfInstLB2";
+          this.listOfInstLB2.Size = new System.Drawing.Size(120, 160);
+          this.listOfInstLB2.TabIndex = 8;
+          // 
+          // connectionTB
+          // 
+          this.connectionTB.Location = new System.Drawing.Point(12, 427);
+          this.connectionTB.Name = "connectionTB";
+          this.connectionTB.Size = new System.Drawing.Size(209, 20);
+          this.connectionTB.TabIndex = 9;
+          // 
+          // delConnBtn
+          // 
+          this.delConnBtn.Location = new System.Drawing.Point(12, 489);
+          this.delConnBtn.Name = "delConnBtn";
+          this.delConnBtn.Size = new System.Drawing.Size(75, 23);
+          this.delConnBtn.TabIndex = 11;
+          this.delConnBtn.Text = "del conn";
+          this.delConnBtn.UseVisualStyleBackColor = true;
+          this.delConnBtn.Click += new System.EventHandler(this.delInstBtn_Click);
+          // 
+          // listOfConnLB
+          // 
+          this.listOfConnLB.FormattingEnabled = true;
+          this.listOfConnLB.Location = new System.Drawing.Point(227, 427);
+          this.listOfConnLB.Name = "listOfConnLB";
+          this.listOfConnLB.Size = new System.Drawing.Size(120, 160);
+          this.listOfConnLB.TabIndex = 8;
+          // 
+          // dataGridView4
+          // 
+          this.dataGridView4.AllowUserToAddRows = false;
+          this.dataGridView4.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+          this.dataGridView4.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+          this.dataGridView4.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+          this.dataGridView4.Location = new System.Drawing.Point(353, 427);
+          this.dataGridView4.Name = "dataGridView4";
+          this.dataGridView4.Size = new System.Drawing.Size(337, 160);
+          this.dataGridView4.TabIndex = 6;
+          // 
+          // createConnBtn
+          // 
+          this.createConnBtn.Location = new System.Drawing.Point(13, 460);
+          this.createConnBtn.Name = "createConnBtn";
+          this.createConnBtn.Size = new System.Drawing.Size(75, 23);
+          this.createConnBtn.TabIndex = 12;
+          this.createConnBtn.Text = "Add conn";
+          this.createConnBtn.UseVisualStyleBackColor = true;
+          this.createConnBtn.Click += new System.EventHandler(this.createConnBtn_Click);
+          // 
           // Form1
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-          this.ClientSize = new System.Drawing.Size(713, 408);
+          this.ClientSize = new System.Drawing.Size(1276, 603);
+          this.Controls.Add(this.createConnBtn);
+          this.Controls.Add(this.delConnBtn);
           this.Controls.Add(this.delInstBtn);
+          this.Controls.Add(this.connectionTB);
           this.Controls.Add(this.createInstBtn);
           this.Controls.Add(this.instNameTB);
+          this.Controls.Add(this.listOfInstLB2);
+          this.Controls.Add(this.listOfConnLB);
           this.Controls.Add(this.listOfInstLB);
           this.Controls.Add(this.showPortsBtn);
+          this.Controls.Add(this.dataGridView3);
+          this.Controls.Add(this.dataGridView4);
           this.Controls.Add(this.dataGridView2);
           this.Controls.Add(this.dataGridView1);
           this.Controls.Add(this.delModBtn);
@@ -196,6 +277,8 @@
           this.Text = "Form1";
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
+          ((System.ComponentModel.ISupportInitialize)(this.dataGridView4)).EndInit();
           this.ResumeLayout(false);
           this.PerformLayout();
 
@@ -217,6 +300,13 @@
         private System.Windows.Forms.Button createInstBtn;
         private System.Windows.Forms.Button delInstBtn;
         private System.Windows.Forms.DataGridView dataGridView2;
+        private System.Windows.Forms.DataGridView dataGridView3;
+        private System.Windows.Forms.ListBox listOfInstLB2;
+        private System.Windows.Forms.TextBox connectionTB;
+        private System.Windows.Forms.Button delConnBtn;
+        private System.Windows.Forms.ListBox listOfConnLB;
+        private System.Windows.Forms.DataGridView dataGridView4;
+        private System.Windows.Forms.Button createConnBtn;
     }
 }
 
