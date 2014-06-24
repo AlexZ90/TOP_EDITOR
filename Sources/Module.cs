@@ -58,6 +58,11 @@ namespace TopEditor
       return null;
     }
 
+    public int getNumOfPorts()
+    {
+      return numOfPorts;
+    }
+
     public void showModDeclaration()
     {
       string ports = "";

@@ -58,6 +58,7 @@ namespace TopEditor
             dt4.Columns.Add("Port 1");
             dt4.Columns.Add("Inst 2");
             dt4.Columns.Add("Port 2");
+            dt4.Columns.Add("Ext");
             dataGridView4.DataSource = dt4;
             listOfConnLB.Click += new EventHandler(listOfConnLB_Click);
 
@@ -287,8 +288,10 @@ namespace TopEditor
             MessageBox.Show("Экземпляр " + connName + " уже существует.");
           else
           {
-
-            listOfConnections[curConntNumber] = new  Connection (connName, inst1, inst1_port, inst2, inst2_port);
+            if (extConnCHBX.Checked == false)
+              listOfConnections[curConntNumber] = new  Connection (connName, inst1, inst1_port, inst2, inst2_port, 0);
+            else
+              listOfConnections[curConntNumber] = new Connection(connName, inst1, inst1_port, inst1, inst1_port, 1);
             Console.WriteLine(listOfConnections[curConntNumber].inst_1.Name);
             curConntNumber++;
           }
@@ -314,6 +317,17 @@ namespace TopEditor
           Console.WriteLine(dataGridView2.CurrentCell.Value.ToString());
         }
 
+        public void deleteConnection(string ConnName)
+        {
+          int i = 0;
+          for (i = 0; i < listOfConnections.Length; i++)
+            if (listOfConnections[i] != null && listOfConnections[i].Name == ConnName)
+            {
+              listOfConnections[i] = null;
+              this.updateListOfConnections(listOfConnections, listOfConnLB);
+            }
+        }
+
         private void listOfConnLB_Click(object sender, EventArgs e)
         {
           showConnections(listOfConnLB.SelectedItem.ToString(), dt4);
@@ -327,8 +341,125 @@ namespace TopEditor
           for (i = 0; i < listOfConnections.Length; i++)
           {
             if (listOfConnections[i] != null && listOfConnections[i].Name == connName)
-              dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name , listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name);
+              if (listOfConnections[i].external == 1)
+                dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name , listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name, "EXT");
+              else
+                dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name, listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name, "");
           }
+        }
+
+        public string alignStr(string stringToAlign, int numOfSigns)
+        {
+          int i = 0;
+          string res;
+
+          res = stringToAlign;
+          for (i = 0; i < (numOfSigns - stringToAlign.Length); i++)
+            res = res + " ";
+          return res;
+
+        }
+
+        private void createTopBTN_Click(object sender, EventArgs e)
+        {
+          int i = 0;
+          int j = 0;
+          int k = 0;
+          int m = 0;
+          int numOfExternals = 0;
+          int numOfPorts = 0;
+          string dir_dtype_dim;
+          using (System.IO.StreamWriter file = new System.IO.StreamWriter(@".\" + topNameTB.Text + ".txt"))
+          {
+
+            file.Write("module " + topNameTB.Text + "(");
+
+            for (k = 0; k < listOfConnections.Length; k++)
+              if (listOfConnections[k] != null && listOfConnections[k].external == 1)
+              {
+                numOfExternals++;
+              }
+            if (numOfExternals > 0) file.WriteLine();
+
+            for (k = 0; k < listOfConnections.Length; k++)
+              if (listOfConnections[k] != null && listOfConnections[k].external == 1)
+              {
+                dir_dtype_dim = alignStr(listOfConnections[k].inst_1_port.dir,7) + " " + "logic ";
+
+                if (listOfConnections[k].inst_1_port.dim > 1)
+                  dir_dtype_dim = dir_dtype_dim + "[" + (listOfConnections[k].inst_1_port.dim - 1).ToString() + ":0]";
+                
+                dir_dtype_dim = alignStr (dir_dtype_dim, 30);
+
+                file.Write (dir_dtype_dim);
+                file.Write (listOfConnections[k].Name);
+                if (numOfExternals > 1)
+                {
+                  file.WriteLine(",");
+                  numOfExternals--;
+                }
+              }
+            file.WriteLine();
+            file.WriteLine(");");
+            file.WriteLine();
+
+            file.WriteLine("/*------------------------- Internal connections ---------------------------------*/");
+            for (k = 0; k < listOfConnections.Length; k++)
+              if (listOfConnections[k] != null && listOfConnections[k].external == 0)
+              {
+                file.Write("wire ");
+                if (listOfConnections[k].inst_1_port.dim > 1)
+                   file.WriteLine ("[" + (listOfConnections[k].inst_1_port.dim-1).ToString() + ":0] " + listOfConnections[k].Name + ";");
+                else file.WriteLine(listOfConnections[k].Name + ";");
+              }
+
+            file.WriteLine("/*--------------------------------------------------------------------------------*/");
+            file.WriteLine();
+            file.WriteLine();
+
+            
+            for (i = 0; i < listOfInstances.Length; i++)
+            {
+              if (listOfInstances[i] != null)
+              {
+                file.WriteLine (listOfInstances[i].BaseModule.modName + " " + listOfInstances[i].Name + "(");
+                numOfPorts = listOfInstances[i].BaseModule.getNumOfPorts();
+                for (j = 0; j < listOfInstances[i].BaseModule.listOfPorts.Length; j++)
+                {
+                  if (listOfInstances[i].BaseModule.listOfPorts[j] != null)
+                  {
+                    
+                    file.Write("." + listOfInstances[i].BaseModule.listOfPorts[j].name);
+                    for (m = 0; m < (50 - listOfInstances[i].BaseModule.listOfPorts[j].name.Length); m++) file.Write(" ");
+                    file.Write("(");
+                      for (k = 0; k < listOfConnections.Length; k++)
+                        if (listOfConnections[k] != null && (listOfConnections[k].inst_1_port.name == listOfInstances[i].BaseModule.listOfPorts[j].name && listOfConnections[k].inst_1.Name == listOfInstances[i].Name || listOfConnections[k].inst_2_port.name == listOfInstances[i].BaseModule.listOfPorts[j].name && listOfConnections[k].inst_2.Name == listOfInstances[i].Name))
+                        {
+                          file.Write(listOfConnections[k].Name);
+                          break;
+                        }
+                    file.Write(")");
+                    if (numOfPorts > 1)
+                    {
+                      file.Write(",");
+                      numOfPorts--;
+                    }
+                    file.WriteLine();
+                  }
+                }
+                file.WriteLine(");");
+                file.WriteLine();
+                file.WriteLine();
+              }
+            }
+            file.WriteLine("endmodule ");
+              file.Close();
+          }
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+          deleteConnection(listOfConnLB.SelectedItem.ToString());
         }
 
     }

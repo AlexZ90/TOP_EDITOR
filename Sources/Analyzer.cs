@@ -801,7 +801,7 @@ namespace TopEditor
                 {
                   Console.WriteLine ("End\n\r");
 
-                  using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"D:\"+ mod_name +".txt"))
+                  using (System.IO.StreamWriter file = new System.IO.StreamWriter(@".\"+ mod_name +".txt"))
                   {
                         
                     file.WriteLine("mod_name: " + mod_name);
