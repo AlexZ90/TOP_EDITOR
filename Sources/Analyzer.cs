@@ -11,7 +11,6 @@ namespace TopEditor
       private FileStream fs = null;
       private int start_pos = 0;
       private char[] id = null;
-      Module[] listOfModules = new Module[100];
 
       public struct port
       {
@@ -38,17 +37,17 @@ namespace TopEditor
         id = null;
       }
       
-      public void openFile (string path)
-      {
-            try
-            {
-              fs = new FileStream(path, FileMode.Open);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("The open file process failed: {0}", ex.ToString());
-            }        
-      }
+      // public void openFile (string path)
+      // {
+            // try
+            // {
+              // fs = new FileStream(path, FileMode.Open);
+            // }
+            // catch (Exception ex)
+            // {
+                // Console.WriteLine("The open file process failed: {0}", ex.ToString());
+            // }        
+      // }
 
       public int search_ID(ref string id)
       {
@@ -493,7 +492,7 @@ namespace TopEditor
 
       }      
 
-      int search_unpacked_dimension (ref string id, ref int dim)
+      public int search_unpacked_dimension (ref string id, ref int dim)
       {
 
 
@@ -833,10 +832,10 @@ namespace TopEditor
 
       public Module[] analizeFile(string path)
       {
-        string id = "";
         int func_res = 0;
         int i = 0;
         Module newModule;
+        Module[] listOfModules = new Module[100];
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
         start_pos = 0;
