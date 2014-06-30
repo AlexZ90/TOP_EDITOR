@@ -620,7 +620,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id);
                 if (token == -1) return (-1);
-                Console.WriteLine(id);
+                //Console.WriteLine(id);
                 if (token == 1 && ((id == "input") || (id == "output") || (id == " inout")))
                 {
                   dir = id;
@@ -653,6 +653,7 @@ namespace TopEditor
                 {
                   start_pos=new_start_pos;
                   state = 2;
+                  return (-2);
                 }
                 break;
               }
@@ -721,7 +722,7 @@ namespace TopEditor
 
           while (true)
           {
-            Console.WriteLine("State = " + state.ToString());
+            //Console.WriteLine("State = " + state.ToString());
             switch (state)
             {
               case 0:
