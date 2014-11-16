@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Collections;
 
 namespace TopEditor
 {
@@ -139,7 +140,8 @@ namespace TopEditor
         }
 
       }
-      
+	  
+    
       public int search_COLON ()
       {
 
@@ -298,11 +300,38 @@ namespace TopEditor
 
       }      
             
+      public int search_ARIFM ()
+      {
+
+        int state = 0;
+        char[] buf = new char[1];
+        int read_res = 0;
+        
+        // Console.WriteLine ("Search SQBR \n\r");
+        fs.Seek ((long)start_pos, SeekOrigin.Begin);
+
+        if ((read_res = fs.ReadByte()) == -1)
+        {
+          Console.WriteLine("search_SQBR: End of fs has been reached\n\r");
+          return (-1);
+        }
+        buf[0] = (char)read_res;
+        if (buf[0]=='+' || buf[0]=='-' || buf[0]=='*' || buf[0]=='/')
+        {
+          start_pos++;
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+
+      }	  			
             
       public int fail (int state)
       {
 
-          if (state != 7) return (state+1);
+          if (state != 8) return (state+1);
           else
           {
             // Console.WriteLine ("Unknown\n\r");
@@ -475,7 +504,6 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
                   state = this.fail(state);
-                  return 9;
                 }
                 else if (func_res == 1)
                 {
@@ -485,6 +513,24 @@ namespace TopEditor
                 }
                 break;
               }
+
+              case 8:
+              {
+                func_res = this.search_ARIFM();
+                // Console.WriteLine ("func res = %d\n\r", func_res);
+                if (func_res == 0)
+                {
+                  state = this.fail(state);
+                  return 10;
+                }
+                else if (func_res == 1)
+                {
+                  // Console.WriteLine ("find COMMA\n\r");
+                  state = 0;
+                  return 9;
+                }
+                break;
+              }			  
 
               default: Console.WriteLine ("Default\n\r"); return 0;
             }
@@ -516,21 +562,21 @@ namespace TopEditor
               case 0:
               {
                 // token = this.next_token (ref id);
-                if (token == 3)
+                if (token == 3) // square brace
                 {
                   state = 1;
                 }
                 else
                 {
                   start_pos=old_start_pos;
-                  return 0;
+                  return 0; // dimension is not defined
                 }
                 break;
               }
               case 1:
               {
                 // token = this.next_token (ref id);
-                if (token == 5)
+                if (token == 5) // number
                 {
                   d1 = Convert.ToInt32(id);
                   state = 2;
@@ -538,7 +584,7 @@ namespace TopEditor
                 else
                 {
                   start_pos=old_start_pos;
-                  return (-2);
+                  return (-2); //error
                 }
                 break;
               }
@@ -546,14 +592,14 @@ namespace TopEditor
               case 2:
               {
                 // token = this.next_token (ref id);
-                if (token == 4)
+                if (token == 4) //colon ':'
                 {
                   state = 3;
                 }
                 else
                 {
                   start_pos=old_start_pos;
-                  return (-2);
+                  return (-2); //error
                 }
                 break;
               }
@@ -561,7 +607,7 @@ namespace TopEditor
               case 3:
               {
                 // token = this.next_token (ref id);
-                if (token == 5)
+                if (token == 5) // number
                 {
                   d2 = Convert.ToInt32(id);
                   state = 4;
@@ -577,16 +623,17 @@ namespace TopEditor
               case 4:
               {
                 // token = this.next_token (ref id);
-                if (token == 3)
+                if (token == 3) // square brace
                 {
-                  if (d1>d2) dim = d1-d2+1;
+                  //calculate dimension
+                  if (d1>d2) dim = d1-d2+1; 
                   else dim = d2-d1+1;
                   return 1;
                 }
                 else
                 {
                   start_pos=old_start_pos;
-                  return (-2);
+                  return (-2); // error
                 }
                 break;
               }
@@ -892,3 +939,4 @@ namespace TopEditor
 
     }
 }
+
