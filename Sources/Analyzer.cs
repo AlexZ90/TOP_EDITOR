@@ -214,12 +214,13 @@ namespace TopEditor
       }      
 
 
-      public int search_BR ()
+      public int search_BR (ref string id)
       {
 
         int state = 0;
         char[] buf = new char[1];
-        int read_res = 0;          
+        int read_res = 0; 
+        id = "";
 
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
@@ -233,6 +234,7 @@ namespace TopEditor
         buf[0] = (char)read_res;        
         if (buf[0]=='(' || buf[0]==')')
         {
+          id = buf[0].ToString();
           start_pos++;
           return 1;
         }
@@ -300,12 +302,13 @@ namespace TopEditor
 
       }      
             
-      public int search_ARIFM ()
+      public int search_ARIFM (ref string id)
       {
 
         int state = 0;
         char[] buf = new char[1];
         int read_res = 0;
+        id = "";
         
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
@@ -318,6 +321,7 @@ namespace TopEditor
         buf[0] = (char)read_res;
         if (buf[0]=='+' || buf[0]=='-' || buf[0]=='*' || buf[0]=='/')
         {
+          id = buf[0].ToString();
           start_pos++;
           return 1;
         }
@@ -386,7 +390,7 @@ namespace TopEditor
                   state = 0;                
                   if (id == "logic")
                     // Console.WriteLine ("find KW: %s\n\r", id);
-                    return 1;
+                    return 1; //1 Token is keyword
                   else if (id == "module")
                     // Console.WriteLine ("find KW: %s\n\r", id);
                     return 1;
@@ -401,7 +405,7 @@ namespace TopEditor
                     return 1;
                   else
                     // Console.WriteLine ("find ID: %s\n\r", id);
-                    return 2;
+                    return 2; //2 Token is ID
                 }
                 break;
               }
@@ -419,7 +423,7 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find square brace\n\r");
                   state = 0;
-                  return 3;
+                  return 3; //3 Token is SQBR
                 }
                 break;
               }
@@ -437,7 +441,7 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find COLON\n\r");
                   state = 0;
-                  return 4;
+                  return 4;//4 Token is COLON
                 }
                 break;
               }
@@ -455,14 +459,14 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find NUM: %s\n\r", id);
                   state = 0;
-                  return 5;
+                  return 5; //5 Token is NUM
                 }
                 break;
               }
 
               case 5:
               {
-                func_res = this.search_BR();
+                func_res = this.search_BR(ref id);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
@@ -473,7 +477,7 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find brace\n\r");
                   state = 0;
-                  return 6;
+                  return 6; //6 Token is BRACE
                 }
                 break;
               }
@@ -491,7 +495,7 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find semicolon\n\r");
                   state = 0;
-                  return 7;
+                  return 7; //7 Token is SEMICOLON
                 }
                 break;
               }
@@ -509,14 +513,14 @@ namespace TopEditor
                 {
                   // Console.WriteLine ("find COMMA\n\r");
                   state = 0;
-                  return 8;
+                  return 8; //8 Token is COMMA
                 }
                 break;
               }
 
               case 8:
               {
-                func_res = this.search_ARIFM();
+                func_res = this.search_ARIFM(ref id);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
@@ -525,9 +529,9 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find COMMA\n\r");
+                  // Console.WriteLine ("find ARIFM\n\r");
                   state = 0;
-                  return 9;
+                  return 9; //9 Token is ARIFM
                 }
                 break;
               }			  
@@ -538,6 +542,143 @@ namespace TopEditor
 
       }      
 
+    public int calculate_expr(string[] in_expr, int in_expr_length)
+    {
+      Stack inStack = new Stack();
+      int i = 0;
+      int j = 0;
+      int out_expr_length = 0;
+      object obj;
+      int num_1 = 0;
+      int num_2 = 0;
+      string[] out_expr = new string[256];
+
+      Console.WriteLine ("in_expr_length=" + in_expr_length);
+      for (i = 0; i < in_expr_length; i++)
+      {
+        Console.WriteLine ("in_expr = " + in_expr[i]);
+      }
+      //From Infix to Reverse Polish Notation
+      for (i = 0; i < in_expr_length; i++)
+      {
+        switch (in_expr[i])
+        {
+          case "(":
+            {
+              inStack.Push(in_expr[i]);
+              break;
+            }
+
+          case ")":
+            {
+              while (true)
+              {
+                obj = inStack.Pop();
+
+                if (obj.ToString() == "(")
+                {
+                  break;
+                }
+                else if (inStack.Count == 0)
+                {
+                  //MessageBox.Show("Ошибка в арифметическом выражении!");
+                  return (-1);
+                }
+                else
+                {
+                  out_expr[j] = obj.ToString();
+                  j++;
+                }
+              }
+              break;
+            }
+
+          case "+":
+          case "-":
+            {
+              while (inStack.Count != 0 && (inStack.Peek().ToString() == "*" || inStack.Peek().ToString() == "/"))
+              {
+                out_expr[j] = inStack.Pop().ToString();
+                j++;
+              }
+              inStack.Push(in_expr[i]);
+              break;
+            }
+
+          case "*":
+          case "/":
+            {
+              inStack.Push(in_expr[i]);
+              break;
+            }
+
+          default://Число
+            {
+              out_expr[j] = in_expr[i];
+              j++;
+              break;
+            }
+
+        }//switch end
+
+      }//for end
+      while (inStack.Count != 0)
+      {
+        out_expr[j] = inStack.Pop().ToString();
+        j++;
+      }
+
+      //Calculate from Reverse Polish Notation 
+      out_expr_length = j;
+
+      for (i = 0; i < out_expr_length; i++)
+      {
+        switch (out_expr[i])
+        {
+          case "+":
+            {
+              num_1 = Convert.ToInt32(inStack.Pop().ToString());
+              num_2 = Convert.ToInt32(inStack.Pop().ToString());
+              num_1 = num_1 + num_2;
+              inStack.Push(num_1.ToString());
+              break;
+            }
+
+          case "-":
+            {
+              num_1 = Convert.ToInt32(inStack.Pop().ToString());
+              num_2 = Convert.ToInt32(inStack.Pop().ToString());
+              num_1 = num_2 - num_1;
+              inStack.Push(num_1.ToString());
+              break;
+            }
+          case "*":
+            {
+              num_1 = Convert.ToInt32(inStack.Pop().ToString());
+              num_2 = Convert.ToInt32(inStack.Pop().ToString());
+              num_1 = num_1 * num_2;
+              inStack.Push(num_1.ToString());
+              break;
+            }
+          case "/":
+            {
+              num_1 = Convert.ToInt32(inStack.Pop().ToString());
+              num_2 = Convert.ToInt32(inStack.Pop().ToString());
+              num_1 = num_2 / num_1;
+              inStack.Push(num_1.ToString());
+              break;
+            }
+          default:
+            {
+              inStack.Push(out_expr[i]);
+              break;
+            }
+        }//switch end
+      }//for end
+        
+        return Convert.ToInt32(inStack.Peek().ToString());
+    }      
+      
       public int search_unpacked_dimension (ref string id, ref int dim)
       {
 
@@ -550,6 +691,10 @@ namespace TopEditor
           int old_start_pos = 0;
           int d1 = 0;
           int d2 = 0;
+          string [] expr_1 = new string [256];
+          string [] expr_2 = new string [256];
+          int expr_1_ind = 0;
+          int expr_2_ind = 0;
 
           old_start_pos = start_pos;
 
@@ -575,66 +720,88 @@ namespace TopEditor
               }
               case 1:
               {
+                if (token != 4) 
+                {
+                  expr_1[expr_1_ind] = id;
+                  expr_1_ind++;
+                  state = 1;
+                  break;
+                }
+                else 
+                {
+                  d1 = calculate_expr(expr_1, expr_1_ind);  
+                 Console.WriteLine ("d1=" + d1); 
+                  state = 4;                  
+                }
+
                 // token = this.next_token (ref id);
-                if (token == 5) // number
-                {
-                  d1 = Convert.ToInt32(id);
-                  state = 2;
-                }
-                else
-                {
-                  start_pos=old_start_pos;
-                  return (-2); //error
-                }
+                //if (token == 5) // number
+                //{
+                //  d1 = Convert.ToInt32(id);
+                //  state = 2;
+                //}
+                // else
+                // {
+                  // start_pos=old_start_pos;
+                  // return (-2); //error
+                // }
                 break;
               }
 
-              case 2:
-              {
-                // token = this.next_token (ref id);
-                if (token == 4) //colon ':'
-                {
-                  state = 3;
-                }
-                else
-                {
-                  start_pos=old_start_pos;
-                  return (-2); //error
-                }
-                break;
-              }
+              // case 2:
+              // {
+                // // token = this.next_token (ref id);
+                // if (token == 4) //colon ':'
+                // {
+                  // state = 3;
+                // }
+                // else
+                // {
+                  // start_pos=old_start_pos;
+                  // return (-2); //error
+                // }
+                // break;
+              // }
 
-              case 3:
-              {
-                // token = this.next_token (ref id);
-                if (token == 5) // number
-                {
-                  d2 = Convert.ToInt32(id);
-                  state = 4;
-                }
-                else
-                {
-                  start_pos=old_start_pos;
-                  return (-2);
-                }
-                break;
-              }
+              // case 3:
+              // {
+                // // token = this.next_token (ref id);
+                // if (token == 5) // number
+                // {
+                  // d2 = Convert.ToInt32(id);
+                  // state = 4;
+                // }
+                // else
+                // {
+                  // start_pos=old_start_pos;
+                  // return (-2);
+                // }
+                // break;
+              // }
 
               case 4:
               {
                 // token = this.next_token (ref id);
-                if (token == 3) // square brace
+                if (token != 3) // square brace
                 {
+                  expr_2[expr_2_ind] = id;
+                  expr_2_ind++;
+                  state = 4;
+                  break;
+                }                
+                else 
+                {
+                  d2 = calculate_expr(expr_2, expr_2_ind);  
                   //calculate dimension
                   if (d1>d2) dim = d1-d2+1; 
                   else dim = d2-d1+1;
                   return 1;
                 }
-                else
-                {
-                  start_pos=old_start_pos;
-                  return (-2); // error
-                }
+                // else
+                // {
+                  // start_pos=old_start_pos;
+                  // return (-2); // error
+                // }
                 break;
               }
             }
@@ -671,12 +838,26 @@ namespace TopEditor
                 if (token == 1 && ((id == "input") || (id == "output") || (id == " inout")))
                 {
                   dir = id;
+                  data_type = " "; //Порт по умолчанию не logic (но и не null)
                   state = 1;
                 }
-                else if ((port_declared == 1) && (token == 2))
+                else if (port_declared == 1)
                 {
-                    name = id;
-                    return 1;
+                      if ((token == 1) && (id == "logic"))
+                      {
+                        data_type = id;
+                        state = 2;
+                      }
+                      else if (token == 3)
+                      {
+                        start_pos = old_start_pos;
+                        state = 2;
+                      }                      
+                      else if (token == 2)
+                      {
+                          name = id;
+                          return 1;
+                      }
                 }
                 else
                 {
@@ -700,7 +881,7 @@ namespace TopEditor
                 {
                   start_pos=new_start_pos;
                   state = 2;
-                  return (-2);
+                  //Console.WriteLine ("Error 703");
                 }
                 break;
               }
@@ -713,6 +894,7 @@ namespace TopEditor
                 if (func_res == -2)
                 {
                   start_pos=old_start_pos;
+                  Console.WriteLine ("Error 717");
                   return (-2);
                 }
                 else
@@ -735,6 +917,7 @@ namespace TopEditor
                 else
                 {
                   start_pos=old_start_pos;
+                  Console.WriteLine ("Error 740");                  
                   return (-2);
                 }
                 break;
@@ -753,7 +936,7 @@ namespace TopEditor
           int func_res = 0;
           int token = 0;
           string buf = "";
-          string data_type = "";
+          string data_type = " ";
           string mod_name = "";
           string dir = "";
           string name = "";
@@ -800,7 +983,7 @@ namespace TopEditor
                 }
                 else
                 {
-                  Console.WriteLine ("Error\n\r");
+                  Console.WriteLine ("Error 803\n\r");
                   return (-2);
                 }
                 break;
@@ -826,7 +1009,7 @@ namespace TopEditor
                   }
                   else  if ((func_res == 0 && port_declared == 1) || func_res == -2)
                   {
-                    Console.WriteLine ("Error\n\r");
+                    Console.WriteLine ("Error 829\n\r func_res = " + func_res);
                     return (-2);
                   }
                   break;
@@ -837,7 +1020,7 @@ namespace TopEditor
                 else if (token == 6) state = 4;
                 else
                 {
-                  Console.WriteLine ("Error\n\r");
+                  Console.WriteLine ("Error 840\n\r");
                   return (-2);
                 }
                 break;
@@ -870,7 +1053,7 @@ namespace TopEditor
                 }
                 else
                 {
-                  Console.WriteLine ("Error\n\r");
+                  Console.WriteLine ("Error 873\n\r");
                   return (-2);
                 }
                 break;

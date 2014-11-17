@@ -384,7 +384,9 @@ namespace TopEditor
             for (k = 0; k < listOfConnections.Length; k++)
               if (listOfConnections[k] != null && listOfConnections[k].external == 1)
               {
-                dir_dtype_dim = alignStr(listOfConnections[k].inst_1_port.dir,7) + " " + "logic ";
+                if (listOfConnections[k].inst_1_port.data_type == "logic")
+                  dir_dtype_dim = alignStr(listOfConnections[k].inst_1_port.dir,7) + " " + "logic ";
+                else dir_dtype_dim = alignStr(listOfConnections[k].inst_1_port.dir, 7) + " ";
 
                 if (listOfConnections[k].inst_1_port.dim > 1)
                   dir_dtype_dim = dir_dtype_dim + "[" + (listOfConnections[k].inst_1_port.dim - 1).ToString() + ":0]";
