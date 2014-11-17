@@ -140,7 +140,7 @@ namespace TopEditor
         }
 
       }
-	  
+    
     
       public int search_COLON ()
       {
@@ -330,12 +330,42 @@ namespace TopEditor
           return 0;
         }
 
-      }	  			
+      }          
+      
+      public int search_EQUAL (ref string id)
+      {
+
+        int state = 0;
+        char[] buf = new char[1];
+        int read_res = 0;
+        id = "";
+        
+        // Console.WriteLine ("Search SQBR \n\r");
+        fs.Seek ((long)start_pos, SeekOrigin.Begin);
+
+        if ((read_res = fs.ReadByte()) == -1)
+        {
+          Console.WriteLine("search_SQBR: End of fs has been reached\n\r");
+          return (-1);
+        }
+        buf[0] = (char)read_res;
+        if (buf[0]=='=')
+        {
+          id = buf[0].ToString();
+          start_pos++;
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+
+      }         
             
       public int fail (int state)
       {
 
-          if (state != 8) return (state+1);
+          if (state != 9) return (state+1);
           else
           {
             // Console.WriteLine ("Unknown\n\r");
@@ -365,7 +395,7 @@ namespace TopEditor
                   return (-1);
                 }
                 buf[0] = (char)read_res;
-                if ((buf[0] == ' ') || (buf[0] == '	') || (buf[0] == '\n') || (buf[0] == '\r'))
+                if ((buf[0] == ' ') || (buf[0] == ' ') || (buf[0] == '\n') || (buf[0] == '\r'))
                 {
                   start_pos++;
                   state = 0;
@@ -525,7 +555,6 @@ namespace TopEditor
                 if (func_res == 0)
                 {
                   state = this.fail(state);
-                  return 10;
                 }
                 else if (func_res == 1)
                 {
@@ -534,7 +563,25 @@ namespace TopEditor
                   return 9; //9 Token is ARIFM
                 }
                 break;
-              }			  
+              }        
+
+              case 9:
+              {
+                func_res = this.search_EQUAL(ref id);
+                // Console.WriteLine ("func res = %d\n\r", func_res);
+                if (func_res == 0)
+                {
+                  state = this.fail(state);
+                  return 11;
+                }
+                else if (func_res == 1)
+                {
+                  // Console.WriteLine ("find ARIFM\n\r");
+                  state = 0;
+                  return 10; //10 Token is EQUAL
+                }
+                break;
+              }                      
 
               default: Console.WriteLine ("Default\n\r"); return 0;
             }
@@ -689,12 +736,14 @@ namespace TopEditor
           int func_res = 0;
           int token = 0;
           int old_start_pos = 0;
+          int old_start_pos_2 = 0;
           int d1 = 0;
           int d2 = 0;
           string [] expr_1 = new string [256];
           string [] expr_2 = new string [256];
           int expr_1_ind = 0;
           int expr_2_ind = 0;
+          int r1 = 0;
 
           old_start_pos = start_pos;
 
@@ -720,8 +769,21 @@ namespace TopEditor
               }
               case 1:
               {
+                old_start_pos_2 = start_pos;
                 if (token != 4) 
                 {
+                  if (token == 2)
+                  {
+                    r1 = search_param_value(ref id);
+                    if (r1 == (-2))
+                      {
+                        Console.WriteLine ("Error 780");
+                        start_pos = old_start_pos_2;
+                        return (-1);
+                      }
+                    else id = r1.ToString();
+                  }
+                  start_pos = old_start_pos_2;
                   expr_1[expr_1_ind] = id;
                   expr_1_ind++;
                   state = 1;
@@ -804,6 +866,107 @@ namespace TopEditor
                 // }
                 break;
               }
+            }
+          }
+      }
+
+      public int search_param_value (ref string parameter)
+      {
+
+
+          char[] buf = new char[1];
+          int read_res = 0;
+          int state = 0;
+          int func_res = 0;
+          int token = 0;
+          int old_start_pos = 0;
+          int res = 0;
+          string id = "";
+          
+
+          old_start_pos = start_pos;
+          start_pos = 0;
+          fs.Seek (0, SeekOrigin.Begin);
+          
+          while (true)
+          {
+            token = this.next_token (ref id);
+            Console.WriteLine ("token:" + token + " id:" + id);
+            if (token == -1) return (-1);
+            switch (state)
+            {
+              case 0:
+              {
+                // token = this.next_token (ref id);
+                if (token == 2 && id == "parameter") // square brace
+                {
+                  Console.WriteLine ("parameter found");
+                  state = 4;
+                }
+                else
+                {
+                  state = 0;
+                }
+                break;
+              }
+              
+              case 4:
+              {
+                if (token == 2) 
+                {
+                  if (id == parameter)
+                    state = 1;
+                }
+                else 
+                {
+                  state = 0;
+                }
+                break;
+              }
+              
+              case 1:
+              {
+                if (token !=10 ) 
+                {
+                  Console.WriteLine ("Error 900");
+                  return (-2);
+                }
+                else 
+                {
+                  state = 2;                  
+                }
+                break;
+              }
+
+              case 2:
+              {
+                if (token != 5) 
+                {
+                  Console.WriteLine ("Error 910");
+                  return (-2);
+                }                
+                else 
+                {
+                  res = Convert.ToInt32(id.ToString());
+                  state = 3;
+                }
+                break;
+              }
+              
+              case 3:
+              {
+                if (token != 7) 
+                {
+                  Console.WriteLine ("Error 925");
+                  return (-1);
+                }                
+                else 
+                {
+                  return res;
+                }
+                break;
+              }
+              
             }
           }
       }

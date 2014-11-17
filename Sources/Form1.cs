@@ -271,6 +271,7 @@ namespace TopEditor
           Port inst1_port;
           Instance inst2;
           Port inst2_port;
+          int ext = 0;
 
           inst1 = this.getInstance(inst1_name);
           inst1_port = inst1.BaseModule.getPort(inst1_port_name);
@@ -279,9 +280,14 @@ namespace TopEditor
 
           Console.WriteLine(inst1.Name);
 
+          if (extConnCHBX.Checked == false)
+            ext = 0;
+          else
+            ext = 1;
+          
           for (j = 0; j < listOfConnections.Length; j++)
           {
-            if (listOfConnections[j] != null && connName == listOfConnections[j].Name)
+            if (listOfConnections[j] != null && connName == listOfConnections[j].Name && ext == listOfConnections[j].external)
               connAlrdyExist++;
           }
           if (connAlrdyExist > 0)
@@ -369,6 +375,7 @@ namespace TopEditor
           int numOfExternals = 0;
           int numOfPorts = 0;
           string dir_dtype_dim;
+          int externalExist = 0;
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(@".\" + topNameTB.Text + ".txt"))
           {
 
@@ -409,10 +416,20 @@ namespace TopEditor
             for (k = 0; k < listOfConnections.Length; k++)
               if (listOfConnections[k] != null && listOfConnections[k].external == 0)
               {
-                file.Write("wire ");
-                if (listOfConnections[k].inst_1_port.dim > 1)
-                   file.WriteLine ("[" + (listOfConnections[k].inst_1_port.dim-1).ToString() + ":0] " + listOfConnections[k].Name + ";");
-                else file.WriteLine(listOfConnections[k].Name + ";");
+                externalExist = 0;
+                for (m = 0; m < listOfConnections.Length; m++)
+                {
+                  if (m!=k && listOfConnections[m] != null && listOfConnections[m].Name == listOfConnections[k].Name && listOfConnections[m].external == 1)
+                    externalExist ++;
+                    
+                }
+                if (externalExist == 0)
+                {
+                  file.Write("wire ");
+                  if (listOfConnections[k].inst_1_port.dim > 1)
+                    file.WriteLine ("[" + (listOfConnections[k].inst_1_port.dim-1).ToString() + ":0] " + listOfConnections[k].Name + ";");
+                  else file.WriteLine(listOfConnections[k].Name + ";");
+                }
               }
 
             file.WriteLine("/*--------------------------------------------------------------------------------*/");
