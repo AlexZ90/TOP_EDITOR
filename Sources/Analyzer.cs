@@ -419,24 +419,36 @@ namespace TopEditor
                 {
                   state = 0;                
                   if (id == "logic")
-                    // Console.WriteLine ("find KW: %s\n\r", id);
+				  {
+                    Console.WriteLine ("find KW: %s\n\r", id);
                     return 1; //1 Token is keyword
+				  }
                   else if (id == "module")
-                    // Console.WriteLine ("find KW: %s\n\r", id);
-                    return 1;
+                  {
+ 				     Console.WriteLine ("find KW: %s\n\r", id);
+                     return 1;
+				  }
                   else if (id == "input")
-                    // Console.WriteLine ("find KW: %s\n\r", id);
-                    return 1;
-                  else if (id == "output")
-                    // Console.WriteLine ("find KW: %s\n\r", id);
-                    return 1;
-                  else if (id == "inout")
-                    // Console.WriteLine ("find KW: %s\n\r", id);
-                    return 1;
-                  else
-                    // Console.WriteLine ("find ID: %s\n\r", id);
-                    return 2; //2 Token is ID
-                }
+				  {
+                     Console.WriteLine ("find KW: %s\n\r", id);
+                     return 1;
+                  }
+				  else if (id == "output")
+                  {
+				   Console.WriteLine ("find KW: %s\n\r", id);
+                     return 1;
+                  }
+				  else if (id == "inout")
+                  {
+					 Console.WriteLine ("find KW: %s\n\r", id);
+                     return 1;
+                  }
+				  else
+				  {
+                     Console.WriteLine ("find ID: %s\n\r", id);
+                     return 2; //2 Token is ID
+				  }
+				}
                 break;
               }
 
@@ -451,7 +463,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find square brace\n\r");
+                  Console.WriteLine ("find square brace\n\r");
                   state = 0;
                   return 3; //3 Token is SQBR
                 }
@@ -469,7 +481,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find COLON\n\r");
+                  Console.WriteLine ("find COLON\n\r");
                   state = 0;
                   return 4;//4 Token is COLON
                 }
@@ -487,7 +499,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find NUM: %s\n\r", id);
+                  Console.WriteLine ("find NUM: %s\n\r", id);
                   state = 0;
                   return 5; //5 Token is NUM
                 }
@@ -505,7 +517,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find brace\n\r");
+                  Console.WriteLine ("find brace\n\r");
                   state = 0;
                   return 6; //6 Token is BRACE
                 }
@@ -523,7 +535,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find semicolon\n\r");
+                  Console.WriteLine ("find semicolon\n\r");
                   state = 0;
                   return 7; //7 Token is SEMICOLON
                 }
@@ -541,7 +553,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find COMMA\n\r");
+                 Console.WriteLine ("find COMMA\n\r");
                   state = 0;
                   return 8; //8 Token is COMMA
                 }
@@ -558,7 +570,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find ARIFM\n\r");
+                  Console.WriteLine ("find ARIFM\n\r");
                   state = 0;
                   return 9; //9 Token is ARIFM
                 }
@@ -572,11 +584,11 @@ namespace TopEditor
                 if (func_res == 0)
                 {
                   state = this.fail(state);
-                  return 11;
+                  //return 11;
                 }
                 else if (func_res == 1)
                 {
-                  // Console.WriteLine ("find ARIFM\n\r");
+                  Console.WriteLine ("find EQUAL\n\r");
                   state = 0;
                   return 10; //10 Token is EQUAL
                 }
@@ -1179,11 +1191,11 @@ namespace TopEditor
               case 3:
                 token = this.next_token (ref id);
                 if (token == -1) return (-1);                  
-                if (token == 8) state = 2;
-                else if (token == 6) state = 4;
+                if (token == 8) state = 2; // If token is COMMA
+                else if (token == 6) state = 4; //If token is BRACE
                 else
                 {
-                  Console.WriteLine ("Error 840\n\r");
+                  Console.WriteLine ("Error 840 Token = " + token.ToString() + "\n\r");
                   return (-2);
                 }
                 break;
