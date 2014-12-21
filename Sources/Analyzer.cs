@@ -4,15 +4,18 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System.Windows.Forms;
 
 namespace TopEditor
 {
     class Analyzer
     {
       private FileStream fs = null;
-      private int start_pos = 0;
+      private long start_pos = 0;
       private char[] id = null;
-
+      static string current_dir = System.IO.Directory.GetCurrentDirectory();
+      
+      
       public struct port
       {
 
@@ -50,7 +53,7 @@ namespace TopEditor
             // }        
       // }
 
-      public int search_ID(ref string id)
+      public int search_ID(ref string id, ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -113,7 +116,7 @@ namespace TopEditor
         }
       }
 
-      public int search_SQBR ()
+      public int search_SQBR (ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -142,7 +145,7 @@ namespace TopEditor
       }
     
     
-      public int search_COLON ()
+      public int search_COLON (ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -172,7 +175,7 @@ namespace TopEditor
       }      
       
       
-      public int search_NUM (ref string id)
+      public int search_NUM (ref string id, ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -214,7 +217,7 @@ namespace TopEditor
       }      
 
 
-      public int search_BR (ref string id)
+      public int search_BR (ref string id, ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -245,7 +248,7 @@ namespace TopEditor
 
       }
       
-      public int search_SEMICOLON ()
+      public int search_SEMICOLON (ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -273,7 +276,7 @@ namespace TopEditor
 
       }   
       
-      public int search_COMMA ()
+      public int search_COMMA (ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -302,7 +305,7 @@ namespace TopEditor
 
       }      
             
-      public int search_ARIFM (ref string id)
+      public int search_ARIFM (ref string id, ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -332,7 +335,7 @@ namespace TopEditor
 
       }          
       
-      public int search_EQUAL (ref string id)
+      public int search_EQUAL (ref string id, ref long start_pos, ref FileStream fs)
       {
 
         int state = 0;
@@ -359,13 +362,41 @@ namespace TopEditor
         {
           return 0;
         }
-
       }         
-            
-      public int fail (int state)
+	  
+      public int search_QUOTE (ref string id, ref long start_pos, ref FileStream fs)
       {
 
-          if (state != 9) return (state+1);
+        int state = 0;
+        char[] buf = new char[1];
+        int read_res = 0;
+        id = "";
+        
+        // Console.WriteLine ("Search SQBR \n\r");
+        fs.Seek ((long)start_pos, SeekOrigin.Begin);
+
+        if ((read_res = fs.ReadByte()) == -1)
+        {
+          Console.WriteLine("search_SQBR: End of fs has been reached\n\r");
+          return (-1);
+        }
+        buf[0] = (char)read_res;
+        if (buf[0]=='"')
+        {
+          id = buf[0].ToString();
+          start_pos++;
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+      }           
+            
+      public int fail (int state, ref long start_pos)
+      {
+
+          if (state != 10) return (state+1);
           else
           {
             // Console.WriteLine ("Unknown\n\r");
@@ -374,7 +405,7 @@ namespace TopEditor
           }
       }
       
-      public int next_token (ref string id)
+      public int next_token (ref string id, ref long start_pos, ref FileStream fs)
       {
 
           char[] buf = new char[1];
@@ -402,18 +433,18 @@ namespace TopEditor
                 }
                 else
                 {
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 break;
               }
               case 1:
               {
-                func_res = this.search_ID (ref id);
+                func_res = this.search_ID (ref id, ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("ID not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -454,12 +485,12 @@ namespace TopEditor
 
               case 2:
               {
-                func_res = this.search_SQBR();
+                func_res = this.search_SQBR(ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -472,12 +503,12 @@ namespace TopEditor
 
               case 3:
               {
-                func_res = this.search_COLON ();
+                func_res = this.search_COLON (ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -490,12 +521,12 @@ namespace TopEditor
 
               case 4:
               {
-                func_res = this.search_NUM (ref id);
+                func_res = this.search_NUM (ref id, ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -508,12 +539,12 @@ namespace TopEditor
 
               case 5:
               {
-                func_res = this.search_BR(ref id);
+                func_res = this.search_BR(ref id, ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -526,12 +557,12 @@ namespace TopEditor
 
               case 6:
               {
-                func_res = this.search_SEMICOLON();
+                func_res = this.search_SEMICOLON(ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -544,12 +575,12 @@ namespace TopEditor
 
               case 7:
               {
-                func_res = this.search_COMMA();
+                func_res = this.search_COMMA(ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
                   // Console.WriteLine ("SQBR not found\n\r");
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -562,11 +593,11 @@ namespace TopEditor
 
               case 8:
               {
-                func_res = this.search_ARIFM(ref id);
+                func_res = this.search_ARIFM(ref id, ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                 }
                 else if (func_res == 1)
                 {
@@ -579,11 +610,11 @@ namespace TopEditor
 
               case 9:
               {
-                func_res = this.search_EQUAL(ref id);
+                func_res = this.search_EQUAL(ref id, ref start_pos, ref fs);
                 // Console.WriteLine ("func res = %d\n\r", func_res);
                 if (func_res == 0)
                 {
-                  state = this.fail(state);
+                  state = this.fail(state, ref start_pos);
                   //return 11;
                 }
                 else if (func_res == 1)
@@ -593,7 +624,24 @@ namespace TopEditor
                   return 10; //10 Token is EQUAL
                 }
                 break;
-              }                      
+              }
+
+              case 10:
+              {
+                func_res = this.search_QUOTE(ref id, ref start_pos, ref fs);
+                // Console.WriteLine ("func res = %d\n\r", func_res);
+                if (func_res == 0)
+                {
+                  state = this.fail(state, ref start_pos);
+                }
+                else if (func_res == 1)
+                {
+                  Console.WriteLine ("find EQUAL\n\r");
+                  state = 0;
+                  return 11; //11 Token is QUOTE
+                }
+                break;
+              }   
 
               default: Console.WriteLine ("Default\n\r"); return 0;
             }
@@ -738,7 +786,7 @@ namespace TopEditor
         return Convert.ToInt32(inStack.Peek().ToString());
     }      
       
-      public int search_unpacked_dimension (ref string id, ref int dim)
+      public int search_unpacked_dimension (ref string id, ref int dim, ref long start_pos)
       {
 
 
@@ -747,8 +795,8 @@ namespace TopEditor
           int state = 0;
           int func_res = 0;
           int token = 0;
-          int old_start_pos = 0;
-          int old_start_pos_2 = 0;
+          long old_start_pos = 0;
+          long old_start_pos_2 = 0;
           int d1 = 0;
           int d2 = 0;
           string [] expr_1 = new string [256];
@@ -761,7 +809,7 @@ namespace TopEditor
 
           while (true)
           {
-            token = this.next_token (ref id);
+            token = this.next_token (ref id, ref start_pos, ref fs);
             if (token == -1) return (-1);
             switch (state)
             {
@@ -786,7 +834,7 @@ namespace TopEditor
                 {
                   if (token == 2)
                   {
-                    r1 = search_param_value(ref id);
+                    r1 = search_param_value(ref id, ref start_pos, ref fs);
                     if (r1 == (-2))
                       {
                         Console.WriteLine ("Error 780");
@@ -882,7 +930,7 @@ namespace TopEditor
           }
       }
 
-      public int search_param_value (ref string parameter)
+      public int search_param_value (ref string parameter, ref long start_pos, ref FileStream fs)
       {
 
 
@@ -891,7 +939,7 @@ namespace TopEditor
           int state = 0;
           int func_res = 0;
           int token = 0;
-          int old_start_pos = 0;
+          long old_start_pos = 0;
           int res = 0;
           string id = "";
           
@@ -902,7 +950,7 @@ namespace TopEditor
           
           while (true)
           {
-            token = this.next_token (ref id);
+            token = this.next_token (ref id, ref start_pos, ref fs);
             Console.WriteLine ("token:" + token + " id:" + id);
             if (token == -1) return (-1);
             switch (state)
@@ -983,7 +1031,7 @@ namespace TopEditor
           }
       }
       
-      public int search_port (ref int dim, ref string name, ref string data_type, ref string dir, int port_declared)
+      public int search_port (ref int dim, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos)
       {
 
 
@@ -991,8 +1039,8 @@ namespace TopEditor
           int state = 0;
           int func_res = 0;
           int token = 0;
-          int old_start_pos = 0;
-          int new_start_pos = 0;
+          long old_start_pos = 0;
+          long new_start_pos = 0;
           int d1 = 0;
           int d2 = 0;
           string id = "";
@@ -1007,7 +1055,7 @@ namespace TopEditor
             {
               case 0:
               {
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
                 if (token == 1 && ((id == "input") || (id == "output") || (id == " inout")))
@@ -1045,7 +1093,7 @@ namespace TopEditor
               case 1:
               {
                 new_start_pos = start_pos;
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);
                 if ((token == 1) && (id == "logic"))
                 {
@@ -1064,7 +1112,7 @@ namespace TopEditor
               case 2:
               {
                 dim = 1;
-                func_res = this.search_unpacked_dimension (ref id, ref dim);
+                func_res = this.search_unpacked_dimension (ref id, ref dim, ref start_pos);
                 if (func_res == -1) return (-1);
                 if (func_res == -2)
                 {
@@ -1082,7 +1130,7 @@ namespace TopEditor
 
               case 3:
               {
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);
                 if (token == 2)
                 {
@@ -1103,7 +1151,7 @@ namespace TopEditor
       
       
 
-      public int search_module(ref Module newModule)
+      public int search_module(ref Module newModule, ref FileStream fs)
       {
 
 
@@ -1131,13 +1179,13 @@ namespace TopEditor
             switch (state)
             {
               case 0:
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);
                 if ((token == 1) && (id == "module")) state = 7;
                 else if (token == 0) return 0;
                 break;
               case 7:
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == 2)
                 {
                   mod_name = id;
@@ -1147,7 +1195,7 @@ namespace TopEditor
                 else return (-2);
                 break;
               case 1:
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);                
                 if (token == 6) state = 2;
                 else if (token == 7)
@@ -1163,7 +1211,7 @@ namespace TopEditor
                 }
                 break;
               case 2:
-                  func_res = this.search_port (ref dim, ref name, ref data_type, ref dir, port_declared);
+                  func_res = this.search_port (ref dim, ref name, ref data_type, ref dir, port_declared, ref start_pos);
                   //Console.WriteLine ("func_res = %d\n\r",func_res);
                   if (func_res == -1) return (-1);                  
                   if (func_res == 1)
@@ -1189,7 +1237,7 @@ namespace TopEditor
                   }
                   break;
               case 3:
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);                  
                 if (token == 8) state = 2; // If token is COMMA
                 else if (token == 6) state = 4; //If token is BRACE
@@ -1200,7 +1248,7 @@ namespace TopEditor
                 }
                 break;
               case 4:
-                token = this.next_token (ref id);
+                token = this.next_token (ref id, ref start_pos, ref fs);
                 if (token == -1) return (-1);
                 if (token == 7)
                 {
@@ -1236,23 +1284,225 @@ namespace TopEditor
           }
       }
 
+	  
+		private int findIncl (ref string includeFilePath, FileStream fs, ref long start_pos)
+        {
+          char[] buf = new char[256];
+          int state = 0;
+          int func_res = 0;
+          int token = 0;
+          long old_start_pos = 0;
+          long new_start_pos = 0;
+          int d1 = 0;
+          int d2 = 0;
+          string id = "";
+          int readRes = 0;
+
+
+          old_start_pos = start_pos;
+
+          while (true)
+          {
+            //Console.WriteLine ("state = %d\n\r", state);
+            switch (state)
+            {
+              case 0:
+              {
+                token = this.next_token (ref id, ref start_pos, ref fs);
+                if (token == -1) return (-1);
+                //Console.WriteLine(id);
+                if (token == 2 && id == "include")
+                {
+                  state = 1;
+                }
+                else
+                {
+                  return (-1);
+                }
+                break;
+              }
+
+              case 1:
+              {
+                new_start_pos = start_pos;
+                token = this.next_token (ref id, ref start_pos, ref fs);
+                if (token == -1) return (-1);
+                if (token == 11)
+                {
+                  state = 2;
+                }
+                else
+                {
+                  return (-1);
+                }
+                break;
+              }
+
+              case 2:
+              {
+                while (true)
+                {
+                  if ((readRes = fs.ReadByte()) == -1)
+                  {
+                    return (-1);
+                  }
+                  else 
+                  {
+                    buf[0] = (char)readRes;
+                    if (buf[0] == '"')
+                    {
+                      return 1;
+                    }
+                    else
+                    {
+                      includeFilePath = includeFilePath + buf[0].ToString();
+                    }
+                  }
+                }
+                break;
+              }
+            }
+          }
+		}
+		
+        
+        private int fileCopy (string includeFilePath, FileStream fsFileToCopy)
+        {
+          char[] buf = new char[1];
+          int readRes = 0;
+          
+          using (FileStream fsIncludeFile = File.Open(includeFilePath, FileMode.Open, FileAccess.Read))
+          {
+            while (true)
+            {
+              if ((readRes = fsIncludeFile.ReadByte()) == -1)
+              {
+                fsIncludeFile.Close();
+                return 1;
+              }
+              else
+              {
+                fsFileToCopy.WriteByte ((byte)readRes);
+              }
+            }
+          }
+        }
+        
+        private int findInclude (string inFilePath, ref string outFilePath)
+        {
+          string orgnFilePath = ""; //Исходный файл
+          string auxFilePath = ""; //Вспомогательный файл
+          int includeFound = 0; // 1 - ранее был найден и распознан include
+          int searchBegan = 0; //1 - Поиск includoв был начат
+          long filePosition = 0; //Позиция в файле
+          int auxFileNamePrefix = 0;
+          char[] buf = new char[1];
+          int readRes = 0;
+          string includeFilePath = "";//Файл в директиве include
+
+          while (true)
+          {
+            if (searchBegan == 0)
+            {
+              searchBegan = 1;
+              orgnFilePath = inFilePath;
+              auxFilePath = System.IO.Path.Combine(current_dir, @".\" + auxFileNamePrefix.ToString()) + ".txt";
+            }
+            else
+            {
+              if (includeFound == 1)
+              {
+                includeFound = 0;
+                orgnFilePath = auxFilePath;
+                if (auxFileNamePrefix > 0 ) File.Delete(System.IO.Path.Combine(current_dir, @".\" + (auxFileNamePrefix-1).ToString() + ".txt"));
+                auxFileNamePrefix++;
+                auxFilePath = System.IO.Path.Combine(current_dir, @".\" + auxFileNamePrefix.ToString() + ".txt");
+              }
+              else
+              {
+                outFilePath = auxFilePath;
+                return (1);
+              }
+
+            }
+
+            using (FileStream fsOrgnFile = File.Open(orgnFilePath, FileMode.Open, FileAccess.Read))
+            {
+              using (FileStream fsAuxFile = File.Create(auxFilePath))
+              {
+                while (true)
+                {
+                  if ((readRes = fsOrgnFile.ReadByte()) == -1)
+                  {
+                    fsOrgnFile.Close();
+                    fsAuxFile.Close();
+                    Console.Write("findInclude: End of fsOrgnFile has been reached\n\r");
+                    break;
+                    //return (-1);
+                  }
+                  else 
+                  {
+                    buf[0] = (char)readRes;
+                    if (buf[0] != '`')
+                    {
+                      fsAuxFile.WriteByte((byte)readRes);
+                    }
+                    else 
+                    {
+                      filePosition = fsOrgnFile.Position;
+                      includeFilePath = "";
+                      if (findIncl(ref includeFilePath, fsOrgnFile, ref filePosition) == -1)
+                      {
+                        fsAuxFile.WriteByte((byte)readRes);
+                        fsOrgnFile.Seek(filePosition, SeekOrigin.Begin);
+                      }
+                      else
+                      {
+                        Console.WriteLine(includeFilePath);
+                        if (fileCopy(includeFilePath, fsAuxFile) == -1)
+                        {
+                          MessageBox.Show("Can't copy include file to auxFile !");
+                          fsOrgnFile.Close();
+                          fsAuxFile.Close();
+                          File.Delete(auxFilePath);
+                          return (-1);
+                        }
+                        else
+                        {
+                          includeFound = 1;
+                        }
+
+
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+
+        }
       public Module[] analizeFile(string path)
       {
         int func_res = 0;
         int i = 0;
         Module newModule;
         Module[] listOfModules = new Module[100];
+        string outFilePath = "";
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
         start_pos = 0;
           try
           {
-            fs = new FileStream(path, FileMode.Open);
+            findInclude (path, ref outFilePath);
+            Console.WriteLine(outFilePath);
+            fs = new FileStream(outFilePath, FileMode.Open);
             fs.Seek(0, SeekOrigin.Begin);
             while (true)
             {
               newModule = new Module();
-              func_res = this.search_module(ref newModule);
+              func_res = this.search_module(ref newModule, ref fs);
               if (func_res == -2 || func_res == -1)
               {
                 Console.WriteLine("analizeFile: End of file");
