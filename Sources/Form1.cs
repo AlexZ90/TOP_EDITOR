@@ -231,7 +231,7 @@ namespace TopEditor
               listOfInstances[i] = null;
               this.updateListOfInstances(listOfInstances, listOfInstLB);
               this.updateListOfInstances(listOfInstances, listOfInstLB2);
-            }
+            } 
         }
 
         Instance getInstance(string InstName)

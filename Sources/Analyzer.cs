@@ -205,7 +205,8 @@ namespace TopEditor
           }
           else if (id_ind>0)
           {
-            id = id + '\0'.ToString();
+            //id = id + '\0'.ToString();
+            //id = id;
             return 1;
           }
           else
@@ -413,8 +414,10 @@ namespace TopEditor
           int func_res = 0;
           int read_res = 0;
 
+          
           while (true)
           {
+            id = "";
             switch (state)
             {
               case 0:
@@ -663,7 +666,7 @@ namespace TopEditor
       Console.WriteLine ("in_expr_length=" + in_expr_length);
       for (i = 0; i < in_expr_length; i++)
       {
-        Console.WriteLine ("in_expr = " + in_expr[i]);
+        Console.WriteLine ("in_expr = " + in_expr[i] + "*");
       }
       //From Infix to Reverse Polish Notation
       for (i = 0; i < in_expr_length; i++)
@@ -703,7 +706,7 @@ namespace TopEditor
           case "+":
           case "-":
             {
-              while (inStack.Count != 0 && (inStack.Peek().ToString() == "*" || inStack.Peek().ToString() == "/"))
+              while (inStack.Count != 0 && (inStack.Peek().ToString() == "*" || inStack.Peek().ToString() == "/" || inStack.Peek().ToString() == "+" || inStack.Peek().ToString() == "-"))
               {
                 out_expr[j] = inStack.Pop().ToString();
                 j++;
@@ -722,6 +725,7 @@ namespace TopEditor
           default://Число
             {
               out_expr[j] = in_expr[i];
+              Console.WriteLine(j + " " + out_expr[j] + " " + i + " " + in_expr[i] + "*");
               j++;
               break;
             }
@@ -734,6 +738,12 @@ namespace TopEditor
         out_expr[j] = inStack.Pop().ToString();
         j++;
       }
+
+      for (i = 0; i < j; i++)
+      {
+        Console.Write(out_expr[i]);
+      }
+
 
       //Calculate from Reverse Polish Notation 
       out_expr_length = j;
