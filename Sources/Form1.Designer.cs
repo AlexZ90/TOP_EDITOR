@@ -64,7 +64,7 @@
             // 
             this.button1.Location = new System.Drawing.Point(13, 89);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(77, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "Analize";
             this.button1.UseVisualStyleBackColor = true;
@@ -91,7 +91,7 @@
             // 
             this.browseBtn.Location = new System.Drawing.Point(13, 61);
             this.browseBtn.Name = "browseBtn";
-            this.browseBtn.Size = new System.Drawing.Size(75, 23);
+            this.browseBtn.Size = new System.Drawing.Size(77, 23);
             this.browseBtn.TabIndex = 4;
             this.browseBtn.Text = "Add file";
             this.browseBtn.UseVisualStyleBackColor = true;
@@ -105,7 +105,7 @@
             // 
             this.delModBtn.Location = new System.Drawing.Point(13, 118);
             this.delModBtn.Name = "delModBtn";
-            this.delModBtn.Size = new System.Drawing.Size(75, 23);
+            this.delModBtn.Size = new System.Drawing.Size(77, 23);
             this.delModBtn.TabIndex = 5;
             this.delModBtn.Text = "Del mod";
             this.delModBtn.UseVisualStyleBackColor = true;
@@ -139,9 +139,9 @@
             // 
             // createInstBtn
             // 
-            this.createInstBtn.Location = new System.Drawing.Point(12, 261);
+            this.createInstBtn.Location = new System.Drawing.Point(13, 261);
             this.createInstBtn.Name = "createInstBtn";
-            this.createInstBtn.Size = new System.Drawing.Size(75, 23);
+            this.createInstBtn.Size = new System.Drawing.Size(77, 23);
             this.createInstBtn.TabIndex = 10;
             this.createInstBtn.Text = "Create Inst";
             this.createInstBtn.UseVisualStyleBackColor = true;
@@ -149,9 +149,9 @@
             // 
             // delInstBtn
             // 
-            this.delInstBtn.Location = new System.Drawing.Point(12, 291);
+            this.delInstBtn.Location = new System.Drawing.Point(13, 291);
             this.delInstBtn.Name = "delInstBtn";
-            this.delInstBtn.Size = new System.Drawing.Size(75, 23);
+            this.delInstBtn.Size = new System.Drawing.Size(77, 23);
             this.delInstBtn.TabIndex = 11;
             this.delInstBtn.Text = "Del Inst";
             this.delInstBtn.UseVisualStyleBackColor = true;
@@ -217,7 +217,7 @@
             // 
             this.createConnBtn.Location = new System.Drawing.Point(13, 460);
             this.createConnBtn.Name = "createConnBtn";
-            this.createConnBtn.Size = new System.Drawing.Size(75, 23);
+            this.createConnBtn.Size = new System.Drawing.Size(77, 23);
             this.createConnBtn.TabIndex = 12;
             this.createConnBtn.Text = "Add conn";
             this.createConnBtn.UseVisualStyleBackColor = true;
@@ -225,9 +225,9 @@
             // 
             // createTopBTN
             // 
-            this.createTopBTN.Location = new System.Drawing.Point(12, 640);
+            this.createTopBTN.Location = new System.Drawing.Point(13, 640);
             this.createTopBTN.Name = "createTopBTN";
-            this.createTopBTN.Size = new System.Drawing.Size(75, 23);
+            this.createTopBTN.Size = new System.Drawing.Size(77, 23);
             this.createTopBTN.TabIndex = 13;
             this.createTopBTN.Text = "Create top";
             this.createTopBTN.UseVisualStyleBackColor = true;
@@ -237,7 +237,7 @@
             // 
             this.topNameTB.Location = new System.Drawing.Point(13, 614);
             this.topNameTB.Name = "topNameTB";
-            this.topNameTB.Size = new System.Drawing.Size(209, 20);
+            this.topNameTB.Size = new System.Drawing.Size(208, 20);
             this.topNameTB.TabIndex = 14;
             this.topNameTB.Text = "top";
             // 
@@ -289,9 +289,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(16, 490);
+            this.button2.Location = new System.Drawing.Point(13, 489);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
+            this.button2.Size = new System.Drawing.Size(77, 23);
             this.button2.TabIndex = 20;
             this.button2.Text = "Del conn";
             this.button2.UseVisualStyleBackColor = true;

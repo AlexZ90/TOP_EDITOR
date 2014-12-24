@@ -54,11 +54,8 @@ namespace TopEditor
             listOfInstLB2.Click += new EventHandler(listOfInstLB2_Click);
 
 
-            dt4.Columns.Add("Inst 1");
-            dt4.Columns.Add("Port 1");
-            dt4.Columns.Add("Inst 2");
-            dt4.Columns.Add("Port 2");
-            dt4.Columns.Add("Ext");
+            dt4.Columns.Add("Inst");
+            dt4.Columns.Add("Port");
             dataGridView4.DataSource = dt4;
             listOfConnLB.Click += new EventHandler(listOfConnLB_Click);
 
@@ -284,14 +281,28 @@ namespace TopEditor
             ext = 0;
           else
             ext = 1;
-          
-          for (j = 0; j < listOfConnections.Length; j++)
+          if (ext == 0)
           {
-            if (listOfConnections[j] != null && connName == listOfConnections[j].Name && ext == listOfConnections[j].external)
-              connAlrdyExist++;
+              for (j = 0; j < listOfConnections.Length; j++)
+              {
+                  if (listOfConnections[j] != null && connName == listOfConnections[j].Name && inst1_name == listOfConnections[j].inst_1.Name && inst2_name == listOfConnections[j].inst_2.Name && inst1_port_name == listOfConnections[j].inst_1_port.name && inst2_port_name == listOfConnections[j].inst_2_port.name)
+                      connAlrdyExist++;
+              }
           }
+          else
+          {
+              for (j = 0; j < listOfConnections.Length; j++)
+              {
+                  if (listOfConnections[j] != null && connName == listOfConnections[j].Name && listOfConnections[j].external == 1)
+                      connAlrdyExist++;
+              }
+          }
+
+
+
+
           if (connAlrdyExist > 0)
-            MessageBox.Show("Экземпляр " + connName + " уже существует.");
+            MessageBox.Show("Связь " + connName + " уже существует.");
           else
           {
             if (extConnCHBX.Checked == false)
@@ -308,11 +319,23 @@ namespace TopEditor
         private void updateListOfConnections(Connection[] listOfConnections, ListBox lb)
         {
           int i = 0;
+          int j = 0;
+          int match_count = 0;
           lb.Items.Clear();
           for (i = 0; i < listOfConnections.Length; i++)
             if (listOfConnections[i] != null)
             {
-              lb.Items.Add(listOfConnections[i].Name);
+                match_count = 0;
+                for (j = 0; j < i; j++)
+                {
+                    if (listOfConnections[j].Name == listOfConnections[i].Name)
+                    {
+                        match_count++;
+                        break;
+                    }
+                }
+                if (match_count == 0) lb.Items.Add(listOfConnections[i].Name);
+
               //newlistOfModules[i].showModDeclaration();
             }
         }
@@ -336,22 +359,81 @@ namespace TopEditor
 
         private void listOfConnLB_Click(object sender, EventArgs e)
         {
-          showConnections(listOfConnLB.SelectedItem.ToString(), dt4);
+            showConnections(listOfConnLB.SelectedItem.ToString(), dt4);
+        }
+
+        public struct connInstsPorts
+        {
+            public string instName;
+            public string portName;
         }
 
         private void showConnections(string connName, DataTable dt)
         {
           int i = 0;
           int j = 0;
+          int k = 0;
+          int m = 0;
+          
+
+          connInstsPorts[] listOfInstPorts = new connInstsPorts [256];
+
           dt.Clear();
           for (i = 0; i < listOfConnections.Length; i++)
           {
             if (listOfConnections[i] != null && listOfConnections[i].Name == connName)
-              if (listOfConnections[i].external == 1)
-                dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name , listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name, "EXT");
-              else
-                dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name, listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name, "");
+                if (listOfConnections[i].external == 0)
+                {
+                    for (m = 0; m < k; m++)
+                    {
+                        if (listOfInstPorts[m].instName == listOfConnections[i].inst_1.Name && listOfInstPorts[m].portName == listOfConnections[i].inst_1_port.name)
+                        {
+
+                        }
+                    }
+                    listOfInstPorts[k].instName = listOfConnections[i].inst_1.Name;
+                    listOfInstPorts[k].portName = listOfConnections[i].inst_1_port.name;
+                    k++;
+                    listOfInstPorts[k].instName = listOfConnections[i].inst_2.Name;
+                    listOfInstPorts[k].portName = listOfConnections[i].inst_2_port.name;
+                    k++;
+
+                    //dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name);
+                    //dt.Rows.Add(listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name);
+
+                    j++;
+                }
           }
+          for (i = 0; i < listOfConnections.Length; i++)
+          {
+              if (listOfConnections[i] != null && listOfConnections[i].Name == connName)
+                  if (listOfConnections[i].external == 1)
+                  {
+                      if (j == 0)
+                      {
+                          listOfInstPorts[k].instName = listOfConnections[i].inst_1.Name;
+                          listOfInstPorts[k].portName = listOfConnections[i].inst_1_port.name;
+                          k++;
+                          listOfInstPorts[k].instName = "External";
+                          listOfInstPorts[k].portName = " ";
+                          k++;
+                          //dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name);
+                          //dt.Rows.Add("External", " ");
+                      }
+                      else
+                      {
+                          listOfInstPorts[k].instName = "External";
+                          listOfInstPorts[k].portName = " ";
+                          k++;
+                          //dt.Rows.Add("External", " ");
+                      }
+                  }
+          }
+          for (i = 0; i < k; i++)
+          {
+              dt.Rows.Add(listOfInstPorts[i].instName, listOfInstPorts[i].portName);
+          }
+
         }
 
         public string alignStr(string stringToAlign, int numOfSigns)
