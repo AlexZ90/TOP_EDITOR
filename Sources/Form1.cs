@@ -66,27 +66,35 @@ namespace TopEditor
           int i = 0;
           int j = 0;
           int modAlrdyExist = 0;
-          newlistOfModules = testAnalyzer.analizeFile(textBox1.Text);
-          for (i = 0; i < newlistOfModules.Length; i++)
-            if (newlistOfModules[i] != null)
-            {
-              modAlrdyExist = 0;
-              for (j = 0; j < listOfModules.Length; j++)
+          Module[] newlistOfModules = new Module[100];
+          int funcRes = 0;
+          funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules);
+          if (funcRes == 1)
+          {
+            for (i = 0; i < newlistOfModules.Length; i++)
+              if (newlistOfModules[i] != null)
               {
-                if (listOfModules[j] != null && newlistOfModules[i].getModName() == listOfModules[j].getModName())
-                  modAlrdyExist++;
-              }
-              if (modAlrdyExist > 0)
-                MessageBox.Show("Модуль " + newlistOfModules[i].getModName() + " уже существует.");
-              else
+                modAlrdyExist = 0;
+                for (j = 0; j < listOfModules.Length; j++)
+                {
+                  if (listOfModules[j] != null && newlistOfModules[i].getModName() == listOfModules[j].getModName())
+                    modAlrdyExist++;
+                }
+                if (modAlrdyExist > 0)
+                  MessageBox.Show("Модуль " + newlistOfModules[i].getModName() + " уже существует.");
+                else
                 {
                   listOfModules[curModNumber] = newlistOfModules[i];
                   curModNumber++;
                 }
-              //newlistOfModules[i].showModDeclaration();
-            }
-          this.updateListOfModules(listOfModules);
-        }
+                //newlistOfModules[i].showModDeclaration();
+              }
+            this.updateListOfModules(listOfModules);
+          }
+          else if (funcRes == -1) MessageBox.Show("Ошибка обработки включений файлов");
+          else if (funcRes == -2) MessageBox.Show("Обнаружена синтаксическая ошибка в объявлении модуля или не найдено значение параметра");
+          else if (funcRes == -3) MessageBox.Show("Не удалось открыть файл " + textBox1.Text);
+}
 
 
         private void updateListOfModules(Module[] listOfModules)
