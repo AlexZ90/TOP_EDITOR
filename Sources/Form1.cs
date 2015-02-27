@@ -382,6 +382,7 @@ namespace TopEditor
           int j = 0;
           int k = 0;
           int m = 0;
+          int instPortAlreadyExist = 0;
           
 
           connInstsPorts[] listOfInstPorts = new connInstsPorts [256];
@@ -392,19 +393,37 @@ namespace TopEditor
             if (listOfConnections[i] != null && listOfConnections[i].Name == connName)
                 if (listOfConnections[i].external == 0)
                 {
+                    //Проверяем наличие в массиве подключенных экземпляров и портов первого экземляра и его порта
+                    instPortAlreadyExist = 0;
                     for (m = 0; m < k; m++)
                     {
                         if (listOfInstPorts[m].instName == listOfConnections[i].inst_1.Name && listOfInstPorts[m].portName == listOfConnections[i].inst_1_port.name)
                         {
-
+                            instPortAlreadyExist = 1;
                         }
                     }
-                    listOfInstPorts[k].instName = listOfConnections[i].inst_1.Name;
-                    listOfInstPorts[k].portName = listOfConnections[i].inst_1_port.name;
-                    k++;
-                    listOfInstPorts[k].instName = listOfConnections[i].inst_2.Name;
-                    listOfInstPorts[k].portName = listOfConnections[i].inst_2_port.name;
-                    k++;
+                    if (instPortAlreadyExist == 0)
+                    {
+                        listOfInstPorts[k].instName = listOfConnections[i].inst_1.Name;
+                        listOfInstPorts[k].portName = listOfConnections[i].inst_1_port.name;
+                        k++;
+                    }
+
+                    //Проверяем наличие в массиве подключенных экземпляров и портов второго экземляра и его порта
+                    instPortAlreadyExist = 0;
+                    for (m = 0; m < k; m++)
+                    {
+                        if (listOfInstPorts[m].instName == listOfConnections[i].inst_2.Name && listOfInstPorts[m].portName == listOfConnections[i].inst_2_port.name)
+                        {
+                            instPortAlreadyExist = 1;
+                        }
+                    }
+                    if (instPortAlreadyExist == 0)
+                    {
+                        listOfInstPorts[k].instName = listOfConnections[i].inst_2.Name;
+                        listOfInstPorts[k].portName = listOfConnections[i].inst_2_port.name;
+                        k++;
+                    }
 
                     //dt.Rows.Add(listOfConnections[i].inst_1.Name, listOfConnections[i].inst_1_port.name);
                     //dt.Rows.Add(listOfConnections[i].inst_2.Name, listOfConnections[i].inst_2_port.name);
