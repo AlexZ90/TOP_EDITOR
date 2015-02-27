@@ -100,13 +100,16 @@ namespace TopEditor
         private void updateListOfModules(Module[] listOfModules)
         {
           int i = 0;
+          int j = 0;
           listOfModuleLB.Items.Clear();
           for (i = 0; i < listOfModules.Length; i++)
             if (listOfModules[i] != null)
             {
+              j = 1;
               listOfModuleLB.Items.Add(listOfModules[i].getModName());
               //newlistOfModules[i].showModDeclaration();
             }
+          if (j != 0) listOfModuleLB.SelectedItem = listOfModuleLB.Items[0];
         }
 
         public void deleteModule(string modName)
@@ -350,7 +353,8 @@ namespace TopEditor
 
         private void createConnBtn_Click(object sender, EventArgs e)
         {
-          addConnection(connectionTB.Text, listOfInstLB.SelectedItem.ToString(), dataGridView2.CurrentCell.Value.ToString(), listOfInstLB2.SelectedItem.ToString(), dataGridView3.CurrentCell.Value.ToString());
+            Console.WriteLine(dataGridView2.CurrentRow.Cells[3].Value.ToString());
+            addConnection(connectionTB.Text, listOfInstLB.SelectedItem.ToString(), dataGridView2.CurrentRow.Cells[3].Value.ToString(), listOfInstLB2.SelectedItem.ToString(), dataGridView3.CurrentRow.Cells[3].Value.ToString());
           Console.WriteLine(dataGridView2.CurrentCell.Value.ToString());
         }
 
