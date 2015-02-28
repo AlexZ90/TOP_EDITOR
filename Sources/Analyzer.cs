@@ -14,8 +14,18 @@ namespace TopEditor
       //private long start_pos = 0;
       //private char[] id = null;
       static string current_dir = System.IO.Directory.GetCurrentDirectory();
-      
-      
+      public const int TOKEN_KEYWORD    = 1;
+      public const int TOKEN_ID         = 2;
+      public const int TOKEN_SQBR       = 3;
+      public const int TOKEN_COLON      = 4;
+      public const int TOKEN_NUM        = 5;
+      public const int TOKEN_BR         = 6;
+      public const int TOKEN_SEMICOLON  = 7;
+      public const int TOKEN_COMMA      = 8;
+      public const int TOKEN_ARIFM      = 9;
+      public const int TOKEN_EQUAL      = 10;
+      public const int TOKEN_QUOTE      = 11;
+
       public struct port
       {
 
@@ -455,7 +465,7 @@ namespace TopEditor
                   if (id == "logic")
 				  {
                     //Console.WriteLine ("fin KW: %s\n\r", id);
-                    return 1; //1 Token is keyword
+                    return TOKEN_KEYWORD; //1 Token is keyword
 				  }
                   else if (id == "module")
                   {
@@ -480,7 +490,7 @@ namespace TopEditor
 				  else
 				  {
                      //Console.WriteLine ("fin ID: %s\n\r", id);
-                     return 2; //2 Token is ID
+                     return TOKEN_ID; //2 Token is ID
 				  }
 				}
                 break;
@@ -499,7 +509,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin square brace\n\r");
                   state = 0;
-                  return 3; //3 Token is SQBR
+                  return TOKEN_SQBR; //3 Token is SQBR
                 }
                 break;
               }
@@ -517,7 +527,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin COLON\n\r");
                   state = 0;
-                  return 4;//4 Token is COLON
+                  return TOKEN_COLON;//4 Token is COLON
                 }
                 break;
               }
@@ -535,7 +545,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin NUM: %s\n\r", id);
                   state = 0;
-                  return 5; //5 Token is NUM
+                  return TOKEN_NUM; //5 Token is NUM
                 }
                 break;
               }
@@ -553,7 +563,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin brace\n\r");
                   state = 0;
-                  return 6; //6 Token is BRACE
+                  return TOKEN_BR; //6 Token is BRACE
                 }
                 break;
               }
@@ -571,7 +581,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin semicolon\n\r");
                   state = 0;
-                  return 7; //7 Token is SEMICOLON
+                  return TOKEN_SEMICOLON; //7 Token is SEMICOLON
                 }
                 break;
               }
@@ -589,7 +599,7 @@ namespace TopEditor
                 {
                  //Console.WriteLine ("fin COMMA\n\r");
                   state = 0;
-                  return 8; //8 Token is COMMA
+                  return TOKEN_COMMA; //8 Token is COMMA
                 }
                 break;
               }
@@ -606,7 +616,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin ARIFM\n\r");
                   state = 0;
-                  return 9; //9 Token is ARIFM
+                  return TOKEN_ARIFM; //9 Token is ARIFM
                 }
                 break;
               }        
@@ -624,7 +634,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin EQUAL\n\r");
                   state = 0;
-                  return 10; //10 Token is EQUAL
+                  return TOKEN_EQUAL; //10 Token is EQUAL
                 }
                 break;
               }
@@ -641,7 +651,7 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin EQUAL\n\r");
                   state = 0;
-                  return 11; //11 Token is QUOTE
+                  return TOKEN_QUOTE; //11 Token is QUOTE
                 }
                 break;
               }   
@@ -827,7 +837,7 @@ namespace TopEditor
               case 0:
               {
                 // token = this.next_token (ref id);
-                if (token == 3) // square brace
+                if (token == TOKEN_SQBR) // square brace
                 {
                   state = 1;
                 }
@@ -841,9 +851,9 @@ namespace TopEditor
               case 1:
               {
                 old_start_pos_2 = start_pos;
-                if (token != 4) 
+                if (token != TOKEN_COLON) 
                 {
-                  if (token == 2)
+                  if (token == TOKEN_ID)
                   {
                     r1 = search_param_value(ref id, fs);
                     if (r1 == (-2))
@@ -922,7 +932,7 @@ namespace TopEditor
               case 4:
               {
                 // token = this.next_token (ref id);
-                if (token != 3) // square brace
+                if (token != TOKEN_SQBR) // square brace
                 {
                   expr_2[expr_2_ind] = id;
                   expr_2_ind++;
@@ -973,8 +983,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                // token = this.next_token (ref id);
-                if (token == 2 && id == "parameter") // square brace
+                if (token == TOKEN_ID && id == "parameter")
                 {
                   //Console.WriteLine ("parameter found");
                   state = 4;
@@ -990,7 +999,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);
-                if (token == 2) 
+                if (token == TOKEN_ID) 
                 {
                   param_name = id;
                   state = 1;
@@ -1007,7 +1016,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);              
-                if (token !=10 ) 
+                if (token !=TOKEN_EQUAL ) 
                 {
                   Console.WriteLine ("search_param_value: Error 2");
                   return (-2);
@@ -1023,7 +1032,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);              
-                if (token != 5) 
+                if (token != TOKEN_NUM) 
                 {
                   Console.WriteLine ("search_param_value: Error 3");
                   return (-2);
@@ -1040,7 +1049,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);              
-                if (token != 7) 
+                if (token != TOKEN_SEMICOLON) 
                 {
                   Console.WriteLine ("search_param_value: Error 4");
                   return (-2);
@@ -1089,7 +1098,7 @@ namespace TopEditor
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
-                if (token == 1 && ((id == "input") || (id == "output") || (id == " inout")))
+                if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == " inout")))
                 {
                   dir = id;
                   data_type = " "; //Порт по умолчанию не logic (но и не null)
@@ -1097,17 +1106,17 @@ namespace TopEditor
                 }
                 else if (port_declared == 1)
                 {
-                      if ((token == 1) && (id == "logic"))
+                      if ((token == TOKEN_KEYWORD) && (id == "logic"))
                       {
                         data_type = id;
                         state = 2;
                       }
-                      else if (token == 3)
+                      else if (token == TOKEN_SQBR)
                       {
                         start_pos = old_start_pos;
                         state = 2;
                       }                      
-                      else if (token == 2)
+                      else if (token == TOKEN_ID)
                       {
                           name = id;
                           return 1;
@@ -1126,7 +1135,7 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == 1) && (id == "logic"))
+                if ((token == TOKEN_KEYWORD) && (id == "logic"))
                 {
                   data_type = id;
                   state = 2;
@@ -1163,7 +1172,7 @@ namespace TopEditor
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if (token == 2)
+                if (token == TOKEN_ID)
                 {
                   name = id;
                   return 1;
@@ -1211,12 +1220,12 @@ namespace TopEditor
               case 0:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == 1) && (id == "module")) state = 7;
+                if ((token == TOKEN_KEYWORD) && (id == "module")) state = 7;
                 else if (token == 0) return 0;
                 break;
               case 7:
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == 2)
+                if (token == TOKEN_ID)
                 {
                   mod_name = id;
                   Console.WriteLine ("module name = " + mod_name + "\n\r");
@@ -1227,8 +1236,8 @@ namespace TopEditor
               case 1:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);                
-                if (token == 6) state = 2;
-                else if (token == 7)
+                if (token == TOKEN_BR) state = 2;
+                else if (token == TOKEN_SEMICOLON)
                 {
                   newModule.setModName(mod_name);
                   Console.WriteLine ("End\n\r");
@@ -1269,8 +1278,8 @@ namespace TopEditor
               case 3:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);                  
-                if (token == 8) state = 2; // If token is COMMA
-                else if (token == 6) state = 4; //If token is BRACE
+                if (token == TOKEN_COMMA) state = 2; // If token is COMMA
+                else if (token == TOKEN_BR) state = 4; //If token is BRACE
                 else
                 {
                   Console.WriteLine ("search_module: Error 3. Token = " + token.ToString() + ". Incorrect module declaration.");
@@ -1280,7 +1289,7 @@ namespace TopEditor
               case 4:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);
-                if (token == 7)
+                if (token == TOKEN_SEMICOLON)
                 {
                   Console.WriteLine ("End\n\r");
 
@@ -1341,7 +1350,7 @@ namespace TopEditor
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
-                if (token == 2 && id == "include")
+                if (token == TOKEN_ID && id == "include")
                 {
                   state = 1;
                 }
@@ -1357,7 +1366,7 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);
-                if (token == 11)
+                if (token == TOKEN_QUOTE)
                 {
                   state = 2;
                 }
