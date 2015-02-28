@@ -1070,6 +1070,164 @@ namespace TopEditor
             }
           }
       }
+
+      public Parameter search_param(ref long start_pos, FileStream fs, ref int errorCode)
+      {
+
+
+        char[] buf = new char[1];
+        int state = 0;
+        int token = 0;
+        
+        int res = 0;
+        string id = "";
+        string param_name = "";
+        errorCode = 0;
+        fs.Seek(start_pos, SeekOrigin.Begin);
+
+        while (true)
+        {
+          switch (state)
+          {
+            case 0:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -1;//EOF There is no parameters in the fs
+                  return (null);
+                }
+                if (token == TOKEN_ID && id == "parameter")
+                {
+                  //Console.WriteLine ("parameter found");
+                  state = 4;
+                }
+                else
+                {
+                  state = 0;
+                }
+                break;
+              }
+
+            case 4:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token == TOKEN_ID)
+                {
+                  param_name = id;
+                  state = 1;
+                }
+                else
+                {
+                  Console.WriteLine("search_param_value: Error 1");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                break;
+              }
+
+            case 1:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_EQUAL)
+                {
+                  Console.WriteLine("search_param_value: Error 2");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  state = 2;
+                }
+                break;
+              }
+
+            case 2:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_NUM)
+                {
+                  Console.WriteLine("search_param_value: Error 3");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  res = Convert.ToInt32(id.ToString());
+                  state = 3;
+                }
+                break;
+              }
+
+            case 3:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_SEMICOLON)
+                {
+                  Console.WriteLine("search_param_value: Error 4");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  Parameter p = new Parameter();
+                  p.setName(param_name);
+                  p.setValue(res);
+                  errorCode = 0;
+                  return (p);
+                }
+                break;
+              }
+          }
+        }
+      }
+
+      public List<Parameter> search_all_params(FileStream fs)
+      {
+        long start_pos = 0;
+        fs.Seek(start_pos, SeekOrigin.Begin);
+        Parameter p;
+        int errorCode = 0;
+        List<Parameter> parameters = new List<Parameter>();
+        Console.WriteLine (fs);
+        while (true)
+        {
+          if ((p = search_param(ref start_pos, fs, ref errorCode)) != null)
+          {
+            parameters.Add(p);
+          }
+          else if (errorCode == -1)
+          {
+            //EOF there are no parameters in fs 
+            return parameters;
+          }
+          else
+          {
+            MessageBox.Show("Синтаксическая ошибка при поиске параметров! " + errorCode.ToString());
+            return null;
+          }
+        }
+      }
       
       public int search_port (ref int dim, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos, FileStream fs)
       {
@@ -1545,6 +1703,8 @@ namespace TopEditor
         long start_pos = 0;
         Module newModule;
         string outFilePath = "";
+        List<Parameter> parameters = new List<Parameter>();
+        parameters.Clear();
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
 
@@ -1557,6 +1717,14 @@ namespace TopEditor
         {
           //Console.WriteLine(outFilePath);
           FileStream fs = new FileStream(outFilePath, FileMode.Open);
+          parameters = search_all_params(fs);
+          if (parameters != null)
+          {
+            foreach (Parameter p in parameters)
+            {
+              Console.WriteLine("Parameter = {0}, value = {1}", p.getName(), p.getValue());
+            }
+          }
           fs.Seek(0, SeekOrigin.Begin);
           while (true)
           {
