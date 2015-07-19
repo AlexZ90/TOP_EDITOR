@@ -30,13 +30,15 @@ namespace TopEditor
       {
 
         public int dim;
+        public string dim_str; //!Добавил 
         public string name;
         public string data_type;
         public string dir;
 
-        public port(int dim_init, string name_init, string data_type_init, string dir_init)
+        public port(int dim_init, string dim_str_init, string name_init, string data_type_init, string dir_init) //!Добавил 
         {
           dim = dim_init;
+          dim_str = dim_str_init; //!Добавил 
           name = name_init;
           data_type = data_type_init;
           dir = dir_init;
@@ -805,9 +807,9 @@ namespace TopEditor
       }//for end
         
         return Convert.ToInt32(inStack.Peek().ToString());
-    }      
-      
-      public int search_unpacked_dimension (ref string id, ref int dim, ref long start_pos, FileStream fs)
+    }
+
+    public int search_unpacked_dimension(ref string id, ref int dim, ref string dim_str, ref long start_pos, FileStream fs) //!Добавил
       {
 
 
@@ -822,6 +824,11 @@ namespace TopEditor
           int d2 = 0;
           string [] expr_1 = new string [256];
           string [] expr_2 = new string [256];
+          
+          string expr_1_str = ""; //!Добавил 
+          string expr_2_str = ""; //!Добавил 
+          string expr_3_str = ""; //!Добавил 
+          
           int expr_1_ind = 0;
           int expr_2_ind = 0;
           int r1 = 0;
@@ -853,6 +860,8 @@ namespace TopEditor
                 old_start_pos_2 = start_pos;
                 if (token != TOKEN_COLON) 
                 {
+                  
+                  expr_1_str = expr_1_str + id; //!Добавил
                   if (token == TOKEN_ID)
                   {
                     r1 = search_param_value(ref id, fs);
@@ -881,6 +890,7 @@ namespace TopEditor
                   if (expr_1_ind == 0) return (-2);
                   d1 = calculate_expr(expr_1, expr_1_ind);  
                   //Console.WriteLine ("d1=" + d1); 
+                  Console.WriteLine ("\n\n ***********|expr_1_str = {0}", expr_1_str); //!Добавил
                   state = 4;                  
                 }
 
@@ -936,16 +946,26 @@ namespace TopEditor
                 {
                   expr_2[expr_2_ind] = id;
                   expr_2_ind++;
+                  
+                  expr_2_str = expr_2_str + id; //!Добавил
+                  
                   state = 4;
                   break;
                 }                
                 else 
                 {
-                  if (expr_2_ind == 0) return (-2);                
+                  if (expr_2_ind == 0) return (-2);   
+                  
+                  Console.WriteLine ("\n\n ***********|expr_2_str = {0}", expr_2_str); //!Добавил    
+                  
                   d2 = calculate_expr(expr_2, expr_2_ind);  
                   //calculate dimension
                   if (d1>d2) dim = d1-d2+1; 
                   else dim = d2-d1+1;
+                  
+                  expr_3_str = "[" + expr_1_str + ":" + expr_2_str + "]"; //!Добавил 
+                  Console.WriteLine ("\n\n ***********|expr_3_str = {0}", expr_3_str); //!Добавил 
+                  dim_str = expr_3_str;//!Добавил
                   return 1;
                 }
                 // else
@@ -1070,6 +1090,7 @@ namespace TopEditor
             }
           }
       }
+
 
       public Parameter search_param(ref long start_pos, FileStream fs, ref int errorCode)
       {
@@ -1229,7 +1250,7 @@ namespace TopEditor
         }
       }
       
-      public int search_port (ref int dim, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos, FileStream fs)
+      public int search_port(ref int dim, ref string dim_str, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos, FileStream fs) //!Добавил
       {
 
 
@@ -1243,7 +1264,7 @@ namespace TopEditor
           int d2 = 0;
           string id = "";
 
-
+          dim_str = ""; //!Добавил 
           old_start_pos = start_pos;
 
           while (true)
@@ -1310,7 +1331,7 @@ namespace TopEditor
               case 2:
               {
                 dim = 1;
-                func_res = this.search_unpacked_dimension (ref id, ref dim, ref start_pos, fs);
+                func_res = this.search_unpacked_dimension(ref id, ref dim, ref dim_str, ref start_pos, fs);//!Добавил
                 if (func_res == -1) return (-1);
                 if (func_res == -2)
                 {
@@ -1365,6 +1386,7 @@ namespace TopEditor
           int port_declared = 0;
           int end_search = 0;
           int dim = 0;
+          string dim_str = "";//!Добавил
           port[] ports = new port[512];
           int port_number = 0;
           int i = 0;
@@ -1408,7 +1430,7 @@ namespace TopEditor
                 }
                 break;
               case 2:
-                  func_res = this.search_port (ref dim, ref name, ref data_type, ref dir, port_declared, ref start_pos, fs);
+                  func_res = this.search_port (ref dim, ref dim_str, ref name, ref data_type, ref dir, port_declared, ref start_pos, fs); //!Добавил
                   //Console.WriteLine ("func_res = %d\n\r",func_res);
                   if (func_res == -1) return (-2);                  
                   if (func_res == 1)
@@ -1417,6 +1439,7 @@ namespace TopEditor
                     ports[port_number].dir = dir;
                     ports[port_number].name = name;
                     ports[port_number].dim = dim;
+                    ports[port_number].dim_str = dim_str;//!Добавил
                     ports[port_number].data_type = data_type;
                     port_number++;
 
@@ -1462,7 +1485,7 @@ namespace TopEditor
                       file.Write(ports[i].data_type + " ");
                       file.Write(ports[i].name + " ");
                       file.Write(ports[i].dim.ToString() + " ");
-                      newPort = new Port(ports[i].dim, ports[i].name, ports[i].data_type, ports[i].dir);
+                      newPort = new Port(ports[i].dim, ports[i].dim_str, ports[i].name, ports[i].data_type, ports[i].dir); //!Добавил 
                       newModule.addPort(newPort);
                       //newModule.showModDeclaration();
                       file.WriteLine();

@@ -27,6 +27,9 @@ namespace TopEditor
         Instance [] listOfInstances = new Instance [100];
         Connection[] listOfConnections = new Connection[100];
 
+        string safeFileName = ""; //!Добавил
+        string fileDirPath = ""; //!Добавил
+        string fullFilePath = ""; //!Добавил
         
       
         public Form1()
@@ -36,6 +39,9 @@ namespace TopEditor
             dt1.Columns.Add("Data type");
             dt1.Columns.Add("Size");
             dt1.Columns.Add("Name");
+
+            dt1.Columns.Add("Size string"); //!Добавил 
+
             dataGridView1.DataSource = dt1;
             listOfModuleLB.Click += new EventHandler(showPortsBtn_Click);
 
@@ -158,7 +164,10 @@ namespace TopEditor
         {
           if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
           {
-            textBox1.Text = openFileDialog1.FileName;
+            fullFilePath = openFileDialog1.FileName;//!Добавил
+            textBox1.Text = fullFilePath;//!Добавил
+            safeFileName = openFileDialog1.SafeFileName;//!Добавил
+            fileDirPath = fullFilePath.Replace(safeFileName, "");//!Добавил
           }
         }
 
@@ -593,6 +602,167 @@ namespace TopEditor
         {
           deleteConnection(listOfConnLB.SelectedItem.ToString());
         }
+
+
+
+      private void btnCreateTest_Click(object sender, EventArgs e)
+      {
+
+        Module module;
+        string mod_name;
+        int numOfPorts;
+        
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        int m = 0;
+
+
+        module = getModule(listOfModuleLB.SelectedItem.ToString());
+        mod_name = module.getModName();
+        numOfPorts = module.getNumOfPorts();
+        
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + fileDirPath + "test.sv"))
+        {
+
+          file.Write("module test (\n");
+
+          for (j = 0; j < module.listOfPorts.Length; j++)
+          {
+            if (module.listOfPorts[j] != null)
+            {
+
+              if (module.listOfPorts[j].dir == "input") file.Write("output ");
+              else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
+              else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
+              else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+              file.Write("logic ");
+              //file.Write("logic " + module.listOfPorts[j].name);
+              for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+              file.Write(module.listOfPorts[j].dim_str + " ");
+
+              file.Write(module.listOfPorts[j].name);
+              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+              if (numOfPorts > 1)
+              {
+                file.Write(",");
+                numOfPorts--;
+              }
+              file.WriteLine();
+            }
+          }
+
+          file.Write(");\n\n");
+
+
+          file.Write("// always #10 clk = ~clk;\n\n");
+
+          file.WriteLine("// initial           ");
+          file.WriteLine("//   begin           ");
+          file.WriteLine("//     rstN = 1;     ");
+          file.WriteLine("//     clk = 0;      \n\n");
+          file.WriteLine("//     #100 rstN = 0;");
+          file.WriteLine("//     #10 rstN = 1; ");
+          file.WriteLine("//   end             ");
+
+
+          file.Write("\n\nendmodule\n\n");
+          file.Close();
+        }
+
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + fileDirPath + "test_top.sv"))
+        {
+
+          file.Write("module test_top;\n\n");
+
+          //Instantiate wires
+
+          for (j = 0; j < module.listOfPorts.Length; j++)
+          {
+            if (module.listOfPorts[j] != null)
+            {
+
+              file.Write("wire ");
+              //file.Write("logic " + module.listOfPorts[j].name);
+              for (m = 0; m < (30 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+              file.Write(module.listOfPorts[j].dim_str + " ");
+
+              file.Write(module.listOfPorts[j].name);
+              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              file.Write(";\n");
+
+            }
+          }
+
+
+          //Instantiate DUT
+
+          numOfPorts = module.getNumOfPorts();
+
+          file.Write("\n\n" + mod_name + " " + mod_name + "_1 (" + "\n");
+
+          for (j = 0; j < module.listOfPorts.Length; j++)
+          {
+            if (module.listOfPorts[j] != null)
+            {
+
+              file.Write("." + module.listOfPorts[j].name);
+              for (m = 0; m < (40 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              file.Write("(");
+              file.Write(module.listOfPorts[j].name);
+              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              file.Write(")");
+              if (numOfPorts > 1)
+              {
+                file.Write(",");
+                numOfPorts--;
+              }
+              file.WriteLine();
+            }
+          }
+          file.WriteLine(");");
+          file.WriteLine();
+          file.WriteLine();
+
+
+          //Instantiate test
+
+          numOfPorts = module.getNumOfPorts();
+          file.Write("\n\n test test_1 (\n");
+
+          for (j = 0; j < module.listOfPorts.Length; j++)
+          {
+            if (module.listOfPorts[j] != null)
+            {
+
+              file.Write("." + module.listOfPorts[j].name);
+              for (m = 0; m < (40 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              file.Write("(");
+              file.Write(module.listOfPorts[j].name);
+              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              file.Write(")");
+              if (numOfPorts > 1)
+              {
+                file.Write(",");
+                numOfPorts--;
+              }
+              file.WriteLine();
+            }
+          }
+          file.WriteLine(");");
+          file.WriteLine();
+          file.WriteLine();
+
+
+          file.Write("\n\nendmodule");
+
+          file.Close();
+        }   
+
+
+      }
 
     }
 }
