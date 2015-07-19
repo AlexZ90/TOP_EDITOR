@@ -621,58 +621,125 @@ namespace TopEditor
         module = getModule(listOfModuleLB.SelectedItem.ToString());
         mod_name = module.getModName();
         numOfPorts = module.getNumOfPorts();
+
+        string vrfFolderName = @"" + fileDirPath + mod_name + "_VRF\\";
+
+        if (Directory.Exists(vrfFolderName) != true)
+            Directory.CreateDirectory(vrfFolderName);
+
+        string testFileName = @"" + vrfFolderName + "test.sv";
+        string testCopyFileName = @"" + vrfFolderName + "test_copy.sv";
+        string testTopFileName = @"" + vrfFolderName + "test_copy.sv";
         
-        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + fileDirPath + "test.sv"))
+
+
+        int val = 0;
+        if (File.Exists(testFileName))
         {
-
-          file.Write("module test (\n");
-
-          for (j = 0; j < module.listOfPorts.Length; j++)
+          using (System.IO.StreamReader sr = new System.IO.StreamReader(testFileName))
           {
-            if (module.listOfPorts[j] != null)
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(testCopyFileName))
             {
+              //Пропускаем старое описание  портов
+              while (sr.Read() != ';') ;
 
-              if (module.listOfPorts[j].dir == "input") file.Write("output ");
-              else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
-              else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
-              else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+              //Вставляем новое описание портов
+              file.Write("module test (\n");
 
-              file.Write("logic ");
-              //file.Write("logic " + module.listOfPorts[j].name);
-              for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
-              file.Write(module.listOfPorts[j].dim_str + " ");
-
-              file.Write(module.listOfPorts[j].name);
-              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
-
-              if (numOfPorts > 1)
+              for (j = 0; j < module.listOfPorts.Length; j++)
               {
-                file.Write(",");
-                numOfPorts--;
+                if (module.listOfPorts[j] != null)
+                {
+
+                  if (module.listOfPorts[j].dir == "input") file.Write("output ");
+                  else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
+                  else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
+                  else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+                  file.Write("logic ");
+                  //file.Write("logic " + module.listOfPorts[j].name);
+                  for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+                  file.Write(module.listOfPorts[j].dim_str + " ");
+
+                  file.Write(module.listOfPorts[j].name);
+                  for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+                  if (numOfPorts > 1)
+                  {
+                    file.Write(",");
+                    numOfPorts--;
+                  }
+                  file.WriteLine();
+                }
               }
-              file.WriteLine();
+
+              file.Write(");");
+
+              //Вставляем старый текст теста
+              while ((val = sr.Read()) > 0) file.Write((char)val);
+              file.Close();
             }
+            sr.Close();
           }
 
-          file.Write(");\n\n");
-
-
-          file.Write("// always #10 clk = ~clk;\n\n");
-
-          file.WriteLine("// initial           ");
-          file.WriteLine("//   begin           ");
-          file.WriteLine("//     rstN = 1;     ");
-          file.WriteLine("//     clk = 0;      \n\n");
-          file.WriteLine("//     #100 rstN = 0;");
-          file.WriteLine("//     #10 rstN = 1; ");
-          file.WriteLine("//   end             ");
-
-
-          file.Write("\n\nendmodule\n\n");
-          file.Close();
+          File.Delete(testFileName);
+          File.Move(testCopyFileName, testFileName);
         }
+        else
+          using (System.IO.StreamWriter file = new System.IO.StreamWriter(testFileName))
+          {
 
-        using (System.IO.StreamWriter file = new System.IO.StreamWriter(@"" + fileDirPath + "test_top.sv"))
+            file.Write("module test (\n");
+
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+              if (module.listOfPorts[j] != null)
+              {
+
+                if (module.listOfPorts[j].dir == "input") file.Write("output ");
+                else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
+                else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
+                else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+                file.Write("logic ");
+                //file.Write("logic " + module.listOfPorts[j].name);
+                for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+                file.Write(module.listOfPorts[j].dim_str + " ");
+
+                file.Write(module.listOfPorts[j].name);
+                for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+                if (numOfPorts > 1)
+                {
+                  file.Write(",");
+                  numOfPorts--;
+                }
+                file.WriteLine();
+              }
+            }
+
+            file.Write(");\n\n");
+
+
+            file.Write("// always #10 clk = ~clk;\n\n");
+
+            file.WriteLine("// initial           ");
+            file.WriteLine("//   begin           ");
+            file.WriteLine("//     rstN = 1;     ");
+            file.WriteLine("//     clk = 0;      \n\n");
+            file.WriteLine("//     #100 rstN = 0;");
+            file.WriteLine("//     #10 rstN = 1; ");
+            file.WriteLine("//   end             ");
+
+
+            file.Write("\n\nendmodule\n\n");
+            file.Close();
+          }
+
+
+
+
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(testTopFileName))
         {
 
           file.Write("module test_top;\n\n");
