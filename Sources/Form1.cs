@@ -151,7 +151,7 @@ namespace TopEditor
             if (listOfModules[i] != null && listOfModules[i].getModName() == modName)
               for (j = 0; j < listOfModules[i].listOfPorts.Length; j++)
                 if (listOfModules[i].listOfPorts[j] != null)
-                  dt.Rows.Add(listOfModules[i].listOfPorts[j].dir, listOfModules[i].listOfPorts[j].data_type, listOfModules[i].listOfPorts[j].dim, listOfModules[i].listOfPorts[j].name);
+                  dt.Rows.Add(listOfModules[i].listOfPorts[j].dir, listOfModules[i].listOfPorts[j].data_type, listOfModules[i].listOfPorts[j].dim, listOfModules[i].listOfPorts[j].name, listOfModules[i].listOfPorts[j].dim_str);
           }
         }
 
