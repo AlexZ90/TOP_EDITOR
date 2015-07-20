@@ -1212,8 +1212,8 @@ namespace TopEditor
                 else
                 {
                   Parameter p = new Parameter();
-                  p.setName(param_name);
-                  p.setValue(res);
+                  p.Name = param_name;
+                  p.Value = res;
                   errorCode = 0;
                   return (p);
                 }
@@ -1745,7 +1745,7 @@ namespace TopEditor
           {
             foreach (Parameter p in parameters)
             {
-              Console.WriteLine("Parameter = {0}, value = {1}", p.getName(), p.getValue());
+              Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
             }
           }
           fs.Seek(0, SeekOrigin.Begin);

@@ -629,7 +629,7 @@ namespace TopEditor
 
         string testFileName = @"" + vrfFolderName + "test.sv";
         string testCopyFileName = @"" + vrfFolderName + "test_copy.sv";
-        string testTopFileName = @"" + vrfFolderName + "test_copy.sv";
+        string testTopFileName = @"" + vrfFolderName + "test_top.sv";
         
 
 
@@ -797,7 +797,7 @@ namespace TopEditor
           //Instantiate test
 
           numOfPorts = module.getNumOfPorts();
-          file.Write("\n\n test test_1 (\n");
+          file.Write("\n\ntest test_1 (\n");
 
           for (j = 0; j < module.listOfPorts.Length; j++)
           {
