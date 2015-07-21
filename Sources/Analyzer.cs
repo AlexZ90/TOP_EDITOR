@@ -331,7 +331,7 @@ namespace TopEditor
 
         if ((read_res = fs.ReadByte()) == -1)
         {
-          Console.WriteLine("search_SQBR: End of fs has been reached\n\r");
+          Console.WriteLine("search_ARIFM: End of fs has been reached\n\r");
           return (-1);
         }
         buf[0] = (char)read_res;

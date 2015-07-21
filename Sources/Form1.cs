@@ -630,7 +630,44 @@ namespace TopEditor
         string testFileName = @"" + vrfFolderName + "test.sv";
         string testCopyFileName = @"" + vrfFolderName + "test_copy.sv";
         string testTopFileName = @"" + vrfFolderName + "test_top.sv";
-        
+        string test_top_mod_name = "test_top";
+        string dut_inst_name = mod_name + "_1";
+        string make_do_filename = @"" + vrfFolderName + "make.do";
+        string restart_do_filename = @"" + vrfFolderName + "restart.do";
+        string addButton_do_filename = @"" + vrfFolderName + "addButton.do";
+
+
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
+        {
+          file.WriteLine("quit -sim");
+          file.WriteLine("add button make_" + mod_name + " {do " + make_do_filename.Replace("\\", "\\\\") + "} NoDisable");
+          file.WriteLine("add button restart_" + mod_name + " {do " + restart_do_filename.Replace("\\", "\\\\") + "} NoDisable");
+          file.Close();
+        }
+
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(make_do_filename))
+        {
+          file.WriteLine("quit -sim");
+          file.WriteLine("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
+          file.WriteLine();
+          file.WriteLine("vsim -novopt work." + test_top_mod_name);
+          file.WriteLine();
+          file.WriteLine("add wave -divider -height 30 " + dut_inst_name);
+          file.WriteLine("add wave -radix hex sim:/" + test_top_mod_name + "/" + dut_inst_name + "/*");
+          file.WriteLine("run 500");
+          //file.WriteLine("#view wave");
+          file.Close();
+        }
+
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(restart_do_filename))
+        {
+          file.WriteLine("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
+          file.WriteLine("restart -force");
+          file.WriteLine("run 500");
+          //file.WriteLine("#view wave");
+          file.Close();
+        }
+
 
 
         int val = 0;
@@ -742,7 +779,7 @@ namespace TopEditor
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(testTopFileName))
         {
 
-          file.Write("module test_top;\n\n");
+          file.Write("module " + test_top_mod_name + ";\n\n");
 
           //Instantiate wires
 
@@ -768,7 +805,7 @@ namespace TopEditor
 
           numOfPorts = module.getNumOfPorts();
 
-          file.Write("\n\n" + mod_name + " " + mod_name + "_1 (" + "\n");
+          file.Write("\n\n" + mod_name + " " + dut_inst_name + " (" + "\n");
 
           for (j = 0; j < module.listOfPorts.Length; j++)
           {
