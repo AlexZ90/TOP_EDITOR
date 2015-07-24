@@ -1616,6 +1616,7 @@ namespace TopEditor
         private int findInclude (string inFilePath, ref string outFilePath)
         {
           string orgnFilePath = ""; //Исходный файл
+          string orgnFileDirPath = ""; //Директория исходного файла
           string auxFilePath = ""; //Вспомогательный файл
           int includeFound = 0; // 1 - ранее был найден и распознан include
           int searchBegan = 0; //1 - Поиск includoв был начат
@@ -1626,9 +1627,14 @@ namespace TopEditor
           int func_res = 0;
           string includeFilePath = "";//Файл в директиве include
           string auxFileDirectory = System.IO.Path.Combine(current_dir, @".\auxFiles\");
+          bool absoluteIncludeFilePath = false; //true - путь абсолютный, false - относительный
 
           if (System.IO.Directory.Exists(auxFileDirectory)) System.IO.Directory.Delete(auxFileDirectory, true);
           System.IO.Directory.CreateDirectory(auxFileDirectory);
+
+          orgnFileDirPath = inFilePath.Substring(0, inFilePath.LastIndexOf('\\', inFilePath.Length - 1) + 1); //Директория исходного файла
+
+         // Console.WriteLine("Inclide in file path {0}", in.LastIndexOf('o', "Hello".Length-1));
 
           while (true)
           {
@@ -1694,7 +1700,16 @@ namespace TopEditor
                       }                      
                       else
                       {
-                        //Console.WriteLine(includeFilePath);
+                        Console.WriteLine(includeFilePath);
+                        //Инклуд содержит относительный или абсолютный путь к файлу
+
+                        absoluteIncludeFilePath = includeFilePath.Contains(":");
+
+                        if (absoluteIncludeFilePath == false)
+                          includeFilePath = System.IO.Path.Combine(orgnFileDirPath, includeFilePath);
+
+                        Console.WriteLine(includeFilePath);
+
                         if (fileCopy(includeFilePath, fsAuxFile) == -1)
                         {
                           //MessageBox.Show("Can't copy include file to auxFile !");
