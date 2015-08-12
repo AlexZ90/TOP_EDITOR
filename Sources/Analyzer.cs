@@ -1612,6 +1612,103 @@ namespace TopEditor
             }
           }
         }
+
+
+    public string delComments(string inFile, string outFile)
+    {
+
+      string testFileName = inFile;
+      string testCopyFileName =  outFile;
+      string fileString = "";
+
+      if (File.Exists(outFile) == true)
+      {
+          File.Delete(outFile);
+      }
+
+      Console.Write(testFileName.Substring(testFileName.LastIndexOf('\\', testFileName.Length - 1) + 1), testFileName.Length); //Директория исходного файла
+      Console.Write("|"); //Директория исходного файла
+
+      int blockCommStartPos = 0;
+      int blockCommEndPos = 0;
+
+      int lineCommStartPos = 0;
+
+      int needReadNewLine = 1;
+
+      if (File.Exists(testFileName))
+      {
+        using (System.IO.StreamReader sr = new System.IO.StreamReader(testFileName))
+        {
+          using (System.IO.StreamWriter file = new System.IO.StreamWriter(testCopyFileName))
+          {
+            while (true)
+            {
+              if (needReadNewLine == 1)
+              {
+                if ((fileString = sr.ReadLine()) == null) break;
+              }
+              else
+              {
+                needReadNewLine = 1;
+              }
+
+              blockCommStartPos = fileString.IndexOf("/*");
+              lineCommStartPos = fileString.IndexOf("//");
+
+              if ((lineCommStartPos == -1) && (blockCommStartPos == -1))// нет комментариев в строке
+              {
+                file.WriteLine(fileString);
+                Console.WriteLine(fileString);
+              }
+              else if ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos == -1) || ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos > -1))) //в строке только комментарий "//" или "//" раньше "/*" 
+              {
+                fileString = fileString.Substring(0, lineCommStartPos);
+                file.WriteLine(fileString);
+                Console.WriteLine(fileString);
+              }
+              else /*if ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos == -1) || ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos > -1)))*/ //в строке только комментарий "/*" или "/*" раньше "//" 
+              {
+                blockCommEndPos = fileString.IndexOf("*/");
+                if (blockCommEndPos > -1) //конец комментария есть в этой же строке
+                {
+                  fileString = string.Concat(fileString.Substring(0, blockCommStartPos), " ", fileString.Substring(blockCommEndPos + 2, fileString.Length - blockCommEndPos - 2));
+                  needReadNewLine = 0;
+                }
+                else //Ищем конец комментария "*/" в остальных строках
+                {
+                  file.WriteLine(fileString.Substring(0, blockCommStartPos));
+                  Console.WriteLine(fileString.Substring(0, blockCommStartPos));
+
+                  while ((fileString = sr.ReadLine()) != null)
+                  {
+                    blockCommEndPos = fileString.IndexOf("*/");
+                    if (blockCommEndPos > -1)
+                    {
+                      fileString = fileString.Substring(blockCommEndPos + 2, fileString.Length - blockCommEndPos - 2);
+                      needReadNewLine = 0;
+                      break;
+                    }
+                  }
+
+                }
+              }
+
+            }
+            
+            //Вставляем старый текст теста
+            //while ((val = sr.Read()) > 0) file.Write((char)val);
+            file.Close();
+          }
+          sr.Close();
+        }
+
+        //File.Delete(testFileName);
+        //File.Move(testCopyFileName, testFileName);
+      }
+      return ("");
+    }
+
         
         private int findInclude (string inFilePath, ref string outFilePath)
         {
@@ -1622,12 +1719,15 @@ namespace TopEditor
           int searchBegan = 0; //1 - Поиск includoв был начат
           long filePosition = 0; //Позиция в файле
           int auxFileNamePrefix = 0;
+          string inFileWithoutComments = "";
           char[] buf = new char[1];
           int readRes = 0;
           int func_res = 0;
           string includeFilePath = "";//Файл в директиве include
           string auxFileDirectory = System.IO.Path.Combine(current_dir, @".\auxFiles\");
           bool absoluteIncludeFilePath = false; //true - путь абсолютный, false - относительный
+          
+          inFileWithoutComments = System.IO.Path.Combine (auxFileDirectory, "inFileWithoutComments.txt");
 
           if (System.IO.Directory.Exists(auxFileDirectory)) System.IO.Directory.Delete(auxFileDirectory, true);
           System.IO.Directory.CreateDirectory(auxFileDirectory);
@@ -1638,22 +1738,37 @@ namespace TopEditor
 
           while (true)
           {
+            //Если поиск инклудов не был начат, то исходный файл - из параметра, дополнительный - новый файл
             if (searchBegan == 0)
             {
               searchBegan = 1;
-              orgnFilePath = inFilePath;
+
+              delComments(inFilePath, inFileWithoutComments);
+              orgnFilePath = inFileWithoutComments;
               auxFilePath = System.IO.Path.Combine(auxFileDirectory, @".\" + auxFileNamePrefix.ToString()) + ".txt";
             }
+            //в противном случае был выполнен поиск инклуда 
             else
             {
+              //Если был найден инклуд, то в дополнительном файле содержится исходный файл и то, что инклудилось,
+              //Так как в "инкудившихся" файлах также могли быть инклуды, нужно проанализировать доп. файл. 
+              //Для этого делаем его исходным и создаем новый доп. файл.
               if (includeFound == 1)
               {
                 includeFound = 0;
+
+                //Удаляем комментарии и делаем доп. файл исходным
+                delComments(auxFilePath, inFileWithoutComments);
+                File.Delete(auxFilePath);
+                File.Move(inFileWithoutComments, auxFilePath);
+
                 orgnFilePath = auxFilePath;
+                //Удаляем лишние доп. файлы, которые были созданы раньше
                 if (auxFileNamePrefix > 0) File.Delete(System.IO.Path.Combine(auxFileDirectory, @".\" + (auxFileNamePrefix - 1).ToString() + ".txt"));
                 auxFileNamePrefix++;
                 auxFilePath = System.IO.Path.Combine(auxFileDirectory, @".\" + auxFileNamePrefix.ToString() + ".txt");
               }
+              //Если инклуд в проанализированном файле найден не был, то поиск закончен
               else
               {
                 outFilePath = auxFilePath;
@@ -1662,6 +1777,9 @@ namespace TopEditor
 
             }
 
+            //Осуществляем поиск в исходном файле инклудов, параллельно копируя его в дополнительный файл
+            //Если находим инклуд, открываем файл, который инклудится и копируем его тоже в дополнительный файл
+            //Когда весь исходный файл скопирован, то в дополнительном файле содержится исходный файл и то, что инклудилось в исходном файле
             using (FileStream fsOrgnFile = File.Open(orgnFilePath, FileMode.Open, FileAccess.Read))
             {
               using (FileStream fsAuxFile = File.Create(auxFilePath))
