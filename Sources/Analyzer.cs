@@ -14,31 +14,32 @@ namespace TopEditor
       //private long start_pos = 0;
       //private char[] id = null;
       static string current_dir = System.IO.Directory.GetCurrentDirectory();
-      public const int TOKEN_KEYWORD    = 1;
-      public const int TOKEN_ID         = 2;
-      public const int TOKEN_SQBR       = 3;
-      public const int TOKEN_COLON      = 4;
-      public const int TOKEN_NUM        = 5;
-      public const int TOKEN_BR         = 6;
-      public const int TOKEN_SEMICOLON  = 7;
-      public const int TOKEN_COMMA      = 8;
-      public const int TOKEN_ARIFM      = 9;
-      public const int TOKEN_EQUAL      = 10;
-      public const int TOKEN_QUOTE      = 11;
+      public const int TOKEN_KEYWORD      = 1;
+      public const int TOKEN_ID           = 2;
+      public const int TOKEN_SQBR         = 3;
+      public const int TOKEN_COLON        = 4;
+      public const int TOKEN_NUM          = 5;
+      public const int TOKEN_BR           = 6;
+      public const int TOKEN_SEMICOLON    = 7;
+      public const int TOKEN_COMMA        = 8;
+      public const int TOKEN_ARIFM        = 9;
+      public const int TOKEN_EQUAL        = 10;
+      public const int TOKEN_QUOTE        = 11;
+      public const int TOKEN_GRAVE_ACCENT = 12;
 
       public struct port
       {
 
         public int dim;
-        public string dim_str; //!Добавил 
+        public string dim_str; //!Добавил
         public string name;
         public string data_type;
         public string dir;
 
-        public port(int dim_init, string dim_str_init, string name_init, string data_type_init, string dir_init) //!Добавил 
+        public port(int dim_init, string dim_str_init, string name_init, string data_type_init, string dir_init) //!Добавил
         {
           dim = dim_init;
-          dim_str = dim_str_init; //!Добавил 
+          dim_str = dim_str_init; //!Добавил
           name = name_init;
           data_type = data_type_init;
           dir = dir_init;
@@ -48,11 +49,11 @@ namespace TopEditor
 
       public Analyzer ()
       {
-        //fs = null;  
+        //fs = null;
         //start_pos = 0;
         //id = null;
       }
-      
+
       // public void openFile (string path)
       // {
             // try
@@ -62,7 +63,7 @@ namespace TopEditor
             // catch (Exception ex)
             // {
                 // Console.WriteLine("The open file process failed: {0}", ex.ToString());
-            // }        
+            // }
       // }
 
       public int search_ID(ref string id, ref long start_pos, FileStream fs)
@@ -134,7 +135,7 @@ namespace TopEditor
         int state = 0;
         char[] buf = new char[1];
         int read_res = 0;
-        
+
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
 
@@ -155,15 +156,15 @@ namespace TopEditor
         }
 
       }
-    
-    
+
+
       public int search_COLON (ref long start_pos, FileStream fs)
       {
 
         int state = 0;
         char[] buf = new char[1];
         int read_res = 0;
-        
+
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
 
@@ -172,7 +173,7 @@ namespace TopEditor
           Console.WriteLine("search_COLON: End of fs has been reached\n\r");
           return (-1);
         }
-        
+
         buf[0] = (char)read_res;
         if (buf[0]==':')
         {
@@ -184,9 +185,9 @@ namespace TopEditor
           return 0;
         }
 
-      }      
-      
-      
+      }
+
+
       public int search_NUM (ref string id, ref long start_pos, FileStream fs)
       {
 
@@ -207,7 +208,7 @@ namespace TopEditor
             if (id_ind > 0) return 1;
             else return (-1);
           }
-          
+
           buf[0] = (char)read_res;
           if (buf[0]>=48 && buf[0]<=57)
           {
@@ -227,7 +228,7 @@ namespace TopEditor
           }
         }
 
-      }      
+      }
 
 
       public int search_BR (ref string id, ref long start_pos, FileStream fs)
@@ -235,7 +236,7 @@ namespace TopEditor
 
         int state = 0;
         char[] buf = new char[1];
-        int read_res = 0; 
+        int read_res = 0;
         id = "";
 
         // Console.WriteLine ("Search SQBR \n\r");
@@ -246,8 +247,8 @@ namespace TopEditor
           Console.WriteLine("search_BR: End of fs has been reached\n\r");
           return (-1);
         }
-        
-        buf[0] = (char)read_res;        
+
+        buf[0] = (char)read_res;
         if (buf[0]=='(' || buf[0]==')')
         {
           id = buf[0].ToString();
@@ -260,7 +261,7 @@ namespace TopEditor
         }
 
       }
-      
+
       public int search_SEMICOLON (ref long start_pos, FileStream fs)
       {
 
@@ -287,8 +288,8 @@ namespace TopEditor
           return 0;
         }
 
-      }   
-      
+      }
+
       public int search_COMMA (ref long start_pos, FileStream fs)
       {
 
@@ -304,7 +305,7 @@ namespace TopEditor
           Console.WriteLine ("Search comma: End of fs has been reached\n\r");
           return (-1);
         }
-        
+
         buf[0] = (char)read_res;
         if (buf[0]==',')
         {
@@ -316,8 +317,8 @@ namespace TopEditor
           return 0;
         }
 
-      }      
-            
+      }
+
       public int search_ARIFM (ref string id, ref long start_pos, FileStream fs)
       {
 
@@ -325,7 +326,7 @@ namespace TopEditor
         char[] buf = new char[1];
         int read_res = 0;
         id = "";
-        
+
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
 
@@ -346,8 +347,8 @@ namespace TopEditor
           return 0;
         }
 
-      }          
-      
+      }
+
       public int search_EQUAL (ref string id, ref long start_pos, FileStream fs)
       {
 
@@ -355,7 +356,7 @@ namespace TopEditor
         char[] buf = new char[1];
         int read_res = 0;
         id = "";
-        
+
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
 
@@ -375,8 +376,8 @@ namespace TopEditor
         {
           return 0;
         }
-      }         
-	  
+      }
+
       public int search_QUOTE (ref string id, ref long start_pos, FileStream fs)
       {
 
@@ -384,7 +385,7 @@ namespace TopEditor
         char[] buf = new char[1];
         int read_res = 0;
         id = "";
-        
+
         // Console.WriteLine ("Search SQBR \n\r");
         fs.Seek ((long)start_pos, SeekOrigin.Begin);
 
@@ -404,12 +405,41 @@ namespace TopEditor
         {
           return 0;
         }
-      }           
-            
+      }
+
+      public int search_GRAVE_ACCENT (ref string id, ref long start_pos, FileStream fs)
+      {
+
+        int state = 0;
+        char[] buf = new char[1];
+        int read_res = 0;
+        id = "";
+
+        // Console.WriteLine ("Search SQBR \n\r");
+        fs.Seek ((long)start_pos, SeekOrigin.Begin);
+
+        if ((read_res = fs.ReadByte()) == -1)
+        {
+          Console.WriteLine("search_GRAVE_ACCENT: End of fs has been reached\n\r");
+          return (-1);
+        }
+        buf[0] = (char)read_res;
+        if (buf[0]=='`')
+        {
+          id = buf[0].ToString();
+          start_pos++;
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+
       public int fail (int state, ref long start_pos)
       {
 
-          if (state != 10) return (state+1);
+          if (state != 11) return (state+1); //if != last state in next_token
           else
           {
             // Console.WriteLine ("Unknown\n\r");
@@ -417,7 +447,7 @@ namespace TopEditor
             return 0;
           }
       }
-      
+
       public int next_token (ref string id, ref long start_pos, FileStream fs)
       {
 
@@ -426,7 +456,7 @@ namespace TopEditor
           int func_res = 0;
           int read_res = 0;
 
-          
+
           while (true)
           {
             id = "";
@@ -463,7 +493,7 @@ namespace TopEditor
                 }
                 else if (func_res == 1)
                 {
-                  state = 0;                
+                  state = 0;
                   if (id == "logic")
 				  {
                     //Console.WriteLine ("fin KW: %s\n\r", id);
@@ -621,7 +651,7 @@ namespace TopEditor
                   return TOKEN_ARIFM; //9 Token is ARIFM
                 }
                 break;
-              }        
+              }
 
               case 9:
               {
@@ -656,13 +686,30 @@ namespace TopEditor
                   return TOKEN_QUOTE; //11 Token is QUOTE
                 }
                 break;
-              }   
+              }
+
+              case 11:
+              {
+                func_res = this.search_GRAVE_ACCENT(ref id, ref start_pos, fs);
+                // Console.WriteLine ("func res = %d\n\r", func_res);
+                if (func_res == 0)
+                {
+                  state = this.fail(state, ref start_pos);
+                }
+                else if (func_res == 1)
+                {
+                  //Console.WriteLine ("fin EQUAL\n\r");
+                  state = 0;
+                  return TOKEN_GRAVE_ACCENT; //12 Token is TOKEN_GRAVE_ACCENT
+                }
+                break;
+              }
 
               default: Console.WriteLine ("Default\n\r"); return 0;
             }
           }
 
-      }      
+      }
 
     public int calculate_expr(string[] in_expr, int in_expr_length)
     {
@@ -758,7 +805,7 @@ namespace TopEditor
       // }
 
 
-      //Calculate from Reverse Polish Notation 
+      //Calculate from Reverse Polish Notation
       out_expr_length = j;
 
       for (i = 0; i < out_expr_length; i++)
@@ -805,7 +852,7 @@ namespace TopEditor
             }
         }//switch end
       }//for end
-        
+
         return Convert.ToInt32(inStack.Peek().ToString());
     }
 
@@ -824,11 +871,11 @@ namespace TopEditor
           int d2 = 0;
           string [] expr_1 = new string [256];
           string [] expr_2 = new string [256];
-          
-          string expr_1_str = ""; //!Добавил 
-          string expr_2_str = ""; //!Добавил 
-          string expr_3_str = ""; //!Добавил 
-          
+
+          string expr_1_str = ""; //!Добавил
+          string expr_2_str = ""; //!Добавил
+          string expr_3_str = ""; //!Добавил
+
           int expr_1_ind = 0;
           int expr_2_ind = 0;
           int r1 = 0;
@@ -858,9 +905,9 @@ namespace TopEditor
               case 1:
               {
                 old_start_pos_2 = start_pos;
-                if (token != TOKEN_COLON) 
+                if (token != TOKEN_COLON)
                 {
-                  
+
                   expr_1_str = expr_1_str + id; //!Добавил
                   if (token == TOKEN_ID)
                   {
@@ -885,13 +932,13 @@ namespace TopEditor
                   state = 1;
                   break;
                 }
-                else 
+                else
                 {
                   if (expr_1_ind == 0) return (-2);
-                  d1 = calculate_expr(expr_1, expr_1_ind);  
-                  //Console.WriteLine ("d1=" + d1); 
+                  d1 = calculate_expr(expr_1, expr_1_ind);
+                  //Console.WriteLine ("d1=" + d1);
                   Console.WriteLine ("\n\n ***********|expr_1_str = {0}", expr_1_str); //!Добавил
-                  state = 4;                  
+                  state = 4;
                 }
 
                 // token = this.next_token (ref id);
@@ -946,25 +993,25 @@ namespace TopEditor
                 {
                   expr_2[expr_2_ind] = id;
                   expr_2_ind++;
-                  
+
                   expr_2_str = expr_2_str + id; //!Добавил
-                  
+
                   state = 4;
                   break;
-                }                
-                else 
+                }
+                else
                 {
-                  if (expr_2_ind == 0) return (-2);   
-                  
-                  Console.WriteLine ("\n\n ***********|expr_2_str = {0}", expr_2_str); //!Добавил    
-                  
-                  d2 = calculate_expr(expr_2, expr_2_ind);  
+                  if (expr_2_ind == 0) return (-2);
+
+                  Console.WriteLine ("\n\n ***********|expr_2_str = {0}", expr_2_str); //!Добавил
+
+                  d2 = calculate_expr(expr_2, expr_2_ind);
                   //calculate dimension
-                  if (d1>d2) dim = d1-d2+1; 
+                  if (d1>d2) dim = d1-d2+1;
                   else dim = d2-d1+1;
-                  
-                  expr_3_str = "[" + expr_1_str + ":" + expr_2_str + "]"; //!Добавил 
-                  Console.WriteLine ("\n\n ***********|expr_3_str = {0}", expr_3_str); //!Добавил 
+
+                  expr_3_str = "[" + expr_1_str + ":" + expr_2_str + "]"; //!Добавил
+                  Console.WriteLine ("\n\n ***********|expr_3_str = {0}", expr_3_str); //!Добавил
                   dim_str = expr_3_str;//!Добавил
                   return 1;
                 }
@@ -992,9 +1039,9 @@ namespace TopEditor
           int res = 0;
           string id = "";
           string param_name = "";
-          
+
           fs.Seek (0, SeekOrigin.Begin);
-          
+
           while (true)
           {
             switch (state)
@@ -1014,36 +1061,36 @@ namespace TopEditor
                 }
                 break;
               }
-              
+
               case 4:
               {
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);
-                if (token == TOKEN_ID) 
+                if (token == TOKEN_ID)
                 {
                   param_name = id;
                   state = 1;
                 }
-                else 
+                else
                 {
                   Console.WriteLine ("search_param_value: Error 1");
                   return (-2);
                 }
                 break;
               }
-              
+
               case 1:
               {
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == -1) return (-2);              
-                if (token !=TOKEN_EQUAL ) 
+                if (token == -1) return (-2);
+                if (token !=TOKEN_EQUAL )
                 {
                   Console.WriteLine ("search_param_value: Error 2");
                   return (-2);
                 }
-                else 
+                else
                 {
-                  state = 2;                  
+                  state = 2;
                 }
                 break;
               }
@@ -1051,34 +1098,34 @@ namespace TopEditor
               case 2:
               {
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == -1) return (-2);              
-                if (token != TOKEN_NUM) 
+                if (token == -1) return (-2);
+                if (token != TOKEN_NUM)
                 {
                   Console.WriteLine ("search_param_value: Error 3");
                   return (-2);
                 }
-                else 
+                else
                 {
                   res = Convert.ToInt32(id.ToString());
                   state = 3;
                 }
                 break;
               }
-              
+
               case 3:
               {
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == -1) return (-2);              
-                if (token != TOKEN_SEMICOLON) 
+                if (token == -1) return (-2);
+                if (token != TOKEN_SEMICOLON)
                 {
                   Console.WriteLine ("search_param_value: Error 4");
                   return (-2);
-                }                
-                else 
+                }
+                else
                 {
                   if (param_name == parameter)
                     return res;
-                  else 
+                  else
                   {
                     state = 0;
                     param_name = "";
@@ -1086,7 +1133,7 @@ namespace TopEditor
                 }
                 break;
               }
-              
+
             }
           }
       }
@@ -1099,7 +1146,7 @@ namespace TopEditor
         char[] buf = new char[1];
         int state = 0;
         int token = 0;
-        
+
         int res = 0;
         string id = "";
         string param_name = "";
@@ -1239,7 +1286,7 @@ namespace TopEditor
           }
           else if (errorCode == -1)
           {
-            //EOF there are no parameters in fs 
+            //EOF there are no parameters in fs
             return parameters;
           }
           else
@@ -1249,6 +1296,33 @@ namespace TopEditor
           }
         }
       }
+
+      public List<Macro> search_all_macro(FileStream fs)
+      {
+        long start_pos = 0;
+        fs.Seek(start_pos, SeekOrigin.Begin);
+        Macro m;
+        int errorCode = 0;
+        List<Macro> macros = new List<Macro>();
+        Console.WriteLine (fs);
+        while (true)
+        {
+          if ((m = search_macro(ref start_pos, fs, ref errorCode)) != null)
+          {
+            macros.Add(m);
+          }
+          else if (errorCode == -1)
+          {
+            //EOF there are no macros in fs
+            return macros;
+          }
+          else
+          {
+            MessageBox.Show("Синтаксическая ошибка при поиске макросов! " + errorCode.ToString());
+            return null;
+          }
+        }
+      }      
       
       public int search_port(ref int dim, ref string dim_str, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos, FileStream fs) //!Добавил
       {
@@ -1264,7 +1338,7 @@ namespace TopEditor
           int d2 = 0;
           string id = "";
 
-          dim_str = ""; //!Добавил 
+          dim_str = ""; //!Добавил
           old_start_pos = start_pos;
 
           while (true)
@@ -1294,7 +1368,7 @@ namespace TopEditor
                       {
                         start_pos = old_start_pos;
                         state = 2;
-                      }                      
+                      }
                       else if (token == TOKEN_ID)
                       {
                           name = id;
@@ -1359,16 +1433,267 @@ namespace TopEditor
                 else
                 {
                   start_pos=old_start_pos;
-                  Console.WriteLine ("search_port: Error 2");                 
+                  Console.WriteLine ("search_port: Error 2");
                   return (-1);
                 }
                 break;
               }
             }
           }
-      }      
-      
-      
+      }
+
+      public Macro search_macro(ref long start_pos, FileStream fs, ref int errorCode)
+      {
+
+
+        char[] buf = new char[1];
+        int state = 0;
+        int token = 0;
+
+        int res = 0;
+        int read_res = 0;
+        string id = "";
+        string macroName = "";
+        string macroArgumentName = "";
+        string macroValueName = "";
+        errorCode = 0;
+        fs.Seek(start_pos, SeekOrigin.Begin);
+
+        while (true)
+        {
+          switch (state)
+          {
+            case 0:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -1;//EOF There is no Macro in the fs
+                  return (null);
+                }
+                if (token == TOKEN_GRAVE_ACCENT)
+                {
+                  //Console.WriteLine ("parameter found");
+                  state = 4;
+                }
+                else
+                {
+                  state = 0;
+                }
+                break;
+              }
+
+            case 4:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token == TOKEN_ID && id == "define")
+                {
+                  state = 1;
+                }
+                else
+                {
+                  state = 0;
+                }
+                break;
+              }
+
+            case 1:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_ID)
+                {
+                  Console.WriteLine("search_macro: Error 2");
+                  errorCode = -3;//There is only part of macro definition
+                  return (null);
+                }
+                else
+                {
+                  macroName = id;
+                  state = 2;
+                }
+                break;
+              }
+
+            case 2:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_BR)
+                {
+                  // Console.WriteLine("search_macro: Error 3");
+                  // errorCode = -3;//There is only part of parameter definition
+                  // return (null);
+                  state = 0;
+                }
+                else
+                {
+                  state = 3;
+                }
+                break;
+              }
+
+            case 3:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_ID)
+                {
+                  Console.WriteLine("search_macro: Error 4");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  macroArgumentName = id;
+                  state = 5;
+                  errorCode = 0;
+                  // Parameter p = new Parameter();
+                  // p.Name = param_name;
+                  // p.Value = res;
+                  // return (p);
+                }
+                break;
+              }
+
+            case 5:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_BR)
+                {
+                  Console.WriteLine("search_macro: Error 5");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  state = 6;
+                }
+                break;
+              }
+
+            case 6:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_GRAVE_ACCENT)
+                {
+                  Console.WriteLine("search_macro: Error 6");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  state = 7;
+                }
+                break;
+              }
+
+            case 7:
+              {
+                token = this.next_token(ref id, ref start_pos, fs);
+                if (token == -1)
+                {
+                  errorCode = -2;//There is only part of parameter definition
+                  return (null);
+                }
+                if (token != TOKEN_QUOTE)
+                {
+                  Console.WriteLine("search_macro: Error 7");
+                  errorCode = -3;//There is only part of parameter definition
+                  return (null);
+                }
+                else
+                {
+                  state = 8;
+                }
+                break;
+              }
+
+              case 8:
+              {
+                while (true)
+                {
+                  if ((read_res = fs.ReadByte()) == -1)
+                  {
+                    Console.WriteLine ("next search_macro: End of fs has been reached\n\r");
+                    errorCode = -3;
+                    return (null);
+                  }
+                  buf[0] = (char)read_res;
+                  start_pos++;
+                  if (buf[0] == '`')
+                  {
+                    Console.WriteLine(macroArgumentName);
+                    state = 9;
+                    break;
+                  }
+                  else if ((buf[0] == ' ') || (buf[0] == ' ') || (buf[0] == '\n') || (buf[0] == '\r')) //Написать код табуляции ( и в других местах тоже)
+                  {}
+                  else
+                  {
+                    macroValueName = macroValueName + buf[0];
+                  }
+                }
+                break;
+              }
+
+            case 9:
+            {
+
+              token = this.next_token(ref id, ref start_pos, fs);
+              if (token == -1)
+              {
+                errorCode = -2;//There is only part of parameter definition
+                return (null);
+              }
+              if (token != TOKEN_QUOTE)
+              {
+                Console.WriteLine("search_macro: Error 8");
+                errorCode = -3;//There is only part of parameter definition
+                return (null);
+              }
+              else
+              {
+                state = 0;
+                errorCode = 0;
+                Macro m = new Macro();
+                m.Name = macroName;
+                m.Argument = macroArgumentName;
+                m.Value = macroValueName;
+                return (m);                
+              }
+              break;
+            }
+          }
+        }
+      }
 
       public int search_module(ref Module newModule, ref long start_pos, FileStream fs)
       {
@@ -1415,7 +1740,7 @@ namespace TopEditor
                 break;
               case 1:
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == -1) return (-2);                
+                if (token == -1) return (-2);
                 if (token == TOKEN_BR) state = 2;
                 else if (token == TOKEN_SEMICOLON)
                 {
@@ -1432,7 +1757,7 @@ namespace TopEditor
               case 2:
                   func_res = this.search_port (ref dim, ref dim_str, ref name, ref data_type, ref dir, port_declared, ref start_pos, fs); //!Добавил
                   //Console.WriteLine ("func_res = %d\n\r",func_res);
-                  if (func_res == -1) return (-2);                  
+                  if (func_res == -1) return (-2);
                   if (func_res == 1)
                   {
                     Console.WriteLine ("FOUND " + dir + " PORT " + name + " size " + dim + " data type " + data_type + "\n\r");
@@ -1458,7 +1783,7 @@ namespace TopEditor
                   break;
               case 3:
                 token = this.next_token (ref id, ref start_pos, fs);
-                if (token == -1) return (-2);                  
+                if (token == -1) return (-2);
                 if (token == TOKEN_COMMA) state = 2; // If token is COMMA
                 else if (token == TOKEN_BR) state = 4; //If token is BRACE
                 else
@@ -1476,7 +1801,7 @@ namespace TopEditor
 
                   using (System.IO.StreamWriter file = new System.IO.StreamWriter(@".\"+ mod_name +".txt"))
                   {
-                        
+
                     file.WriteLine("mod_name: " + mod_name);
                     newModule.setModName(mod_name);
                     for (i = 0; i < port_number; i++)
@@ -1485,7 +1810,7 @@ namespace TopEditor
                       file.Write(ports[i].data_type + " ");
                       file.Write(ports[i].name + " ");
                       file.Write(ports[i].dim.ToString() + " ");
-                      newPort = new Port(ports[i].dim, ports[i].dim_str, ports[i].name, ports[i].data_type, ports[i].dir); //!Добавил 
+                      newPort = new Port(ports[i].dim, ports[i].dim_str, ports[i].name, ports[i].data_type, ports[i].dir); //!Добавил
                       newModule.addPort(newPort);
                       //newModule.showModDeclaration();
                       file.WriteLine();
@@ -1504,7 +1829,7 @@ namespace TopEditor
           }
       }
 
-	  
+
 		private int findIncl (ref string includeFilePath, FileStream fs, ref long start_pos)
         {
           char[] buf = new char[256];
@@ -1537,6 +1862,7 @@ namespace TopEditor
                 }
                 else
                 {
+                  start_pos = old_start_pos;
                   return (-3);
                 }
                 break;
@@ -1566,7 +1892,7 @@ namespace TopEditor
                   {
                     return (-2);
                   }
-                  else 
+                  else
                   {
                     buf[0] = (char)readRes;
                     if (buf[0] == '"')
@@ -1584,14 +1910,14 @@ namespace TopEditor
             }
           }
 		}
-		
-        
+
+
         private int fileCopy (string includeFilePath, FileStream fsFileToCopy)
         {
           char[] buf = new char[1];
           int readRes = 0;
-          
-          if (File.Exists(includeFilePath) == false) 
+
+          if (File.Exists(includeFilePath) == false)
           {
             Console.WriteLine ("Error: Include file " + includeFilePath + " did not found");
             return -1;
@@ -1626,8 +1952,8 @@ namespace TopEditor
           File.Delete(outFile);
       }
 
-      Console.Write(testFileName.Substring(testFileName.LastIndexOf('\\', testFileName.Length - 1) + 1), testFileName.Length); //Директория исходного файла
-      Console.Write("|"); //Директория исходного файла
+      //Console.Write(testFileName.Substring(testFileName.LastIndexOf('\\', testFileName.Length - 1) + 1), testFileName.Length); //Директория исходного файла
+      //Console.Write("|"); //Директория исходного файла
 
       int blockCommStartPos = 0;
       int blockCommEndPos = 0;
@@ -1659,15 +1985,15 @@ namespace TopEditor
               if ((lineCommStartPos == -1) && (blockCommStartPos == -1))// нет комментариев в строке
               {
                 file.WriteLine(fileString);
-                Console.WriteLine(fileString);
+                //Console.WriteLine(fileString);
               }
-              else if ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos == -1) || ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos > -1))) //в строке только комментарий "//" или "//" раньше "/*" 
+              else if ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos == -1) || ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos > -1))) //в строке только комментарий "//" или "//" раньше "/*"
               {
                 fileString = fileString.Substring(0, lineCommStartPos);
                 file.WriteLine(fileString);
-                Console.WriteLine(fileString);
+                //Console.WriteLine(fileString);
               }
-              else /*if ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos == -1) || ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos > -1)))*/ //в строке только комментарий "/*" или "/*" раньше "//" 
+              else /*if ((blockCommStartPos > lineCommStartPos) && (lineCommStartPos == -1) || ((lineCommStartPos > blockCommStartPos) && (blockCommStartPos > -1)))*/ //в строке только комментарий "/*" или "/*" раньше "//"
               {
                 blockCommEndPos = fileString.IndexOf("*/");
                 if (blockCommEndPos > -1) //конец комментария есть в этой же строке
@@ -1678,7 +2004,7 @@ namespace TopEditor
                 else //Ищем конец комментария "*/" в остальных строках
                 {
                   file.WriteLine(fileString.Substring(0, blockCommStartPos));
-                  Console.WriteLine(fileString.Substring(0, blockCommStartPos));
+                  //Console.WriteLine(fileString.Substring(0, blockCommStartPos));
 
                   while ((fileString = sr.ReadLine()) != null)
                   {
@@ -1695,7 +2021,7 @@ namespace TopEditor
               }
 
             }
-            
+
             //Вставляем старый текст теста
             //while ((val = sr.Read()) > 0) file.Write((char)val);
             file.Close();
@@ -1709,7 +2035,7 @@ namespace TopEditor
       return ("");
     }
 
-        
+
         private int findInclude (string inFilePath, ref string outFilePath)
         {
           string orgnFilePath = ""; //Исходный файл
@@ -1726,7 +2052,7 @@ namespace TopEditor
           string includeFilePath = "";//Файл в директиве include
           string auxFileDirectory = System.IO.Path.Combine(current_dir, @".\auxFiles\");
           bool absoluteIncludeFilePath = false; //true - путь абсолютный, false - относительный
-          
+
           inFileWithoutComments = System.IO.Path.Combine (auxFileDirectory, "inFileWithoutComments.txt");
 
           if (System.IO.Directory.Exists(auxFileDirectory)) System.IO.Directory.Delete(auxFileDirectory, true);
@@ -1747,11 +2073,11 @@ namespace TopEditor
               orgnFilePath = inFileWithoutComments;
               auxFilePath = System.IO.Path.Combine(auxFileDirectory, @".\" + auxFileNamePrefix.ToString()) + ".txt";
             }
-            //в противном случае был выполнен поиск инклуда 
+            //в противном случае был выполнен поиск инклуда
             else
             {
               //Если был найден инклуд, то в дополнительном файле содержится исходный файл и то, что инклудилось,
-              //Так как в "инкудившихся" файлах также могли быть инклуды, нужно проанализировать доп. файл. 
+              //Так как в "инкудившихся" файлах также могли быть инклуды, нужно проанализировать доп. файл.
               //Для этого делаем его исходным и создаем новый доп. файл.
               if (includeFound == 1)
               {
@@ -1794,14 +2120,14 @@ namespace TopEditor
                     break;
                     //return (-1);
                   }
-                  else 
+                  else
                   {
                     buf[0] = (char)readRes;
                     if (buf[0] != '`')
                     {
                       fsAuxFile.WriteByte((byte)readRes);
                     }
-                    else 
+                    else
                     {
                       filePosition = fsOrgnFile.Position;
                       includeFilePath = "";
@@ -1815,7 +2141,7 @@ namespace TopEditor
                       {
                         Console.WriteLine("findInclude: Error in `inculde declaration.");
                         return (-1);
-                      }                      
+                      }
                       else
                       {
                         Console.WriteLine(includeFilePath);
@@ -1861,6 +2187,10 @@ namespace TopEditor
         string outFilePath = "";
         List<Parameter> parameters = new List<Parameter>();
         parameters.Clear();
+        
+        List<Macro> macros = new List<Macro>();
+        macros.Clear();        
+        
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
 
@@ -1871,7 +2201,7 @@ namespace TopEditor
         }
         else try
         {
-          //Console.WriteLine(outFilePath);
+          Console.WriteLine("After find include: {0}", outFilePath);
           FileStream fs = new FileStream(outFilePath, FileMode.Open);
           parameters = search_all_params(fs);
           if (parameters != null)
@@ -1881,6 +2211,16 @@ namespace TopEditor
               Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
             }
           }
+          
+          macros = search_all_macro(fs);
+          if (macros != null)
+          {
+            foreach (Macro m in macros)
+            {
+              Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
+            }
+          }
+          
           fs.Seek(0, SeekOrigin.Begin);
           while (true)
           {
@@ -1913,18 +2253,18 @@ namespace TopEditor
         {
           Console.WriteLine("The open file process failed: {0}", ex.ToString());
           return -3;
-        }  
+        }
 
       }
-      
+
       // public void show_1 ()
       // {
-        // Console.WriteLine ("Show 1 \n");      
+        // Console.WriteLine ("Show 1 \n");
         // Console.WriteLine ("start_pos =  {0}", start_pos);
         // start_pos++;
         // Console.WriteLine ("start_pos =  {0}\n", start_pos);
       // }
-      
+
       // public void show_2 ()
       // {
         // Console.WriteLine ("Show 2 \n");
