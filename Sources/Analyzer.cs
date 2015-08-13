@@ -26,6 +26,7 @@ namespace TopEditor
       public const int TOKEN_EQUAL        = 10;
       public const int TOKEN_QUOTE        = 11;
       public const int TOKEN_GRAVE_ACCENT = 12;
+      public const int TOKEN_NUMBER_SIGN  = 13;
 
       public struct port
       {
@@ -436,10 +437,40 @@ namespace TopEditor
         }
       }
 
+      public int search_NUMBER_SIGN (ref string id, ref long start_pos, FileStream fs)
+      {
+
+        int state = 0;
+        char[] buf = new char[1];
+        int read_res = 0;
+        id = "";
+
+        // Console.WriteLine ("Search SQBR \n\r");
+        fs.Seek ((long)start_pos, SeekOrigin.Begin);
+
+        if ((read_res = fs.ReadByte()) == -1)
+        {
+          Console.WriteLine("search_NUMBER_SIGN: End of fs has been reached\n\r");
+          return (-1);
+        }
+        buf[0] = (char)read_res;
+        if (buf[0]=='#')
+        {
+          id = buf[0].ToString();
+          start_pos++;
+          return 1;
+        }
+        else
+        {
+          return 0;
+        }
+      }
+
+
       public int fail (int state, ref long start_pos)
       {
 
-          if (state != 11) return (state+1); //if != last state in next_token
+          if (state != 12) return (state+1); //if != last state in next_token
           else
           {
             // Console.WriteLine ("Unknown\n\r");
@@ -700,7 +731,24 @@ namespace TopEditor
                 {
                   //Console.WriteLine ("fin EQUAL\n\r");
                   state = 0;
-                  return TOKEN_GRAVE_ACCENT; //12 Token is TOKEN_GRAVE_ACCENT
+                  return TOKEN_GRAVE_ACCENT;
+                }
+                break;
+              }
+
+              case 12:
+              {
+                func_res = this.search_NUMBER_SIGN(ref id, ref start_pos, fs);
+                // Console.WriteLine ("func res = %d\n\r", func_res);
+                if (func_res == 0)
+                {
+                  state = this.fail(state, ref start_pos);
+                }
+                else if (func_res == 1)
+                {
+                  //Console.WriteLine ("fin EQUAL\n\r");
+                  state = 0;
+                  return TOKEN_NUMBER_SIGN;
                 }
                 break;
               }
@@ -909,34 +957,41 @@ namespace TopEditor
                 {
 
                   expr_1_str = expr_1_str + id; //!Добавил
-                  if (token == TOKEN_ID)
-                  {
-                    r1 = search_param_value(ref id, fs);
-                    if (r1 == (-2))
-                      {
-                        Console.WriteLine ("search_unpacked_dimension: Error in parameter declaration.");
-                        start_pos = old_start_pos_2;
-                        return (-2);
-                      }
-                    else if (r1 == -1)
-                    {
-                        Console.WriteLine ("search_unpacked_dimension: Parameter not found");
-                        start_pos = old_start_pos_2;
-                        return (-1);
-                    }
-                    else id = r1.ToString();
-                  }
-                  start_pos = old_start_pos_2;
-                  expr_1[expr_1_ind] = id;
+
+                  /*Временно закомментировал, пока не напишу норамльный поиск параметров и обработку инклудов */
+                  /*Комментарии с этой же причиной - TEMP_INCLUDE_COMM */
+
+                  // if (token == TOKEN_ID)
+                  // {
+                    // r1 = search_param_value(ref id, fs);
+                    // if (r1 == (-2))
+                      // {
+                        // Console.WriteLine ("search_unpacked_dimension: Error in parameter declaration.");
+                        // start_pos = old_start_pos_2;
+                        // return (-2);
+                      // }
+                    // else if (r1 == -1)
+                    // {
+                        // Console.WriteLine ("search_unpacked_dimension: Parameter not found");
+                        // start_pos = old_start_pos_2;
+                        // return (-1);
+                    // }
+                    // else id = r1.ToString();
+                  // }
+                  // start_pos = old_start_pos_2;
+                  // expr_1[expr_1_ind] = id;
+
+                  /*************************************************************************************************/
+
                   expr_1_ind++;
+
                   state = 1;
                   break;
                 }
                 else
                 {
                   if (expr_1_ind == 0) return (-2);
-                  d1 = calculate_expr(expr_1, expr_1_ind);
-                  //Console.WriteLine ("d1=" + d1);
+                  //d1 = calculate_expr(expr_1, expr_1_ind); //TEMP_INCLUDE_COMM
                   Console.WriteLine ("\n\n ***********|expr_1_str = {0}", expr_1_str); //!Добавил
                   state = 4;
                 }
@@ -945,7 +1000,6 @@ namespace TopEditor
 
               case 4:
               {
-                // token = this.next_token (ref id);
                 if (token != TOKEN_SQBR) // square brace
                 {
                   expr_2[expr_2_ind] = id;
@@ -964,9 +1018,9 @@ namespace TopEditor
 
                   d2 = calculate_expr(expr_2, expr_2_ind);
                   //calculate dimension
-                  if (d1>d2) dim = d1-d2+1;
-                  else dim = d2-d1+1;
-
+                  // if (d1>d2) dim = d1-d2+1;  //TEMP_INCLUDE_COMM
+                  // else dim = d2-d1+1;        //TEMP_INCLUDE_COMM
+                  dim = 999;                    //TEMP_INCLUDE_COMM - убрать эту строку целиком позже
                   expr_3_str = "[" + expr_1_str + ":" + expr_2_str + "]"; //!Добавил
                   Console.WriteLine ("\n\n ***********|expr_3_str = {0}", expr_3_str); //!Добавил
                   dim_str = expr_3_str;//!Добавил
@@ -1274,8 +1328,8 @@ namespace TopEditor
             return null;
           }
         }
-      }      
-      
+      }
+
       public int search_port(ref int dim, ref string dim_str, ref string name, ref string data_type, ref string dir, int port_declared, ref long start_pos, FileStream fs) //!Добавил
       {
 
@@ -1639,7 +1693,7 @@ namespace TopEditor
                 m.Name = macroName;
                 m.Argument = macroArgumentName;
                 m.Value = macroValueName;
-                return (m);                
+                return (m);
               }
               break;
             }
@@ -1654,7 +1708,7 @@ namespace TopEditor
           int state = 0;
           int func_res = 0;
           int token = 0;
-          string buf = "";
+          char[] buf = new char[1];
           string data_type = " ";
           string mod_name = "";
           string dir = "";
@@ -1667,6 +1721,7 @@ namespace TopEditor
           port[] ports = new port[512];
           int port_number = 0;
           int i = 0;
+          int read_res = 0;
           Port newPort;
 
           while (true)
@@ -1699,6 +1754,10 @@ namespace TopEditor
                   newModule.setModName(mod_name);
                   Console.WriteLine ("End\n\r");
                   return 1;
+                }
+                else if (token == TOKEN_NUMBER_SIGN)
+                {
+                  state = 5;
                 }
                 else
                 {
@@ -1777,6 +1836,28 @@ namespace TopEditor
                   return (-2);
                 }
                 break;
+                
+              case 5: //Пропускаем параметры модуля
+              {
+                while (true)
+                {
+                  if ((read_res = fs.ReadByte()) == -1)
+                  {
+                    Console.WriteLine ("search_module: Error 5. End of file.");
+                    return (-1);
+                  }
+                  buf[0] = (char)read_res;
+                  start_pos++;
+                  if (buf[0] == ')')
+                  {
+                    state = 1;
+                    break;
+                  }
+                }
+                break;
+              }
+            
+            
             }
           }
       }
@@ -2139,10 +2220,10 @@ namespace TopEditor
         string outFilePath = "";
         List<Parameter> parameters = new List<Parameter>();
         parameters.Clear();
-        
+
         List<Macro> macros = new List<Macro>();
-        macros.Clear();        
-        
+        macros.Clear();
+
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
 
@@ -2163,7 +2244,7 @@ namespace TopEditor
               Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
             }
           }
-          
+
           macros = search_all_macro(fs);
           if (macros != null)
           {
@@ -2172,7 +2253,7 @@ namespace TopEditor
               Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
             }
           }
-          
+
           fs.Seek(0, SeekOrigin.Begin);
           while (true)
           {
