@@ -940,51 +940,8 @@ namespace TopEditor
                   Console.WriteLine ("\n\n ***********|expr_1_str = {0}", expr_1_str); //!Добавил
                   state = 4;
                 }
-
-                // token = this.next_token (ref id);
-                //if (token == 5) // number
-                //{
-                //  d1 = Convert.ToInt32(id);
-                //  state = 2;
-                //}
-                // else
-                // {
-                  // start_pos=old_start_pos;
-                  // return (-2); //error
-                // }
                 break;
               }
-
-              // case 2:
-              // {
-                // // token = this.next_token (ref id);
-                // if (token == 4) //colon ':'
-                // {
-                  // state = 3;
-                // }
-                // else
-                // {
-                  // start_pos=old_start_pos;
-                  // return (-2); //error
-                // }
-                // break;
-              // }
-
-              // case 3:
-              // {
-                // // token = this.next_token (ref id);
-                // if (token == 5) // number
-                // {
-                  // d2 = Convert.ToInt32(id);
-                  // state = 4;
-                // }
-                // else
-                // {
-                  // start_pos=old_start_pos;
-                  // return (-2);
-                // }
-                // break;
-              // }
 
               case 4:
               {
@@ -1015,11 +972,6 @@ namespace TopEditor
                   dim_str = expr_3_str;//!Добавил
                   return 1;
                 }
-                // else
-                // {
-                  // start_pos=old_start_pos;
-                  // return (-2); // error
-                // }
                 break;
               }
             }
