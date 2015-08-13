@@ -55,6 +55,7 @@
           this.label4 = new System.Windows.Forms.Label();
           this.button2 = new System.Windows.Forms.Button();
           this.btnCreateTest = new System.Windows.Forms.Button();
+          this.cbOnlyForTest = new System.Windows.Forms.CheckBox();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
           ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -312,11 +313,22 @@
           this.btnCreateTest.UseVisualStyleBackColor = true;
           this.btnCreateTest.Click += new System.EventHandler(this.btnCreateTest_Click);
           // 
+          // cbOnlyForTest
+          // 
+          this.cbOnlyForTest.AutoSize = true;
+          this.cbOnlyForTest.Location = new System.Drawing.Point(16, 148);
+          this.cbOnlyForTest.Name = "cbOnlyForTest";
+          this.cbOnlyForTest.Size = new System.Drawing.Size(115, 17);
+          this.cbOnlyForTest.TabIndex = 22;
+          this.cbOnlyForTest.Text = "Только для теста";
+          this.cbOnlyForTest.UseVisualStyleBackColor = true;
+          // 
           // Form1
           // 
           this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
           this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
           this.ClientSize = new System.Drawing.Size(1117, 741);
+          this.Controls.Add(this.cbOnlyForTest);
           this.Controls.Add(this.btnCreateTest);
           this.Controls.Add(this.button2);
           this.Controls.Add(this.label4);
@@ -383,6 +395,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btnCreateTest;
+        private System.Windows.Forms.CheckBox cbOnlyForTest;
     }
 }
 

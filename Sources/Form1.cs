@@ -74,7 +74,10 @@ namespace TopEditor
           int modAlrdyExist = 0;
           Module[] newlistOfModules = new Module[100];
           int funcRes = 0;
-          funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules);
+
+          bool onlyTest = false;
+
+          funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules, cbOnlyForTest.Checked);
           if (funcRes == 1)
           {
             for (i = 0; i < newlistOfModules.Length; i++)

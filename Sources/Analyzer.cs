@@ -2211,15 +2211,18 @@ namespace TopEditor
 
 
         }
-      public int analizeFile(string path, ref Module[] listOfModules)
+      public int analizeFile(string path, ref Module[] listOfModules, bool onlyTest)
       {
         int func_res = 0;
         int i = 0;
         long start_pos = 0;
         Module newModule;
         string outFilePath = "";
+        string inFileWithoutComments = "";
+
         List<Parameter> parameters = new List<Parameter>();
         parameters.Clear();
+
 
         List<Macro> macros = new List<Macro>();
         macros.Clear();
@@ -2227,32 +2230,50 @@ namespace TopEditor
         for (i = 0; i < listOfModules.Length; i++) listOfModules[i] = null;
         i = 0;
 
-        if (findInclude (path, ref outFilePath) == -1)
+
+
+        string auxFileDirectory = current_dir;
+        inFileWithoutComments = System.IO.Path.Combine(auxFileDirectory, "onlyTestWithoutComments.txt");
+        delComments(path, inFileWithoutComments);
+
+        outFilePath = inFileWithoutComments;
+
+        if (onlyTest == false)
         {
-          Console.WriteLine("analizeFile: Include processing failed");
-          return -1;
+          if (findInclude(inFileWithoutComments, ref outFilePath) == -1)
+          {
+            Console.WriteLine("analizeFile: Include processing failed");
+            return -1;
+          }
         }
-        else try
+          
+        try
         {
           Console.WriteLine("After find include: {0}", outFilePath);
           FileStream fs = new FileStream(outFilePath, FileMode.Open);
-          parameters = search_all_params(fs);
-          if (parameters != null)
+
+
+          if (onlyTest == false)
           {
-            foreach (Parameter p in parameters)
+            parameters = search_all_params(fs);
+            if (parameters != null)
             {
-              Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
+              foreach (Parameter p in parameters)
+              {
+                Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
+              }
+            }
+
+            macros = search_all_macro(fs);
+            if (macros != null)
+            {
+              foreach (Macro m in macros)
+              {
+                Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
+              }
             }
           }
 
-          macros = search_all_macro(fs);
-          if (macros != null)
-          {
-            foreach (Macro m in macros)
-            {
-              Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
-            }
-          }
 
           fs.Seek(0, SeekOrigin.Begin);
           while (true)
