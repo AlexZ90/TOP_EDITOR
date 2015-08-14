@@ -1023,7 +1023,7 @@ namespace TopEditor
                   dim = 999;                    //TEMP_INCLUDE_COMM - убрать эту строку целиком позже
                   expr_3_str = "[" + expr_1_str + ":" + expr_2_str + "]"; //!Добавил
                   Console.WriteLine ("\n\n ***********|expr_3_str = {0}", expr_3_str); //!Добавил
-                  dim_str = expr_3_str;//!Добавил
+                  dim_str = dim_str + expr_3_str;//!Добавил
                   return 1;
                 }
                 break;
@@ -1407,22 +1407,29 @@ namespace TopEditor
                 }
                 break;
               }
-
+ 
               case 2:
               {
                 dim = 1;
-                func_res = this.search_unpacked_dimension(ref id, ref dim, ref dim_str, ref start_pos, fs);//!Добавил
-                if (func_res == -1) return (-1);
-                if (func_res == -2)
+                dim_str = "";
+                while (true)
                 {
-                  start_pos=old_start_pos;
-                  Console.WriteLine ("search_port: Error 1");
-                  return (-1);
-                }
-                else
-                {
-                  //Console.WriteLine ("DIMENSION d=%d !!!!\n\r", *dim);
-                  state = 3;
+                  func_res = this.search_unpacked_dimension(ref id, ref dim, ref dim_str, ref start_pos, fs);//!Добавил
+                  Console.WriteLine (func_res);
+                  if (func_res == -1) return (-1);
+                  if (func_res == -2)
+                  {
+                    start_pos=old_start_pos;
+                    Console.WriteLine ("search_port: Error 1");
+                    return (-1);
+                  }
+                  else if (func_res == 0)
+                  {
+                    //Console.WriteLine ("DIMENSION d=%d !!!!\n\r", *dim);
+                    state = 3;
+                    break;
+                  }
+                
                 }
                 break;
               }
