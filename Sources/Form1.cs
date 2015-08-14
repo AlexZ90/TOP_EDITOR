@@ -683,8 +683,15 @@ namespace TopEditor
               //Пропускаем старое описание  портов
               while (sr.Read() != ';') ;
 
+
+
+              // Вставляем данные из текстбокса
+
+              file.WriteLine(rtbAddToTest.Text);
+
               //Вставляем новое описание портов
               file.Write("module test (\n");
+              Console.WriteLine(rtbAddToTest.Text);
 
               for (j = 0; j < module.listOfPorts.Length; j++)
               {
@@ -729,6 +736,7 @@ namespace TopEditor
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(testFileName))
           {
 
+            file.WriteLine(rtbAddToTest.Text);
             file.Write("module test (\n");
 
             for (j = 0; j < module.listOfPorts.Length; j++)
@@ -782,6 +790,7 @@ namespace TopEditor
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(testTopFileName))
         {
 
+          file.WriteLine(rtbAddToTest.Text);
           file.Write("module " + test_top_mod_name + ";\n\n");
 
           //Instantiate wires
