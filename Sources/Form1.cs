@@ -614,6 +614,7 @@ namespace TopEditor
         Module module;
         string mod_name;
         int numOfPorts;
+        string metka = "";
         
         int i = 0;
         int j = 0;
@@ -676,18 +677,32 @@ namespace TopEditor
         int val = 0;
         if (File.Exists(testFileName))
         {
+          //Модифицируем существующий файл с тестом, чтобы не нарушить его содержимое
           using (System.IO.StreamReader sr = new System.IO.StreamReader(testFileName))
           {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(testCopyFileName))
             {
-              //Пропускаем старое описание  портов
-              while (sr.Read() != ';') ;
+              //Пропускаем описание портов в старом тесте
+              //while (sr.Read() != ';') ;
+
+              while (true)
+              {
+                  metka = sr.ReadLine();
+                  if (string.Equals(metka, "/*DONT_DELETE2567*/"))
+                  {
+                      Console.WriteLine("Equal ****************8");
+                      break;
+                  }
+              }
 
 
-
-              // Вставляем данные из текстбокса
+              
+              // Вставляем в новый файл с тестом данные из текстбокса
 
               file.WriteLine(rtbAddToTest.Text);
+              file.WriteLine();
+
+                
 
               //Вставляем новое описание портов
               file.Write("module test (\n");
@@ -720,23 +735,29 @@ namespace TopEditor
                 }
               }
 
-              file.Write(");");
+              file.Write(");\n\n");
 
-              //Вставляем старый текст теста
+              file.WriteLine("/*DONT_DELETE2567*/");
+
+              //Вставляем в новый файл текст теста из старого файла
               while ((val = sr.Read()) > 0) file.Write((char)val);
               file.Close();
             }
             sr.Close();
           }
 
+          //Заменяем старый файл с тестом новым
           File.Delete(testFileName);
           File.Move(testCopyFileName, testFileName);
         }
-        else
+        else // Если создаем файл с тестом впервые 
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(testFileName))
           {
 
+            // Добавляем общий текст  из текстбокса
             file.WriteLine(rtbAddToTest.Text);
+            file.WriteLine();
+
             file.Write("module test (\n");
 
             for (j = 0; j < module.listOfPorts.Length; j++)
@@ -768,6 +789,8 @@ namespace TopEditor
 
             file.Write(");\n\n");
 
+            file.WriteLine("/*DONT_DELETE2567*/");
+            file.WriteLine();
 
             file.Write("// always #10 clk = ~clk;\n\n");
 
@@ -786,11 +809,18 @@ namespace TopEditor
 
 
 
-
+        // Создаем топ для теста
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(testTopFileName))
         {
 
           file.WriteLine(rtbAddToTest.Text);
+          file.WriteLine();
+
+          //строчки для инклуда тестового файла и тестируемого файла
+          file.WriteLine("`include \"" + testFileName.Replace("\\","/") + "\"");
+          file.WriteLine("`include \"" + fullFilePath.Replace("\\", "/") + "\"");
+          file.WriteLine();
+
           file.Write("module " + test_top_mod_name + ";\n\n");
 
           //Instantiate wires
