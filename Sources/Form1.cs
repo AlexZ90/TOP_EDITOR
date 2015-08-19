@@ -817,8 +817,8 @@ namespace TopEditor
           file.WriteLine();
 
           //строчки для инклуда тестового файла и тестируемого файла
-          file.WriteLine("`include \"" + testFileName.Replace("\\","/") + "\"");
           file.WriteLine("`include \"" + fullFilePath.Replace("\\", "/") + "\"");
+          file.WriteLine("`include \"" + testFileName.Replace("\\","/") + "\"");
           file.WriteLine();
 
           file.Write("module " + test_top_mod_name + ";\n\n");
