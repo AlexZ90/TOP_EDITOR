@@ -638,7 +638,7 @@ namespace TopEditor
         string dut_inst_name = mod_name + "_1";
         string make_do_filename = @"" + vrfFolderName + "make.do";
         string restart_do_filename = @"" + vrfFolderName + "restart.do";
-        string addButton_do_filename = @"" + vrfFolderName + "addButton.do";
+        string addButton_do_filename = @"" + vrfFolderName + "addButton_" + mod_name + ".do";
 
 
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
