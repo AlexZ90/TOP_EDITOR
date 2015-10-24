@@ -796,8 +796,16 @@ namespace TopEditor
 
             file.WriteLine("// initial           ");
             file.WriteLine("//   begin           ");
-            file.WriteLine("//     rstN = 1;     ");
-            file.WriteLine("//     clk = 0;      \n\n");
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].dir == "input")
+                {
+                  file.Write("//     " + module.listOfPorts[j].name + " = '0;\n");
+                }
+              }
+            }
             file.WriteLine("//     #100 rstN = 0;");
             file.WriteLine("//     #10 rstN = 1; ");
             file.WriteLine("//   end             ");
