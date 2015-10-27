@@ -49,6 +49,7 @@ namespace TopEditor
             dt2.Columns.Add("Data type");
             dt2.Columns.Add("Size");
             dt2.Columns.Add("Name");
+            dt2.Columns.Add("Size string"); //!Добавил
             dataGridView2.DataSource = dt2;
             listOfInstLB.Click += new EventHandler(listOfInstLB_Click);
 
@@ -56,6 +57,7 @@ namespace TopEditor
             dt3.Columns.Add("Data type");
             dt3.Columns.Add("Size");
             dt3.Columns.Add("Name");
+            dt3.Columns.Add("Size string"); //!Добавил
             dataGridView3.DataSource = dt3;
             listOfInstLB2.Click += new EventHandler(listOfInstLB2_Click);
 
