@@ -58,6 +58,9 @@
             this.cbOnlyForTest = new System.Windows.Forms.CheckBox();
             this.rtbAddToTest = new System.Windows.Forms.RichTextBox();
             this.lblAddToTestFiles = new System.Windows.Forms.Label();
+            this.outputRTB = new System.Windows.Forms.RichTextBox();
+            this.getOutputsBtn = new System.Windows.Forms.Button();
+            this.getInputsBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -342,11 +345,43 @@
             this.lblAddToTestFiles.TabIndex = 24;
             this.lblAddToTestFiles.Text = "Добавить в тестовые файлы";
             // 
+            // outputRTB
+            // 
+            this.outputRTB.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.outputRTB.Location = new System.Drawing.Point(227, 595);
+            this.outputRTB.Name = "outputRTB";
+            this.outputRTB.Size = new System.Drawing.Size(832, 134);
+            this.outputRTB.TabIndex = 25;
+            this.outputRTB.Text = "";
+            // 
+            // getOutputsBtn
+            // 
+            this.getOutputsBtn.Location = new System.Drawing.Point(940, 64);
+            this.getOutputsBtn.Name = "getOutputsBtn";
+            this.getOutputsBtn.Size = new System.Drawing.Size(119, 23);
+            this.getOutputsBtn.TabIndex = 26;
+            this.getOutputsBtn.Text = "Get outputs";
+            this.getOutputsBtn.UseVisualStyleBackColor = true;
+            this.getOutputsBtn.Click += new System.EventHandler(this.getOutputsBtn_Click);
+            // 
+            // getInputsBtn
+            // 
+            this.getInputsBtn.Location = new System.Drawing.Point(940, 93);
+            this.getInputsBtn.Name = "getInputsBtn";
+            this.getInputsBtn.Size = new System.Drawing.Size(119, 23);
+            this.getInputsBtn.TabIndex = 26;
+            this.getInputsBtn.Text = "Get inputs";
+            this.getInputsBtn.UseVisualStyleBackColor = true;
+            this.getInputsBtn.Click += new System.EventHandler(this.getInputsBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1117, 741);
+            this.Controls.Add(this.getInputsBtn);
+            this.Controls.Add(this.getOutputsBtn);
+            this.Controls.Add(this.outputRTB);
             this.Controls.Add(this.lblAddToTestFiles);
             this.Controls.Add(this.rtbAddToTest);
             this.Controls.Add(this.cbOnlyForTest);
@@ -419,6 +454,9 @@
         private System.Windows.Forms.CheckBox cbOnlyForTest;
         private System.Windows.Forms.RichTextBox rtbAddToTest;
         private System.Windows.Forms.Label lblAddToTestFiles;
+        private System.Windows.Forms.RichTextBox outputRTB;
+        private System.Windows.Forms.Button getOutputsBtn;
+        private System.Windows.Forms.Button getInputsBtn;
     }
 }
 
