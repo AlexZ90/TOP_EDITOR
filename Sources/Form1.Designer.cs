@@ -63,6 +63,7 @@
             this.getInputsBtn = new System.Windows.Forms.Button();
             this.genInstBtn = new System.Windows.Forms.Button();
             this.genPortsDefBtn = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -358,7 +359,7 @@
             // 
             // getOutputsBtn
             // 
-            this.getOutputsBtn.Location = new System.Drawing.Point(940, 64);
+            this.getOutputsBtn.Location = new System.Drawing.Point(941, 93);
             this.getOutputsBtn.Name = "getOutputsBtn";
             this.getOutputsBtn.Size = new System.Drawing.Size(119, 23);
             this.getOutputsBtn.TabIndex = 26;
@@ -368,7 +369,7 @@
             // 
             // getInputsBtn
             // 
-            this.getInputsBtn.Location = new System.Drawing.Point(940, 93);
+            this.getInputsBtn.Location = new System.Drawing.Point(941, 122);
             this.getInputsBtn.Name = "getInputsBtn";
             this.getInputsBtn.Size = new System.Drawing.Size(119, 23);
             this.getInputsBtn.TabIndex = 26;
@@ -378,7 +379,7 @@
             // 
             // genInstBtn
             // 
-            this.genInstBtn.Location = new System.Drawing.Point(940, 122);
+            this.genInstBtn.Location = new System.Drawing.Point(941, 151);
             this.genInstBtn.Name = "genInstBtn";
             this.genInstBtn.Size = new System.Drawing.Size(119, 23);
             this.genInstBtn.TabIndex = 27;
@@ -388,13 +389,23 @@
             // 
             // genPortsDefBtn
             // 
-            this.genPortsDefBtn.Location = new System.Drawing.Point(939, 151);
+            this.genPortsDefBtn.Location = new System.Drawing.Point(941, 180);
             this.genPortsDefBtn.Name = "genPortsDefBtn";
             this.genPortsDefBtn.Size = new System.Drawing.Size(119, 23);
             this.genPortsDefBtn.TabIndex = 27;
             this.genPortsDefBtn.Text = "Gen ports def";
             this.genPortsDefBtn.UseVisualStyleBackColor = true;
             this.genPortsDefBtn.Click += new System.EventHandler(this.genPortsDef_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(941, 64);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(119, 23);
+            this.button3.TabIndex = 26;
+            this.button3.Text = "Get ports";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.getPortsBtn_Click);
             // 
             // Form1
             // 
@@ -404,6 +415,7 @@
             this.Controls.Add(this.genPortsDefBtn);
             this.Controls.Add(this.genInstBtn);
             this.Controls.Add(this.getInputsBtn);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.getOutputsBtn);
             this.Controls.Add(this.outputRTB);
             this.Controls.Add(this.lblAddToTestFiles);
@@ -483,6 +495,7 @@
         private System.Windows.Forms.Button getInputsBtn;
         private System.Windows.Forms.Button genInstBtn;
         private System.Windows.Forms.Button genPortsDefBtn;
+        private System.Windows.Forms.Button button3;
     }
 }
 
