@@ -969,8 +969,9 @@ namespace TopEditor
                     }
                 }
             }
-        //******************
-    }
+            Clipboard.SetText(outputRTB.Text);
+            //******************
+        }
 
         private void getInputsBtn_Click(object sender, EventArgs e)
         {
@@ -1021,6 +1022,64 @@ namespace TopEditor
                     }
                 }
             }
+            Clipboard.SetText(outputRTB.Text);
+            //******************
+        }
+
+        private void genInstBtn_Click(object sender, EventArgs e)
+        {
+            //******************************
+            Module module;
+            string mod_name;
+            int numOfPorts;
+            string metka = "";
+            int maxNameLength = 0;
+
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            int m = 0;
+
+
+            module = getModule(listOfModuleLB.SelectedItem.ToString());
+            mod_name = module.getModName();
+            numOfPorts = module.getNumOfPorts();
+
+            outputRTB.Clear();
+
+            maxNameLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+                }
+            }
+
+            maxNameLength = maxNameLength + 2;
+
+            outputRTB.AppendText(module.getModName() + " block_" + module.getModName() + "\n");
+            outputRTB.AppendText("(\n");
+
+            numOfPorts = module.getNumOfPorts();
+
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    outputRTB.AppendText("  ." + module.listOfPorts[j].name + " ");
+                    for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+                    outputRTB.AppendText("()");
+                    if (numOfPorts > 1)
+                    {
+                        outputRTB.AppendText(",");
+                        numOfPorts--;
+                    }
+                    outputRTB.AppendText("\n");
+                }
+            }
+            outputRTB.AppendText(");\n");
+            Clipboard.SetText(outputRTB.Text);
             //******************
         }
     }

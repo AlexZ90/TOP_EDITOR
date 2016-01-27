@@ -61,6 +61,7 @@
             this.outputRTB = new System.Windows.Forms.RichTextBox();
             this.getOutputsBtn = new System.Windows.Forms.Button();
             this.getInputsBtn = new System.Windows.Forms.Button();
+            this.genInstBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -374,11 +375,22 @@
             this.getInputsBtn.UseVisualStyleBackColor = true;
             this.getInputsBtn.Click += new System.EventHandler(this.getInputsBtn_Click);
             // 
+            // genInstBtn
+            // 
+            this.genInstBtn.Location = new System.Drawing.Point(940, 122);
+            this.genInstBtn.Name = "genInstBtn";
+            this.genInstBtn.Size = new System.Drawing.Size(119, 23);
+            this.genInstBtn.TabIndex = 27;
+            this.genInstBtn.Text = "Gen instance";
+            this.genInstBtn.UseVisualStyleBackColor = true;
+            this.genInstBtn.Click += new System.EventHandler(this.genInstBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1117, 741);
+            this.Controls.Add(this.genInstBtn);
             this.Controls.Add(this.getInputsBtn);
             this.Controls.Add(this.getOutputsBtn);
             this.Controls.Add(this.outputRTB);
@@ -457,6 +469,7 @@
         private System.Windows.Forms.RichTextBox outputRTB;
         private System.Windows.Forms.Button getOutputsBtn;
         private System.Windows.Forms.Button getInputsBtn;
+        private System.Windows.Forms.Button genInstBtn;
     }
 }
 
