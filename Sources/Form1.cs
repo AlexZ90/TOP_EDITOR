@@ -1082,5 +1082,67 @@ namespace TopEditor
             Clipboard.SetText(outputRTB.Text);
             //******************
         }
+
+        private void genPortsDef_Click(object sender, EventArgs e)
+        {
+            //******************************
+            Module module;
+            string mod_name;
+            int numOfPorts;
+            string metka = "";
+            int maxDirLength = 0;
+            int maxNameLength = 0;
+
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            int m = 0;
+
+
+            module = getModule(listOfModuleLB.SelectedItem.ToString());
+            mod_name = module.getModName();
+            numOfPorts = module.getNumOfPorts();
+
+            outputRTB.Clear();
+
+            maxDirLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
+                }
+            }
+
+            maxDirLength = maxDirLength + 2;
+
+            maxNameLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+                }
+            }
+
+            maxNameLength = maxNameLength + 2;
+
+
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    outputRTB.AppendText("logic ");
+                    //file.Write("logic " + module.listOfPorts[j].name);
+                    outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
+                    for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
+                    outputRTB.AppendText(module.listOfPorts[j].name);
+                    for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+                    outputRTB.AppendText(";\n");
+                }
+            }
+            Clipboard.SetText(outputRTB.Text);
+            //******************
+        }
     }
 }
