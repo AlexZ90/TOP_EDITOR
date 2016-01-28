@@ -1181,8 +1181,20 @@ namespace TopEditor
             {
                 if (module.listOfPorts[j] != null)
                 {
-                    if (module.listOfPorts[j].dir == "output") outputRTB.AppendText("output ");
-                    else if (module.listOfPorts[j].dir == "input") outputRTB.AppendText("input  ");
+                    if (module.listOfPorts[j].dir == "output")
+                    {
+                        if (invertPortsChb.Checked)
+                            outputRTB.AppendText("input  ");
+                        else
+                            outputRTB.AppendText("output ");
+                    }
+                    else if (module.listOfPorts[j].dir == "input")
+                    {
+                        if (invertPortsChb.Checked)
+                            outputRTB.AppendText("output ");
+                        else
+                            outputRTB.AppendText("input  ");
+                    }
                     else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
                     else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 

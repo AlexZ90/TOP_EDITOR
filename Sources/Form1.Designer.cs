@@ -64,6 +64,7 @@
             this.genInstBtn = new System.Windows.Forms.Button();
             this.genPortsDefBtn = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
+            this.invertPortsChb = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -407,11 +408,22 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.getPortsBtn_Click);
             // 
+            // invertPortsChb
+            // 
+            this.invertPortsChb.AutoSize = true;
+            this.invertPortsChb.Location = new System.Drawing.Point(1066, 70);
+            this.invertPortsChb.Name = "invertPortsChb";
+            this.invertPortsChb.Size = new System.Drawing.Size(79, 17);
+            this.invertPortsChb.TabIndex = 28;
+            this.invertPortsChb.Text = "Invert ports";
+            this.invertPortsChb.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1117, 741);
+            this.ClientSize = new System.Drawing.Size(1149, 741);
+            this.Controls.Add(this.invertPortsChb);
             this.Controls.Add(this.genPortsDefBtn);
             this.Controls.Add(this.genInstBtn);
             this.Controls.Add(this.getInputsBtn);
@@ -448,7 +460,7 @@
             this.Controls.Add(this.listOfModuleLB);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = " ";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).EndInit();
@@ -496,6 +508,7 @@
         private System.Windows.Forms.Button genInstBtn;
         private System.Windows.Forms.Button genPortsDefBtn;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.CheckBox invertPortsChb;
     }
 }
 
