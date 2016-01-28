@@ -63,7 +63,45 @@ namespace TopEditor
       return numOfPorts;
     }
 
-    public void showModDeclaration()
+    public int getNumOfInPorts()
+    {
+        int i = 0;
+        int j = 0;
+        for (i = 0; i < listOfPorts.Length; i++)
+            if (listOfPorts[i] != null && listOfPorts[i].dir == "input")
+            {
+                j++;
+            }
+        return j;
+    }
+
+    public int getNumOfOutPorts()
+    {
+        int i = 0;
+        int j = 0;
+        for (i = 0; i < listOfPorts.Length; i++)
+            if (listOfPorts[i] != null && listOfPorts[i].dir == "output")
+            {
+                j++;
+            }
+        return j;
+    }
+
+    public int getNumOfInOutPorts()
+    {
+        int i = 0;
+        int j = 0;
+        for (i = 0; i < listOfPorts.Length; i++)
+            if (listOfPorts[i] != null && listOfPorts[i].dir == "inout")
+            {
+                j++;
+            }
+        return j;
+    }
+
+
+
+        public void showModDeclaration()
     {
       string ports = "";
       int i = 0;
