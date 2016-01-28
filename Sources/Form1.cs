@@ -1163,6 +1163,7 @@ namespace TopEditor
             module = getModule(listOfModuleLB.SelectedItem.ToString());
             mod_name = module.getModName();
             numOfPorts = module.getNumOfPorts();
+            numOfPortsValLbl.Text = numOfPorts.ToString();
 
             outputRTB.Clear();
 

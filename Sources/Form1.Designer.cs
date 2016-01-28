@@ -65,6 +65,8 @@
             this.genPortsDefBtn = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.invertPortsChb = new System.Windows.Forms.CheckBox();
+            this.numOfPortsLbl = new System.Windows.Forms.Label();
+            this.numOfPortsValLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -421,11 +423,31 @@
             this.invertPortsChb.Text = "Invert ports";
             this.invertPortsChb.UseVisualStyleBackColor = true;
             // 
+            // numOfPortsLbl
+            // 
+            this.numOfPortsLbl.AutoSize = true;
+            this.numOfPortsLbl.Location = new System.Drawing.Point(939, 209);
+            this.numOfPortsLbl.Name = "numOfPortsLbl";
+            this.numOfPortsLbl.Size = new System.Drawing.Size(82, 13);
+            this.numOfPortsLbl.TabIndex = 29;
+            this.numOfPortsLbl.Text = "Кол-во портов:";
+            // 
+            // numOfPortsValLbl
+            // 
+            this.numOfPortsValLbl.AutoSize = true;
+            this.numOfPortsValLbl.Location = new System.Drawing.Point(1024, 209);
+            this.numOfPortsValLbl.Name = "numOfPortsValLbl";
+            this.numOfPortsValLbl.Size = new System.Drawing.Size(19, 13);
+            this.numOfPortsValLbl.TabIndex = 30;
+            this.numOfPortsValLbl.Text = "00";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1149, 741);
+            this.Controls.Add(this.numOfPortsValLbl);
+            this.Controls.Add(this.numOfPortsLbl);
             this.Controls.Add(this.invertPortsChb);
             this.Controls.Add(this.genPortsDefBtn);
             this.Controls.Add(this.genInstBtn);
@@ -512,6 +534,8 @@
         private System.Windows.Forms.Button genPortsDefBtn;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.CheckBox invertPortsChb;
+        private System.Windows.Forms.Label numOfPortsLbl;
+        private System.Windows.Forms.Label numOfPortsValLbl;
     }
 }
 
