@@ -361,11 +361,19 @@ namespace TopEditor
           else if (conn1_exists)
           {
           existsConn_.addInstPort(inst2, inst2_port);
+            if (ext == 1)
+            {
+              existsConn_.external = ext;
+            } 
           }
           else if (conn2_exists)
           {
-          existsConn_.addInstPort(inst1, inst1_port);
-          }
+            existsConn_.addInstPort(inst1, inst1_port);
+            if (ext == 1)
+            {
+              existsConn_.external = ext;
+            }
+        }
           else MessageBox.Show("Ошибка при добавлении связи.");
         }
         else
@@ -375,6 +383,7 @@ namespace TopEditor
           listOfConnections_.Add(conn_);
           conn_.addInstPort(inst1, inst1_port);
           conn_.addInstPort(inst2, inst2_port);
+          conn_.external = ext;
         }
      
 
@@ -506,6 +515,7 @@ namespace TopEditor
             {
               dt.Rows.Add(instPort.inst.Name, instPort.port.name);
             }
+            if (conn.external == 1) dt.Rows.Add("External", " ");
           }
         }
       }
