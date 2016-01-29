@@ -330,7 +330,6 @@ namespace TopEditor
           }
 
       //******************************************** Connection_ begin
-      MessageBox.Show("Связь добавлена.");
 
       foreach (Connection_ conn in listOfConnections_)
       {
@@ -376,7 +375,6 @@ namespace TopEditor
           listOfConnections_.Add(conn_);
           conn_.addInstPort(inst1, inst1_port);
           conn_.addInstPort(inst2, inst2_port);
-          MessageBox.Show("Связь добавлена.");
         }
      
 
@@ -429,7 +427,11 @@ namespace TopEditor
         {
           lb.Items.Add(conn.Name);
         }
-
+      }
+      if (lb.Items.Count != 0)
+      {
+        lb.SelectedIndex = 0;
+        showConnections(listOfConnLB.SelectedItem.ToString(), dt4);
       }
         }
 
@@ -442,6 +444,8 @@ namespace TopEditor
 
         public void deleteConnection(string ConnName)
         {
+
+      Connection_ existsConn_;
       /*int i = 0;
       for (i = 0; i < listOfConnections.Length; i++)
         if (listOfConnections[i] != null && listOfConnections[i].Name == ConnName)
@@ -450,12 +454,19 @@ namespace TopEditor
           this.updateListOfConnections(listOfConnections, listOfConnLB);
         }
         */
+      existsConn_ = null;
       foreach (Connection_ conn in listOfConnections_)
         if (conn != null && conn.Name == ConnName)
         {
-          listOfConnections_.Remove(conn);
-          this.updateListOfConnections(listOfConnections, listOfConnLB);
+          existsConn_ = conn;
         }
+      if (existsConn_ != null)
+      {
+        listOfConnections_.Remove(existsConn_);
+        this.updateListOfConnections(listOfConnections, listOfConnLB);
+      }
+
+
     }
 
         private void listOfConnLB_Click(object sender, EventArgs e)
@@ -711,14 +722,14 @@ namespace TopEditor
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-      try
+     // try
       {
         deleteConnection(listOfConnLB.SelectedItem.ToString());
       }
-      catch
+      /*catch
       {
         MessageBox.Show("Ошибка при удалении связи!");
-      }
+      }*/
         }
 
 
@@ -1375,5 +1386,15 @@ namespace TopEditor
             Clipboard.SetText(outputRTB.Text);
             //******************
         }
+
+    private void connectionTB_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter) { this.createConnBtn_Click(sender, e); }
     }
+
+    private void instNameTB_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter) { this.createInstBtn_Click(sender, e); }
+    }
+  }
 }
