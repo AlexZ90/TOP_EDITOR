@@ -636,6 +636,13 @@ namespace TopEditor
               }
             if (numOfExternals > 0) file.WriteLine();
 
+        /*foreach (Connection_ conn in listOfConnections_)
+        {
+          if (conn.external == 1){
+        }*/
+
+
+
             for (k = 0; k < listOfConnections.Length; k++)
               if (listOfConnections[k] != null && listOfConnections[k].external == 1)
               {
