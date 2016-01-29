@@ -312,7 +312,7 @@ namespace TopEditor
             ext = 0;
           else
             ext = 1;
-          if (ext == 0)
+/*          if (ext == 0)
           {
               for (j = 0; j < listOfConnections.Length; j++)
               {
@@ -327,7 +327,7 @@ namespace TopEditor
                   if (listOfConnections[j] != null && connName == listOfConnections[j].Name && listOfConnections[j].external == 1)
                       connAlrdyExist++;
               }
-          }
+          }*/
 
       //******************************************** Connection_ begin
 
@@ -382,7 +382,7 @@ namespace TopEditor
 
 
 
-      if (connAlrdyExist > 0)
+ /*     if (connAlrdyExist > 0)
             MessageBox.Show("Связь " + connName + " уже существует.");
           else
           {
@@ -392,7 +392,7 @@ namespace TopEditor
               listOfConnections[curConntNumber] = new Connection(connName, inst1, inst1_port, inst1, inst1_port, 1);
             Console.WriteLine(listOfConnections[curConntNumber].inst_1.Name);
             curConntNumber++;
-          }
+          }*/
 
           this.updateListOfConnections(listOfConnections, listOfConnLB);
         }
@@ -401,7 +401,7 @@ namespace TopEditor
         {
           int i = 0;
           int j = 0;
-          int match_count = 0;
+          string selectedConn = "";
           lb.Items.Clear();
           /*
           for (i = 0; i < listOfConnections.Length; i++)
@@ -433,6 +433,10 @@ namespace TopEditor
         lb.SelectedIndex = 0;
         showConnections(listOfConnLB.SelectedItem.ToString(), dt4);
       }
+      else
+      {
+        showConnections("", dt4);
+      }
         }
 
         private void createConnBtn_Click(object sender, EventArgs e)
@@ -463,8 +467,8 @@ namespace TopEditor
       if (existsConn_ != null)
       {
         listOfConnections_.Remove(existsConn_);
-        this.updateListOfConnections(listOfConnections, listOfConnLB);
       }
+      this.updateListOfConnections(listOfConnections, listOfConnLB);
 
 
     }
@@ -492,14 +496,16 @@ namespace TopEditor
 
       //********** Connection_ Begin
       dt.Clear();
-
-      foreach (Connection_ conn in listOfConnections_)
+      if (connName != "")
       {
-        if (conn != null && connName == conn.Name)
+        foreach (Connection_ conn in listOfConnections_)
         {
-          foreach (InstPort instPort in conn.listOfInstPort)
+          if (conn != null && connName == conn.Name)
           {
-            dt.Rows.Add(instPort.inst.Name, instPort.port.name);
+            foreach (InstPort instPort in conn.listOfInstPort)
+            {
+              dt.Rows.Add(instPort.inst.Name, instPort.port.name);
+            }
           }
         }
       }
