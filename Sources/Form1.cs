@@ -677,8 +677,8 @@ namespace TopEditor
           if (conn != null && conn.external == 0)
           {
             file.Write("wire ");
-            file.WriteLine(conn.listOfInstPort[1].port.dim_str); //!!!!!!!!!!!!!!!!!!!!!! Исправить (разрядности могут не совпадать)
-            file.WriteLine(listOfConnections[k].Name + ";");
+            file.Write(conn.listOfInstPort[1].port.dim_str); //!!!!!!!!!!!!!!!!!!!!!! Исправить (разрядности могут не совпадать)
+            file.WriteLine(conn.Name + ";");
           }
         }
 
@@ -701,12 +701,28 @@ namespace TopEditor
                     file.Write("." + listOfInstances[i].BaseModule.listOfPorts[j].name);
                     for (m = 0; m < (50 - listOfInstances[i].BaseModule.listOfPorts[j].name.Length); m++) file.Write(" ");
                     file.Write("(");
+
+                foreach (Connection_ conn in listOfConnections_)
+                {
+                    foreach (InstPort instPort in conn.listOfInstPort)
+                    {
+                      if ((instPort.port.name == listOfInstances[i].BaseModule.listOfPorts[j].name) && (instPort.inst.Name == listOfInstances[i].Name))
+                      {
+                        file.Write(conn.Name);
+                      }
+                      //file.Write("wire ");
+                      //file.WriteLine(conn.listOfInstPort[1].port.dim_str); //!!!!!!!!!!!!!!!!!!!!!! Исправить (разрядности могут не совпадать)
+                      //file.WriteLine(conn.Name + ";");
+                    }
+                }
+                /*
                       for (k = 0; k < listOfConnections.Length; k++)
                         if (listOfConnections[k] != null && (listOfConnections[k].inst_1_port.name == listOfInstances[i].BaseModule.listOfPorts[j].name && listOfConnections[k].inst_1.Name == listOfInstances[i].Name || listOfConnections[k].inst_2_port.name == listOfInstances[i].BaseModule.listOfPorts[j].name && listOfConnections[k].inst_2.Name == listOfInstances[i].Name))
                         {
                           file.Write(listOfConnections[k].Name);
                           break;
                         }
+                        */
                     file.Write(")");
                     if (numOfPorts > 1)
                     {
@@ -728,14 +744,14 @@ namespace TopEditor
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-     // try
+      try
       {
         deleteConnection(listOfConnLB.SelectedItem.ToString());
       }
-      /*catch
+      catch
       {
         MessageBox.Show("Ошибка при удалении связи!");
-      }*/
+      }
         }
 
 
