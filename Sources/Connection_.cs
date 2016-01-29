@@ -5,36 +5,61 @@ using System.Text;
 
 namespace TopEditor
 {
-  class Connection
+  class Connection_
   {
 
     public string Name;
-    public List<Instance> listOfInsts;
-    public List<Port> listOfPorts;
+    public List<InstPort> listOfInstPort;
     public int external;
 
 
-    public Connection(string cName, int ext)
+
+
+
+    public Connection_(string cName, int ext)
     {
+      listOfInstPort = new List<InstPort>();
       Name = cName;
-      listOfInsts = new List<Instance>();
-      listOfPorts = new List<Port>();
       external = ext;
     }
 
     public void addInstPort (Instance inst, Port port)
     {
-      listOfInsts.Add(inst);
-      listOfPorts.Add(port);
+      listOfInstPort.Add(new InstPort(inst, port));
     }
 
     public void removeInstPort(Instance inst, Port port)
     {
 
-      Instance instance;
-
+      foreach (InstPort instPortVal in listOfInstPort)
+      {
+        if (instPortVal.inst == inst && instPortVal.port == port)
+          listOfInstPort.Remove(instPortVal);
+      }
     }
 
+    public bool InstPortExists (Instance inst, Port port)
+    {
+
+      foreach (InstPort instPortVal in listOfInstPort)
+      {
+        if (instPortVal.inst == inst && instPortVal.port == port)
+        {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    public void printInstPorts()
+    {
+      Console.WriteLine("************* Start print InstPorts ***************");
+      foreach (InstPort instPortVal in listOfInstPort)
+      {
+        Console.WriteLine(instPortVal.inst.Name + " " + instPortVal.port.name);
+      }
+      Console.WriteLine("************* End print InstPorts ***************");
+    }
 
   }
 }

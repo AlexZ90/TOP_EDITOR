@@ -26,8 +26,9 @@ namespace TopEditor
         DataTable dt4 = new DataTable();
         Instance [] listOfInstances = new Instance [100];
         Connection[] listOfConnections = new Connection[100];
+        List<Connection_> listOfConnections_ = new List<Connection_>();
 
-        string safeFileName = ""; //!Добавил
+    string safeFileName = ""; //!Добавил
         string fileDirPath = ""; //!Добавил
         string fullFilePath = ""; //!Добавил
         
@@ -294,8 +295,13 @@ namespace TopEditor
           Instance inst2;
           Port inst2_port;
           int ext = 0;
+          Connection_ conn_;
+      bool conn1_exists = false;
+      bool conn2_exists = false;
+      int connAlrdyExist_ = 0;
+      Connection_ existsConn_;
 
-          inst1 = this.getInstance(inst1_name);
+      inst1 = this.getInstance(inst1_name);
           inst1_port = inst1.BaseModule.getPort(inst1_port_name);
           inst2 = this.getInstance(inst2_name);
           inst2_port = inst2.BaseModule.getPort(inst2_port_name);
@@ -323,10 +329,62 @@ namespace TopEditor
               }
           }
 
+      //******************************************** Connection_ begin
+      MessageBox.Show("Связь добавлена.");
+
+      foreach (Connection_ conn in listOfConnections_)
+      {
+        if (conn != null )
+        {
+          Console.WriteLine(conn.Name);
+          conn.printInstPorts();
+        }
+      }
+
+      existsConn_ = null;
+      foreach (Connection_ conn in listOfConnections_)
+      {
+        if (conn != null && connName == conn.Name)
+        {
+          connAlrdyExist_++;
+          existsConn_ = conn;
+          break;
+        }
+      }
+
+
+      if (connAlrdyExist_ > 0 && existsConn_ != null)
+        { 
+          conn1_exists = existsConn_.InstPortExists(inst1, inst1_port);
+          conn2_exists = existsConn_.InstPortExists(inst2, inst2_port);
+          if (conn1_exists && conn2_exists)
+            MessageBox.Show("Связь " + connName + " уже существует!");
+          else if (conn1_exists)
+          {
+          existsConn_.addInstPort(inst2, inst2_port);
+          }
+          else if (conn2_exists)
+          {
+          existsConn_.addInstPort(inst1, inst1_port);
+          }
+          else MessageBox.Show("Ошибка при добавлении связи.");
+        }
+        else
+        {
+
+          conn_ = new Connection_(connName, ext);
+          listOfConnections_.Add(conn_);
+          conn_.addInstPort(inst1, inst1_port);
+          conn_.addInstPort(inst2, inst2_port);
+          MessageBox.Show("Связь добавлена.");
+        }
+     
+
+      //******************************************** Connection_ end
 
 
 
-          if (connAlrdyExist > 0)
+      if (connAlrdyExist > 0)
             MessageBox.Show("Связь " + connName + " уже существует.");
           else
           {
@@ -347,6 +405,7 @@ namespace TopEditor
           int j = 0;
           int match_count = 0;
           lb.Items.Clear();
+          /*
           for (i = 0; i < listOfConnections.Length; i++)
             if (listOfConnections[i] != null)
             {
@@ -363,6 +422,15 @@ namespace TopEditor
 
               //newlistOfModules[i].showModDeclaration();
             }
+            */
+      foreach (Connection_ conn in listOfConnections_)
+      {
+        if (conn != null)
+        {
+          lb.Items.Add(conn.Name);
+        }
+
+      }
         }
 
         private void createConnBtn_Click(object sender, EventArgs e)
@@ -374,14 +442,21 @@ namespace TopEditor
 
         public void deleteConnection(string ConnName)
         {
-          int i = 0;
-          for (i = 0; i < listOfConnections.Length; i++)
-            if (listOfConnections[i] != null && listOfConnections[i].Name == ConnName)
-            {
-              listOfConnections[i] = null;
-              this.updateListOfConnections(listOfConnections, listOfConnLB);
-            }
+      /*int i = 0;
+      for (i = 0; i < listOfConnections.Length; i++)
+        if (listOfConnections[i] != null && listOfConnections[i].Name == ConnName)
+        {
+          listOfConnections[i] = null;
+          this.updateListOfConnections(listOfConnections, listOfConnLB);
         }
+        */
+      foreach (Connection_ conn in listOfConnections_)
+        if (conn != null && conn.Name == ConnName)
+        {
+          listOfConnections_.Remove(conn);
+          this.updateListOfConnections(listOfConnections, listOfConnLB);
+        }
+    }
 
         private void listOfConnLB_Click(object sender, EventArgs e)
         {
@@ -401,9 +476,28 @@ namespace TopEditor
           int k = 0;
           int m = 0;
           int instPortAlreadyExist = 0;
-          
 
-          connInstsPorts[] listOfInstPorts = new connInstsPorts [256];
+      Connection_ existsConn_;
+
+      //********** Connection_ Begin
+      dt.Clear();
+
+      foreach (Connection_ conn in listOfConnections_)
+      {
+        if (conn != null && connName == conn.Name)
+        {
+          foreach (InstPort instPort in conn.listOfInstPort)
+          {
+            dt.Rows.Add(instPort.inst.Name, instPort.port.name);
+          }
+        }
+      }
+
+
+      //********** Connection_ End
+
+      /*
+      connInstsPorts[] listOfInstPorts = new connInstsPorts [256];
 
           dt.Clear();
           for (i = 0; i < listOfConnections.Length; i++)
@@ -478,9 +572,9 @@ namespace TopEditor
           {
               dt.Rows.Add(listOfInstPorts[i].instName, listOfInstPorts[i].portName);
           }
-
+          */
         }
-
+    
         public string alignStr(string stringToAlign, int numOfSigns)
         {
           int i = 0;
@@ -540,7 +634,8 @@ namespace TopEditor
             file.WriteLine();
 
             file.WriteLine("/*------------------------- Internal connections ---------------------------------*/");
-            for (k = 0; k < listOfConnections.Length; k++)
+        /*
+        for (k = 0; k < listOfConnections.Length; k++)
               if (listOfConnections[k] != null && listOfConnections[k].external == 0)
               {
                 externalExist = 0;
@@ -558,6 +653,17 @@ namespace TopEditor
                   else file.WriteLine(listOfConnections[k].Name + ";");
                 }
               }
+              */
+
+        foreach (Connection_ conn in listOfConnections_)
+        {
+          if (conn != null && conn.external == 0)
+          {
+            file.Write("wire ");
+            file.WriteLine(conn.listOfInstPort[1].port.dim_str); //!!!!!!!!!!!!!!!!!!!!!! Исправить (разрядности могут не совпадать)
+            file.WriteLine(listOfConnections[k].Name + ";");
+          }
+        }
 
             file.WriteLine("/*--------------------------------------------------------------------------------*/");
             file.WriteLine();
@@ -605,7 +711,14 @@ namespace TopEditor
 
         private void button2_Click_1(object sender, EventArgs e)
         {
-          deleteConnection(listOfConnLB.SelectedItem.ToString());
+      try
+      {
+        deleteConnection(listOfConnLB.SelectedItem.ToString());
+      }
+      catch
+      {
+        MessageBox.Show("Ошибка при удалении связи!");
+      }
         }
 
 
