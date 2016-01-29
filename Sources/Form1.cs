@@ -684,27 +684,29 @@ namespace TopEditor
           {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(testCopyFileName))
             {
-              //Пропускаем описание портов в старом тесте
-              //while (sr.Read() != ';') ;
 
-              while (true)
+            //Копируем содержимое тестового файла до описания портов в новый файл
+            while (true)
+            {
+              metka = sr.ReadLine();
+              if (string.Equals(metka, "/*DONT_DELETE2568*/") || metka.Contains("module test"))
               {
-                  metka = sr.ReadLine();
-                  if (string.Equals(metka, "/*DONT_DELETE2567*/"))
-                  {
-                      Console.WriteLine("Equal ****************8");
-                      break;
-                  }
+                Console.WriteLine("Equal ****************8");
+                break;
               }
+              else
+              {
+                file.WriteLine(metka);
+              }
+            }
 
-
-              
-              // Вставляем в новый файл с тестом данные из текстбокса
-
-              file.WriteLine(rtbAddToTest.Text);
-              file.WriteLine();
-
-                
+            // Вставляем в новый файл с тестом данные из текстбокса
+              if (rtbAddToTest.Text != "")
+              {
+                file.WriteLine(rtbAddToTest.Text);
+                file.WriteLine();
+              }
+              file.WriteLine("/*DONT_DELETE2568*/");
 
               //Вставляем новое описание портов
               file.Write("module test (\n");
@@ -741,8 +743,21 @@ namespace TopEditor
 
               file.WriteLine("/*DONT_DELETE2567*/");
 
-              //Вставляем в новый файл текст теста из старого файла
-              while ((val = sr.Read()) > 0) file.Write((char)val);
+            //Пропускаем описание портов в старом тесте
+            //while (sr.Read() != ';') ;
+
+            while (true)
+            {
+              metka = sr.ReadLine();
+              if (string.Equals(metka, "/*DONT_DELETE2567*/"))
+              {
+                Console.WriteLine("Equal ****************8");
+                break;
+              }
+            }
+
+            //Вставляем в новый файл текст теста из старого файла
+            while ((val = sr.Read()) > 0) file.Write((char)val);
               file.Close();
             }
             sr.Close();
@@ -756,9 +771,15 @@ namespace TopEditor
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(testFileName))
           {
 
-            // Добавляем общий текст  из текстбокса
+          // Добавляем общий текст  из текстбокса
+          if (rtbAddToTest.Text != "")
+          {
             file.WriteLine(rtbAddToTest.Text);
             file.WriteLine();
+          }
+
+          file.WriteLine("/*DONT_DELETE2568*/");
+
 
             file.Write("module test (\n");
 
