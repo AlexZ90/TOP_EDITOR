@@ -617,12 +617,14 @@ namespace TopEditor
         string mod_name;
         int numOfPorts;
         string metka = "";
-        
-        int i = 0;
-        int j = 0;
-        int k = 0;
-        int m = 0;
 
+      int maxDirLength = 0;
+      int maxNameLength = 0;
+
+      int i = 0;
+      int j = 0;
+      int k = 0;
+      int m = 0;
 
         module = getModule(listOfModuleLB.SelectedItem.ToString());
         mod_name = module.getModName();
@@ -630,7 +632,29 @@ namespace TopEditor
 
         string vrfFolderName = @"" + fileDirPath + mod_name + "_VRF\\";
 
-        if (Directory.Exists(vrfFolderName) != true)
+        maxDirLength = 0;
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+            if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
+          }
+        }
+
+        maxDirLength = maxDirLength + 2;
+
+        maxNameLength = 0;
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+            if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+          }
+        }
+
+        maxNameLength = maxNameLength + 2;
+
+      if (Directory.Exists(vrfFolderName) != true)
             Directory.CreateDirectory(vrfFolderName);
 
         string testFileName = @"" + vrfFolderName + "test.sv";
@@ -723,12 +747,13 @@ namespace TopEditor
                   else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
                   file.Write("logic ");
-                  //file.Write("logic " + module.listOfPorts[j].name);
-                  for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
-                  file.Write(module.listOfPorts[j].dim_str + " ");
+                //file.Write("logic " + module.listOfPorts[j].name);
+                file.Write(module.listOfPorts[j].dim_str + " ");
+                for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+
 
                   file.Write(module.listOfPorts[j].name);
-                  for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+                  for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
 
                   if (numOfPorts > 1)
                   {
@@ -794,12 +819,13 @@ namespace TopEditor
                 else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
                 file.Write("logic ");
-                //file.Write("logic " + module.listOfPorts[j].name);
-                for (m = 0; m < (40 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
-                file.Write(module.listOfPorts[j].dim_str + " ");
+              //file.Write("logic " + module.listOfPorts[j].name);
+              file.Write(module.listOfPorts[j].dim_str + " ");
+              for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+
 
                 file.Write(module.listOfPorts[j].name);
-                for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+                for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
 
                 if (numOfPorts > 1)
                 {
@@ -862,12 +888,13 @@ namespace TopEditor
             {
 
               file.Write("wire ");
-              //file.Write("logic " + module.listOfPorts[j].name);
-              for (m = 0; m < (30 - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
-              file.Write(module.listOfPorts[j].dim_str + " ");
+            //file.Write("logic " + module.listOfPorts[j].name);
+            file.Write(module.listOfPorts[j].dim_str + " ");
+            for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+
 
               file.Write(module.listOfPorts[j].name);
-              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
               file.Write(";\n");
 
             }
@@ -886,10 +913,10 @@ namespace TopEditor
             {
 
               file.Write("." + module.listOfPorts[j].name);
-              for (m = 0; m < (40 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
               file.Write("(");
               file.Write(module.listOfPorts[j].name);
-              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
               file.Write(")");
               if (numOfPorts > 1)
               {
@@ -915,10 +942,10 @@ namespace TopEditor
             {
 
               file.Write("." + module.listOfPorts[j].name);
-              for (m = 0; m < (40 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
               file.Write("(");
               file.Write(module.listOfPorts[j].name);
-              for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+              for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
               file.Write(")");
               if (numOfPorts > 1)
               {
