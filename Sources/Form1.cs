@@ -870,11 +870,14 @@ namespace TopEditor
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(testTopFileName))
         {
 
+        if (rtbAddToTest.Text != "")
+        {
           file.WriteLine(rtbAddToTest.Text);
           file.WriteLine();
+        }
 
-          //строчки для инклуда тестового файла и тестируемого файла
-          file.WriteLine("`include \"" + fullFilePath.Replace("\\", "/") + "\"");
+        //строчки для инклуда тестового файла и тестируемого файла
+        file.WriteLine("`include \"" + fullFilePath.Replace("\\", "/") + "\"");
           file.WriteLine("`include \"" + testFileName.Replace("\\","/") + "\"");
           file.WriteLine();
 
