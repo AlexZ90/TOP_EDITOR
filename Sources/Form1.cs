@@ -755,7 +755,7 @@ namespace TopEditor
               }
             }
             file.WriteLine("endmodule ");
-              file.Close();
+              file.Close(); 
           }
         }
 
@@ -793,9 +793,9 @@ namespace TopEditor
         mod_name = module.getModName();
         numOfPorts = module.getNumOfPorts();
 
-        string vrfFolderName = @"" + fileDirPath + mod_name + "_VRF\\";
+        string vrfFolderName = @"" + fileDirPath + "VRF\\" + mod_name + "_VRF\\";
 
-        maxDirLength = 0;
+      maxDirLength = 0;
         for (j = 0; j < module.listOfPorts.Length; j++)
         {
           if (module.listOfPorts[j] != null)
