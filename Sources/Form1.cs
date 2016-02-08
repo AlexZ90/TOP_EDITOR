@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
+using System.Diagnostics;
 
 namespace TopEditor
 {
@@ -31,6 +32,7 @@ namespace TopEditor
     string safeFileName = ""; //!Добавил
         string fileDirPath = ""; //!Добавил
         string fullFilePath = ""; //!Добавил
+    string vrfFolderNameGlbl = "";
         
       
         public Form1()
@@ -755,7 +757,7 @@ namespace TopEditor
               }
             }
             file.WriteLine("endmodule ");
-              file.Close();
+              file.Close(); 
           }
         }
 
@@ -793,9 +795,10 @@ namespace TopEditor
         mod_name = module.getModName();
         numOfPorts = module.getNumOfPorts();
 
-        string vrfFolderName = @"" + fileDirPath + mod_name + "_VRF\\";
+        string vrfFolderName = @"" + fileDirPath + "VRF\\" + mod_name + "_VRF\\";
+      vrfFolderNameGlbl = vrfFolderName;
 
-        maxDirLength = 0;
+      maxDirLength = 0;
         for (j = 0; j < module.listOfPorts.Length; j++)
         {
           if (module.listOfPorts[j] != null)
@@ -1434,6 +1437,18 @@ namespace TopEditor
     private void instNameTB_KeyUp(object sender, KeyEventArgs e)
     {
       if (e.KeyCode == Keys.Enter) { this.createInstBtn_Click(sender, e); }
+    }
+
+    private void openVrfFldrBtn_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Process.Start(vrfFolderNameGlbl);
+      }
+      catch
+      {
+        MessageBox.Show("Какая-то непонятная ошибка при попытке открыть папку!");
+      }
     }
   }
 }

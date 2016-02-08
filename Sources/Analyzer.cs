@@ -1730,6 +1730,7 @@ namespace TopEditor
           int i = 0;
           int read_res = 0;
           Port newPort;
+      int braceCnt = 0;
 
           while (true)
           {
@@ -1764,11 +1765,13 @@ namespace TopEditor
                 }
                 else if (token == TOKEN_NUMBER_SIGN)
                 {
-                  state = 5;
+              Console.WriteLine("search_module(state 1): found TOKEN_NUMBER_SIGN", token);
+              braceCnt = 0; //Обнуляем счетчик скобок для поиска завершения обяъвления параметров 
+              state = 5;
                 }
                 else
                 {
-                  Console.WriteLine ("search_module: Error 1. Incorrect module declaration.");
+                  Console.WriteLine ("search_module(state 1): Error 1. Incorrect module declaration. Token = {0}", token);
                   return (-2);
                 }
                 break;
@@ -1855,10 +1858,16 @@ namespace TopEditor
                   }
                   buf[0] = (char)read_res;
                   start_pos++;
-                  if (buf[0] == ')')
+                if (buf[0] == '(')
+                    braceCnt++;
+                else if (buf[0] == ')')
                   {
-                    state = 1;
-                    break;
+                  braceCnt--;
+                    if (braceCnt == 0)
+                      {
+                        state = 1;
+                        break;
+                      }
                   }
                 }
                 break;
