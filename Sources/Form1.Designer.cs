@@ -67,6 +67,7 @@
       this.invertPortsChb = new System.Windows.Forms.CheckBox();
       this.numOfPortsLbl = new System.Windows.Forms.Label();
       this.numOfPortsValLbl = new System.Windows.Forms.Label();
+      this.openVrfFldrBtn = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -361,7 +362,7 @@
       this.outputRTB.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
       this.outputRTB.Location = new System.Drawing.Point(227, 595);
       this.outputRTB.Name = "outputRTB";
-      this.outputRTB.Size = new System.Drawing.Size(832, 134);
+      this.outputRTB.Size = new System.Drawing.Size(876, 134);
       this.outputRTB.TabIndex = 25;
       this.outputRTB.Text = "";
       // 
@@ -443,11 +444,21 @@
       this.numOfPortsValLbl.TabIndex = 30;
       this.numOfPortsValLbl.Text = "00";
       // 
+      // openVrfFldrBtn
+      // 
+      this.openVrfFldrBtn.Location = new System.Drawing.Point(1065, 35);
+      this.openVrfFldrBtn.Name = "openVrfFldrBtn";
+      this.openVrfFldrBtn.Size = new System.Drawing.Size(119, 23);
+      this.openVrfFldrBtn.TabIndex = 21;
+      this.openVrfFldrBtn.Text = "Open VRF folder";
+      this.openVrfFldrBtn.UseVisualStyleBackColor = true;
+      this.openVrfFldrBtn.Click += new System.EventHandler(this.openVrfFldrBtn_Click);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1149, 741);
+      this.ClientSize = new System.Drawing.Size(1193, 741);
       this.Controls.Add(this.numOfPortsValLbl);
       this.Controls.Add(this.numOfPortsLbl);
       this.Controls.Add(this.invertPortsChb);
@@ -460,6 +471,7 @@
       this.Controls.Add(this.lblAddToTestFiles);
       this.Controls.Add(this.rtbAddToTest);
       this.Controls.Add(this.cbOnlyForTest);
+      this.Controls.Add(this.openVrfFldrBtn);
       this.Controls.Add(this.btnCreateTest);
       this.Controls.Add(this.button2);
       this.Controls.Add(this.label4);
@@ -538,6 +550,7 @@
         private System.Windows.Forms.CheckBox invertPortsChb;
         private System.Windows.Forms.Label numOfPortsLbl;
         private System.Windows.Forms.Label numOfPortsValLbl;
-    }
+    private System.Windows.Forms.Button openVrfFldrBtn;
+  }
 }
 
