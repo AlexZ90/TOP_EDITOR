@@ -1370,6 +1370,7 @@ namespace TopEditor
             int numOfPorts;
             string metka = "";
             int maxDirLength = 0;
+            int maxNameLength = 0;
 
             int i = 0;
             int j = 0;
@@ -1394,6 +1395,18 @@ namespace TopEditor
             }
 
             maxDirLength = maxDirLength + 2;
+
+            maxNameLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+              }
+            }
+
+            maxNameLength = maxNameLength + 2;
+
 
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
@@ -1421,7 +1434,7 @@ namespace TopEditor
                     outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                     for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
                     outputRTB.AppendText(module.listOfPorts[j].name);
-                    for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+                    for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
                     outputRTB.AppendText("\n");
                 }
             }
@@ -1449,6 +1462,96 @@ namespace TopEditor
       {
         MessageBox.Show("Какая-то непонятная ошибка при попытке открыть папку!");
       }
+    }
+
+    private void getFormatBtn_Click(object sender, EventArgs e)
+    {
+      //******************************
+      Module module;
+      string mod_name;
+      int numOfPorts;
+      int maxDirLength = 0;
+      int maxNameLength = 0;
+      int i = 0;
+      int j = 0;
+      int k = 0;
+      int m = 0;
+
+
+      module = getModule(listOfModuleLB.SelectedItem.ToString());
+      mod_name = module.getModName();
+      numOfPorts = module.getNumOfPorts();
+
+      outputRTB.Clear();
+
+
+      outputRTB.AppendText("module " + mod_name + "\n");
+      outputRTB.AppendText("(\n");
+
+      maxDirLength = 0;
+      for (j = 0; j < module.listOfPorts.Length; j++)
+      {
+        if (module.listOfPorts[j] != null)
+        {
+          if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
+        }
+      }
+
+      maxDirLength = maxDirLength + 2;
+
+
+      maxNameLength = 0;
+      for (j = 0; j < module.listOfPorts.Length; j++)
+      {
+        if (module.listOfPorts[j] != null)
+        {
+          if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+        }
+      }
+
+      maxNameLength = maxNameLength + 2;
+
+
+      i = 0;
+      for (j = 0; j < module.listOfPorts.Length; j++)
+      {
+        if (module.listOfPorts[j] != null)
+        {
+          i++;
+          outputRTB.AppendText("  ");
+          if (module.listOfPorts[j].dir == "output")
+          {
+            if (invertPortsChb.Checked)
+              outputRTB.AppendText("input  ");
+            else
+              outputRTB.AppendText("output ");
+          }
+          else if (module.listOfPorts[j].dir == "input")
+          {
+            if (invertPortsChb.Checked)
+              outputRTB.AppendText("output ");
+            else
+              outputRTB.AppendText("input  ");
+          }
+          else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
+          else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+          outputRTB.AppendText("logic ");
+          //file.Write("logic " + module.listOfPorts[j].name);
+          outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
+          for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
+          outputRTB.AppendText(module.listOfPorts[j].name);
+          for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+          if (i != numOfPorts) 
+            outputRTB.AppendText(",");
+          outputRTB.AppendText("\n");
+        }
+      }
+
+      outputRTB.AppendText(");\n");
+
+      Clipboard.SetText(outputRTB.Text);
+      //******************
     }
   }
 }
