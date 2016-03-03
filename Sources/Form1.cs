@@ -1553,5 +1553,17 @@ namespace TopEditor
       Clipboard.SetText(outputRTB.Text);
       //******************
     }
+
+    private void openInFileFldrBtn_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Process.Start(fileDirPath);
+      }
+      catch
+      {
+        MessageBox.Show("Какая-то непонятная ошибка при попытке открыть папку с исходным файлом!");
+      }
+    }
   }
 }
