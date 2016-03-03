@@ -1565,5 +1565,17 @@ namespace TopEditor
         MessageBox.Show("Какая-то непонятная ошибка при попытке открыть папку с исходным файлом!");
       }
     }
+
+    private void openInFileBtn_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        Process.Start(fullFilePath);
+      }
+      catch
+      {
+        MessageBox.Show("Какая-то непонятная ошибка при попытке открыть исходный файл!");
+      }
+    }
   }
 }

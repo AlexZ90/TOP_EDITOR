@@ -70,6 +70,7 @@
       this.openVrfFldrBtn = new System.Windows.Forms.Button();
       this.getFormatBtn = new System.Windows.Forms.Button();
       this.openInFileFldrBtn = new System.Windows.Forms.Button();
+      this.openInFileBtn = new System.Windows.Forms.Button();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -476,6 +477,16 @@
       this.openInFileFldrBtn.UseVisualStyleBackColor = true;
       this.openInFileFldrBtn.Click += new System.EventHandler(this.openInFileFldrBtn_Click);
       // 
+      // openInFileBtn
+      // 
+      this.openInFileBtn.Location = new System.Drawing.Point(95, 89);
+      this.openInFileBtn.Name = "openInFileBtn";
+      this.openInFileBtn.Size = new System.Drawing.Size(77, 23);
+      this.openInFileBtn.TabIndex = 4;
+      this.openInFileBtn.Text = "Open file";
+      this.openInFileBtn.UseVisualStyleBackColor = true;
+      this.openInFileBtn.Click += new System.EventHandler(this.openInFileBtn_Click);
+      // 
       // Form1
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -517,6 +528,7 @@
       this.Controls.Add(this.dataGridView2);
       this.Controls.Add(this.dataGridView1);
       this.Controls.Add(this.delModBtn);
+      this.Controls.Add(this.openInFileBtn);
       this.Controls.Add(this.openInFileFldrBtn);
       this.Controls.Add(this.browseBtn);
       this.Controls.Add(this.textBox1);
@@ -577,6 +589,7 @@
     private System.Windows.Forms.Button openVrfFldrBtn;
     private System.Windows.Forms.Button getFormatBtn;
     private System.Windows.Forms.Button openInFileFldrBtn;
+    private System.Windows.Forms.Button openInFileBtn;
   }
 }
 
