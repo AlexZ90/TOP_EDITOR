@@ -1394,7 +1394,7 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
                 {
                   data_type = id;
                   state = 2;
