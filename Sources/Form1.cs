@@ -1155,6 +1155,8 @@ namespace TopEditor
         }
 
       // *************** Создаем файл с триггерами для оценки частоты ***********************
+        string clkForTriggerName = "clkForTrigger2785";
+
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(trigModFilename))
       {
 
@@ -1172,13 +1174,15 @@ namespace TopEditor
         numOfPorts = module.getNumOfPorts();
         file.Write("module " + trigModName + " (\n");
 
+        file.WriteLine("input  logic  " + clkForTriggerName + ",");
+
         for (j = 0; j < module.listOfPorts.Length; j++)
         {
           if (module.listOfPorts[j] != null)
           {
 
-            if (module.listOfPorts[j].dir == "input") file.Write("output ");
-            else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
+            if (module.listOfPorts[j].dir == "input") file.Write("input  ");
+            else if (module.listOfPorts[j].dir == "output") file.Write("output ");
             else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
             else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
@@ -1187,8 +1191,6 @@ namespace TopEditor
             //file.Write("logic " + module.listOfPorts[j].name);
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
-
-
             file.Write(module.listOfPorts[j].name);
             for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
 
@@ -1217,8 +1219,15 @@ namespace TopEditor
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
 
+            if (module.listOfPorts[j].dir == "input")
+              file.Write("tr_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "output")
+              file.Write("cb_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "inout")
+              file.Write(module.listOfPorts[j].name);
+            else 
+              MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-            file.Write(module.listOfPorts[j].name);
             for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
             file.Write(";\n");
 
@@ -1240,7 +1249,17 @@ namespace TopEditor
             file.Write("." + module.listOfPorts[j].name);
             for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
             file.Write("(");
-            file.Write(module.listOfPorts[j].name);
+
+            if (module.listOfPorts[j].dir == "input")
+              file.Write("tr_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "output")
+              file.Write("cb_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "inout")
+              file.Write(module.listOfPorts[j].name);
+            else
+              MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+
             for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
             file.Write(")");
             if (numOfPorts > 1)
@@ -1255,7 +1274,52 @@ namespace TopEditor
         file.WriteLine();
         file.WriteLine();
 
+        file.WriteLine("always_ff @(posedge " + clkForTriggerName + ")");
+        file.WriteLine("begin");
+
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+
+            if (module.listOfPorts[j].dir == "input")
+              file.Write("  tr_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "output")
+              file.Write("  " + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "inout")
+              file.Write("");
+            else
+              MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+            file.Write("<= ");
+
+            if (module.listOfPorts[j].dir == "input")
+              file.Write(module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "output")
+              file.Write("cb_" + module.listOfPorts[j].name);
+            else if (module.listOfPorts[j].dir == "inout")
+              file.Write("");
+            else
+              MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+            file.Write(";\n");
+
+          }
+        }
+
+
+        file.Write("end");
+
+
         file.Write("\n\nendmodule");
+
+        
+
+
 
         file.Close();
       }
