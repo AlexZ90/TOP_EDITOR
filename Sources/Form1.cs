@@ -831,9 +831,8 @@ namespace TopEditor
         string make_do_filename = @"" + vrfFolderName + "make.do";
         string restart_do_filename = @"" + vrfFolderName + "restart.do";
         string addButton_do_filename = @"" + vrfFolderName + "addButton_" + mod_name + ".do";
-
-
-        using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
+        
+      using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
         {
           file.WriteLine("quit -sim");
           file.WriteLine("add button make_" + mod_name + " {do " + make_do_filename.Replace("\\", "\\\\") + "} NoDisable");
@@ -912,7 +911,7 @@ namespace TopEditor
                   else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
                   else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                  file.Write("logic ");
+                file.Write(module.listOfPorts[j].data_type + " ");
                 //file.Write("logic " + module.listOfPorts[j].name);
                 file.Write(module.listOfPorts[j].dim_str + " ");
                 for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -984,7 +983,7 @@ namespace TopEditor
                 else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
                 else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                file.Write("logic ");
+                file.Write(module.listOfPorts[j].data_type + " ");
               //file.Write("logic " + module.listOfPorts[j].name);
               file.Write(module.listOfPorts[j].dim_str + " ");
               for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1056,7 +1055,7 @@ namespace TopEditor
             if (module.listOfPorts[j] != null)
             {
 
-              file.Write("wire ");
+              file.Write(module.listOfPorts[j].data_type + " ");
             //file.Write("logic " + module.listOfPorts[j].name);
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1176,7 +1175,7 @@ namespace TopEditor
                     if (module.listOfPorts[j].dir == "output")
                     {
                         outputRTB.AppendText("output ");
-                        outputRTB.AppendText("logic ");
+                        outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
                         //file.Write("logic " + module.listOfPorts[j].name);
                         outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                         for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1229,7 +1228,7 @@ namespace TopEditor
                     if (module.listOfPorts[j].dir == "input")
                     {
                         outputRTB.AppendText("input ");
-                        outputRTB.AppendText("logic ");
+                        outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
                         //file.Write("logic " + module.listOfPorts[j].name);
                         outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                         for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1349,7 +1348,7 @@ namespace TopEditor
             {
                 if (module.listOfPorts[j] != null)
                 {
-                    outputRTB.AppendText("logic ");
+                    outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
                     //file.Write("logic " + module.listOfPorts[j].name);
                     outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                     for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1429,7 +1428,7 @@ namespace TopEditor
                     else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
                     else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                    outputRTB.AppendText("logic ");
+                    outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
                     //file.Write("logic " + module.listOfPorts[j].name);
                     outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                     for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1536,7 +1535,7 @@ namespace TopEditor
           else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
           else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-          outputRTB.AppendText("logic ");
+          outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
           //file.Write("logic " + module.listOfPorts[j].name);
           outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
           for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");

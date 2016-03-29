@@ -1360,12 +1360,12 @@ namespace TopEditor
                 if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == " inout")))
                 {
                   dir = id;
-                  data_type = " "; //Порт по умолчанию не logic (но и не null)
+                  data_type = "logic"; //Порт по умолчанию logic
                   state = 1;
                 }
                 else if (port_declared == 1)
                 {
-                      if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                      if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
                       {
                         data_type = id;
                         state = 2;
