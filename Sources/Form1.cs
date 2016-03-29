@@ -33,8 +33,8 @@ namespace TopEditor
         string fileDirPath = ""; //!Добавил
         string fullFilePath = ""; //!Добавил
     string vrfFolderNameGlbl = "";
-        
-      
+
+
         public Form1()
         {
             InitializeComponent();
@@ -43,7 +43,7 @@ namespace TopEditor
             dt1.Columns.Add("Size");
             dt1.Columns.Add("Name");
 
-            dt1.Columns.Add("Size string"); //!Добавил 
+            dt1.Columns.Add("Size string"); //!Добавил
 
             dataGridView1.DataSource = dt1;
             listOfModuleLB.Click += new EventHandler(showPortsBtn_Click);
@@ -210,7 +210,7 @@ namespace TopEditor
           int j = 0;
           int instAlrdyExist = 0;
           int baseModNumber = 0;
-          
+
           for (i = 0; i < listOfModules.Length; i++)
             if (listOfModules[i] != null && baseModName == listOfModules[i].getModName())
             {
@@ -256,7 +256,7 @@ namespace TopEditor
               listOfInstances[i] = null;
               this.updateListOfInstances(listOfInstances, listOfInstLB);
               this.updateListOfInstances(listOfInstances, listOfInstLB2);
-            } 
+            }
         }
 
         Instance getInstance(string InstName)
@@ -355,7 +355,7 @@ namespace TopEditor
 
 
       if (connAlrdyExist_ > 0 && existsConn_ != null)
-        { 
+        {
           conn1_exists = existsConn_.InstPortExists(inst1, inst1_port);
           conn2_exists = existsConn_.InstPortExists(inst2, inst2_port);
           if (conn1_exists && conn2_exists)
@@ -366,7 +366,7 @@ namespace TopEditor
             if (ext == 1)
             {
               existsConn_.external = ext;
-            } 
+            }
           }
           else if (conn2_exists)
           {
@@ -387,7 +387,7 @@ namespace TopEditor
           conn_.addInstPort(inst2, inst2_port);
           conn_.external = ext;
         }
-     
+
 
       //******************************************** Connection_ end
 
@@ -603,7 +603,7 @@ namespace TopEditor
           }
           */
         }
-    
+
         public string alignStr(string stringToAlign, int numOfSigns)
         {
           int i = 0;
@@ -654,7 +654,7 @@ namespace TopEditor
 
                 if (listOfConnections[k].inst_1_port.dim > 1)
                   dir_dtype_dim = dir_dtype_dim + "[" + (listOfConnections[k].inst_1_port.dim - 1).ToString() + ":0]";
-                
+
                 dir_dtype_dim = alignStr (dir_dtype_dim, 30);
 
                 file.Write (dir_dtype_dim);
@@ -679,7 +679,7 @@ namespace TopEditor
                 {
                   if (m!=k && listOfConnections[m] != null && listOfConnections[m].Name == listOfConnections[k].Name && listOfConnections[m].external == 1)
                     externalExist ++;
-                    
+
                 }
                 if (externalExist == 0)
                 {
@@ -705,7 +705,7 @@ namespace TopEditor
             file.WriteLine();
             file.WriteLine();
 
-            
+
             for (i = 0; i < listOfInstances.Length; i++)
             {
               if (listOfInstances[i] != null)
@@ -716,7 +716,7 @@ namespace TopEditor
                 {
                   if (listOfInstances[i].BaseModule.listOfPorts[j] != null)
                   {
-                    
+
                     file.Write("." + listOfInstances[i].BaseModule.listOfPorts[j].name);
                     for (m = 0; m < (50 - listOfInstances[i].BaseModule.listOfPorts[j].name.Length); m++) file.Write(" ");
                     file.Write("(");
@@ -757,7 +757,7 @@ namespace TopEditor
               }
             }
             file.WriteLine("endmodule ");
-              file.Close(); 
+              file.Close();
           }
         }
 
@@ -783,8 +783,10 @@ namespace TopEditor
         int numOfPorts;
         string metka = "";
 
+      int maxDataTypeLength = 0;
       int maxDirLength = 0;
       int maxNameLength = 0;
+
 
       int i = 0;
       int j = 0;
@@ -797,6 +799,18 @@ namespace TopEditor
 
         string vrfFolderName = @"" + fileDirPath + "VRF\\" + mod_name + "_VRF\\";
       vrfFolderNameGlbl = vrfFolderName;
+
+
+      maxDataTypeLength = 0;
+      for (j = 0; j < module.listOfPorts.Length; j++)
+      {
+        if (module.listOfPorts[j] != null)
+        {
+          if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+        }
+      }
+
+      maxDataTypeLength = maxDataTypeLength + 2;
 
       maxDirLength = 0;
         for (j = 0; j < module.listOfPorts.Length; j++)
@@ -914,7 +928,9 @@ namespace TopEditor
                   else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
                   else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                file.Write(module.listOfPorts[j].data_type + " ");
+                  file.Write(module.listOfPorts[j].data_type);
+                  for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
+
                 //file.Write("logic " + module.listOfPorts[j].name);
                 file.Write(module.listOfPorts[j].dim_str + " ");
                 for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -960,7 +976,7 @@ namespace TopEditor
           File.Delete(testFileName);
           File.Move(testCopyFileName, testFileName);
         }
-        else // Если создаем файл с тестом впервые 
+        else // Если создаем файл с тестом впервые
           using (System.IO.StreamWriter file = new System.IO.StreamWriter(testFileName))
           {
 
@@ -986,7 +1002,8 @@ namespace TopEditor
                 else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
                 else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                file.Write(module.listOfPorts[j].data_type + " ");
+              file.Write(module.listOfPorts[j].data_type);
+              for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
               //file.Write("logic " + module.listOfPorts[j].name);
               file.Write(module.listOfPorts[j].dim_str + " ");
               for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1058,7 +1075,8 @@ namespace TopEditor
             if (module.listOfPorts[j] != null)
             {
 
-              file.Write(module.listOfPorts[j].data_type + " ");
+            file.Write(module.listOfPorts[j].data_type);
+            for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
             //file.Write("logic " + module.listOfPorts[j].name);
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1136,7 +1154,7 @@ namespace TopEditor
           file.Close();
         }
 
-      // Создаем файл с триггерами для оценки частоты
+      // *************** Создаем файл с триггерами для оценки частоты ***********************
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(trigModFilename))
       {
 
@@ -1164,7 +1182,8 @@ namespace TopEditor
             else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
             else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-            file.Write(module.listOfPorts[j].data_type + " ");
+            file.Write(module.listOfPorts[j].data_type);
+            for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
             //file.Write("logic " + module.listOfPorts[j].name);
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1192,7 +1211,8 @@ namespace TopEditor
           if (module.listOfPorts[j] != null)
           {
 
-            file.Write(module.listOfPorts[j].data_type + " ");
+            file.Write(module.listOfPorts[j].data_type);
+            for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
             //file.Write("logic " + module.listOfPorts[j].name);
             file.Write(module.listOfPorts[j].dim_str + " ");
             for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
@@ -1253,12 +1273,15 @@ namespace TopEditor
             string mod_name;
             int numOfPorts;
             string metka = "";
+            int maxDataTypeLength = 0;
             int maxDirLength = 0;
+            int maxNameLength = 0;
 
             int i = 0;
             int j = 0;
             int k = 0;
             int m = 0;
+            int outputs_exists = 0;
 
 
             module = getModule(listOfModuleLB.SelectedItem.ToString());
@@ -1267,16 +1290,38 @@ namespace TopEditor
 
             outputRTB.Clear();
 
-            maxDirLength = 0;
+            maxDataTypeLength = 0;
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
-                if (module.listOfPorts[j] != null)
-                {
-                    if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
-                }
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+              }
             }
 
-            maxDirLength = maxDirLength + 2;
+            maxDataTypeLength = maxDataTypeLength + 2;
+
+            maxDirLength = 0;
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+                  if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
+                }
+              }
+
+              maxDirLength = maxDirLength + 2;
+
+              maxNameLength = 0;
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+                  if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+                }
+              }
+
+              maxNameLength = maxNameLength + 2;
 
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
@@ -1284,18 +1329,20 @@ namespace TopEditor
                 {
                     if (module.listOfPorts[j].dir == "output")
                     {
+                        outputs_exists = 1;
                         outputRTB.AppendText("output ");
-                        outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
+                        outputRTB.AppendText(module.listOfPorts[j].data_type);
+                        for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) outputRTB.AppendText(" ");
                         //file.Write("logic " + module.listOfPorts[j].name);
                         outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                         for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
                         outputRTB.AppendText(module.listOfPorts[j].name);
-                        for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+                        for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
                         outputRTB.AppendText("\n");
                     }
                 }
             }
-            Clipboard.SetText(outputRTB.Text);
+            if (outputs_exists == 1) Clipboard.SetText(outputRTB.Text);
             //******************
         }
 
@@ -1306,7 +1353,9 @@ namespace TopEditor
             string mod_name;
             int numOfPorts;
             string metka = "";
+            int maxDataTypeLength = 0;
             int maxDirLength = 0;
+            int maxNameLength = 0;
 
             int i = 0;
             int j = 0;
@@ -1320,16 +1369,38 @@ namespace TopEditor
 
             outputRTB.Clear();
 
-            maxDirLength = 0;
+            maxDataTypeLength = 0;
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
-                if (module.listOfPorts[j] != null)
-                {
-                    if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
-                }
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+              }
             }
 
-            maxDirLength = maxDirLength + 2;
+            maxDataTypeLength = maxDataTypeLength + 2;
+
+            maxDirLength = 0;
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+                  if (module.listOfPorts[j].dim_str.Length > maxDirLength) maxDirLength = module.listOfPorts[j].dim_str.Length;
+                }
+              }
+
+              maxDirLength = maxDirLength + 2;
+
+              maxNameLength = 0;
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+                  if (module.listOfPorts[j].name.Length > maxNameLength) maxNameLength = module.listOfPorts[j].name.Length;
+                }
+              }
+
+              maxNameLength = maxNameLength + 2;
 
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
@@ -1338,12 +1409,13 @@ namespace TopEditor
                     if (module.listOfPorts[j].dir == "input")
                     {
                         outputRTB.AppendText("input ");
-                        outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
+                        outputRTB.AppendText(module.listOfPorts[j].data_type);
+                        for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) outputRTB.AppendText(" ");
                         //file.Write("logic " + module.listOfPorts[j].name);
                         outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                         for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
                         outputRTB.AppendText(module.listOfPorts[j].name);
-                        for (m = 0; m < (20 - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
+                        for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
                         outputRTB.AppendText("\n");
                     }
                 }
@@ -1416,6 +1488,7 @@ namespace TopEditor
             string mod_name;
             int numOfPorts;
             string metka = "";
+            int maxDataTypeLength = 0;
             int maxDirLength = 0;
             int maxNameLength = 0;
 
@@ -1431,6 +1504,18 @@ namespace TopEditor
 
             outputRTB.Clear();
 
+            maxDataTypeLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+              }
+            }
+
+            maxDataTypeLength = maxDataTypeLength + 2;
+            
+            
             maxDirLength = 0;
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
@@ -1458,7 +1543,8 @@ namespace TopEditor
             {
                 if (module.listOfPorts[j] != null)
                 {
-                    outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
+                    outputRTB.AppendText(module.listOfPorts[j].data_type);
+                    for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) outputRTB.AppendText(" ");
                     //file.Write("logic " + module.listOfPorts[j].name);
                     outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                     for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1478,6 +1564,7 @@ namespace TopEditor
             string mod_name;
             int numOfPorts;
             string metka = "";
+            int maxDataTypeLength = 0;
             int maxDirLength = 0;
             int maxNameLength = 0;
 
@@ -1494,6 +1581,18 @@ namespace TopEditor
 
             outputRTB.Clear();
 
+            maxDataTypeLength = 0;
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+              if (module.listOfPorts[j] != null)
+              {
+                if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+              }
+            }
+
+            maxDataTypeLength = maxDataTypeLength + 2;
+            
+            
             maxDirLength = 0;
             for (j = 0; j < module.listOfPorts.Length; j++)
             {
@@ -1538,7 +1637,8 @@ namespace TopEditor
                     else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
                     else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                    outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
+                    outputRTB.AppendText(module.listOfPorts[j].data_type);
+                    for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) outputRTB.AppendText(" ");
                     //file.Write("logic " + module.listOfPorts[j].name);
                     outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
                     for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
@@ -1579,6 +1679,7 @@ namespace TopEditor
       Module module;
       string mod_name;
       int numOfPorts;
+      int maxDataTypeLength = 0;
       int maxDirLength = 0;
       int maxNameLength = 0;
       int i = 0;
@@ -1597,6 +1698,18 @@ namespace TopEditor
       outputRTB.AppendText("module " + mod_name + "\n");
       outputRTB.AppendText("(\n");
 
+      maxDataTypeLength = 0;
+      for (j = 0; j < module.listOfPorts.Length; j++)
+      {
+        if (module.listOfPorts[j] != null)
+        {
+          if (module.listOfPorts[j].data_type.Length > maxDataTypeLength) maxDataTypeLength = module.listOfPorts[j].data_type.Length;
+        }
+      }
+
+      maxDataTypeLength = maxDataTypeLength + 2;     
+      
+      
       maxDirLength = 0;
       for (j = 0; j < module.listOfPorts.Length; j++)
       {
@@ -1645,13 +1758,14 @@ namespace TopEditor
           else if (module.listOfPorts[j].dir == "inout") outputRTB.AppendText("inout  ");
           else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-          outputRTB.AppendText(module.listOfPorts[j].data_type + " ");
+          outputRTB.AppendText(module.listOfPorts[j].data_type);
+          for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) outputRTB.AppendText(" ");
           //file.Write("logic " + module.listOfPorts[j].name);
           outputRTB.AppendText(module.listOfPorts[j].dim_str + " ");
           for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) outputRTB.AppendText(" ");
           outputRTB.AppendText(module.listOfPorts[j].name);
           for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) outputRTB.AppendText(" ");
-          if (i != numOfPorts) 
+          if (i != numOfPorts)
             outputRTB.AppendText(",");
           outputRTB.AppendText("\n");
         }
