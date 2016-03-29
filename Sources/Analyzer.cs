@@ -1343,6 +1343,7 @@ namespace TopEditor
           int d1 = 0;
           int d2 = 0;
           string id = "";
+          bool id_detected = false;
 
           dim_str = ""; //!Добавил
           old_start_pos = start_pos;
@@ -1354,36 +1355,59 @@ namespace TopEditor
             {
               case 0:
               {
+                new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
                 if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == " inout")))
                 {
                   dir = id;
-                  data_type = " "; //Порт по умолчанию не logic (но и не null)
+                  data_type = "logic"; //Порт по умолчанию logic
                   state = 1;
                 }
                 else if (port_declared == 1)
                 {
-                      if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                      if (token == TOKEN_ID) //тип данных или имя порта
                       {
-                        data_type = id;
-                        state = 2;
-                      }
-                      else if (token == TOKEN_SQBR)
-                      {
-                        start_pos = old_start_pos;
-                        state = 2;
-                      }
-                      else if (token == TOKEN_ID)
-                      {
+                        if (id_detected) // второй идентификатор => первый - тип, а второй имя
+                        {
+                          id_detected = false;
                           name = id;
                           return 1;
+                        }
+                        else // найден первый идентификатор после запятой, ищем следующий токен для проверки
+                        {
+                          id_detected = true;
+                          data_type = id;
+                          name = id;
+                          state = 0;
+                        }
+
+                      }
+                      else if (token == TOKEN_SQBR) // возможно, далее идет разрядность
+                      {
+                        start_pos = new_start_pos;
+                        state = 2;
+                      }
+                      else 
+                      {
+                        if (id_detected) // первый токен - идентификатор, второй - нет => 1-ый токен - имя порта
+                        {
+                          id_detected = false;
+                          data_type = "logic";
+                          start_pos = new_start_pos;
+                          return 1;
+                        }
+                        else
+                        {
+                          start_pos = old_start_pos; //не найден ни один из допустимых идентификаторов после запятой при уже объявленном порте
+                          return 0;
+                        }
                       }
                 }
                 else
                 {
-                  start_pos=old_start_pos;
+                  start_pos = old_start_pos;
                   return 0;
                 }
                 break;
@@ -1394,7 +1418,7 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
                 {
                   data_type = id;
                   state = 2;
@@ -1446,7 +1470,7 @@ namespace TopEditor
                 else
                 {
                   start_pos=old_start_pos;
-                  Console.WriteLine ("search_port: Error 2");
+                  Console.WriteLine ("search_port: ID expected, found: " + id);
                   return (-1);
                 }
                 break;
@@ -1805,8 +1829,16 @@ namespace TopEditor
               case 3:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-2);
-                if (token == TOKEN_COMMA) state = 2; // If token is COMMA
-                else if (token == TOKEN_BR) state = 4; //If token is BRACE
+                if (token == TOKEN_COMMA) // If token is COMMA
+                {
+                  state = 2;
+                  Console.WriteLine("Search port: found COMMA");
+                }
+                else if (token == TOKEN_BR) //If token is BRACE
+                {
+                  state = 4; 
+                  Console.WriteLine("Search port: found BRACE"); 
+                }
                 else
                 {
                   Console.WriteLine ("search_module: Error 3. Token = " + token.ToString() + ". Incorrect module declaration.");
