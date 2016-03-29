@@ -831,7 +831,10 @@ namespace TopEditor
         string make_do_filename = @"" + vrfFolderName + "make.do";
         string restart_do_filename = @"" + vrfFolderName + "restart.do";
         string addButton_do_filename = @"" + vrfFolderName + "addButton_" + mod_name + ".do";
-        
+
+      string trigModName = mod_name + "_trig";
+      string trigModFilename = @"" + vrfFolderName + trigModName + ".sv";
+
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
         {
           file.WriteLine("quit -sim");
@@ -1131,10 +1134,117 @@ namespace TopEditor
           file.Write("\n\nendmodule");
 
           file.Close();
-        }   
+        }
+
+      // Создаем файл с триггерами для оценки частоты
+      using (System.IO.StreamWriter file = new System.IO.StreamWriter(trigModFilename))
+      {
+
+        if (rtbAddToTest.Text != "")
+        {
+          file.WriteLine(rtbAddToTest.Text);
+          file.WriteLine();
+        }
+
+        //строчки для инклуда тестируемого файла
+        file.WriteLine("`include \"" + fullFilePath.Replace("\\", "/") + "\"");
+        file.WriteLine();
 
 
+        numOfPorts = module.getNumOfPorts();
+        file.Write("module " + trigModName + " (\n");
+
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+
+            if (module.listOfPorts[j].dir == "input") file.Write("output ");
+            else if (module.listOfPorts[j].dir == "output") file.Write("input  ");
+            else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
+            else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+            file.Write(module.listOfPorts[j].data_type + " ");
+            //file.Write("logic " + module.listOfPorts[j].name);
+            file.Write(module.listOfPorts[j].dim_str + " ");
+            for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+
+
+            file.Write(module.listOfPorts[j].name);
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+
+            if (numOfPorts > 1)
+            {
+              file.Write(",");
+              numOfPorts--;
+            }
+            file.WriteLine();
+          }
+        }
+
+        file.Write(");\n\n");
+
+
+        //Instantiate wires
+
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+
+            file.Write(module.listOfPorts[j].data_type + " ");
+            //file.Write("logic " + module.listOfPorts[j].name);
+            file.Write(module.listOfPorts[j].dim_str + " ");
+            for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
+
+
+            file.Write(module.listOfPorts[j].name);
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+            file.Write(";\n");
+
+          }
+        }
+
+
+        //Instantiate DUT
+
+        numOfPorts = module.getNumOfPorts();
+
+        file.Write("\n\n" + mod_name + " " + dut_inst_name + " (" + "\n");
+
+        for (j = 0; j < module.listOfPorts.Length; j++)
+        {
+          if (module.listOfPorts[j] != null)
+          {
+
+            file.Write("." + module.listOfPorts[j].name);
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+            file.Write("(");
+            file.Write(module.listOfPorts[j].name);
+            for (m = 0; m < (maxNameLength - module.listOfPorts[j].name.Length); m++) file.Write(" ");
+            file.Write(")");
+            if (numOfPorts > 1)
+            {
+              file.Write(",");
+              numOfPorts--;
+            }
+            file.WriteLine();
+          }
+        }
+        file.WriteLine(");");
+        file.WriteLine();
+        file.WriteLine();
+
+        file.Write("\n\nendmodule");
+
+        file.Close();
       }
+
+
+    }
+
+
+
 
         private void getOutputsBtn_Click(object sender, EventArgs e)
         {
