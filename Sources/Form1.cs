@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TopEditor
 {
@@ -1933,5 +1934,50 @@ namespace TopEditor
         MessageBox.Show("Какая-то непонятная ошибка при попытке открыть исходный файл!");
       }
     }
-  }
+
+        private void genVisPortsBtn_Click(object sender, EventArgs e)
+        {
+            Module module;
+            string mod_name;
+            int numOfPorts;
+            int i = 0;
+            int j = 0;
+            int k = 0;
+            int m = 0;
+            int height = 5;
+            int gap = 2;
+            int initY = 50;
+            int direction = 0; // input - 0, output - 1 
+            VisDrawer Vis = new VisDrawer();
+
+            module = getModule(listOfModuleLB.SelectedItem.ToString());
+            mod_name = module.getModName();
+            numOfPorts = module.getNumOfPorts();
+
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+
+                    if (module.listOfPorts[j].dir == "output")
+                    {
+                        direction = 1;
+                    }
+                    else if (module.listOfPorts[j].dir == "input")
+                    {
+                        direction = 0;
+                    }
+                    else if (module.listOfPorts[j].dir == "inout")
+                    {
+                        direction = 0;
+                    }
+                    else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+                    Vis.DropShape(module.listOfPorts[j].name, 0.0, initY, height, direction);
+                    initY = initY - height - gap;
+                }
+            }
+
+        }
+    }
 }
