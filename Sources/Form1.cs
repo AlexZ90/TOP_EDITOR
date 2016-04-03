@@ -845,8 +845,9 @@ namespace TopEditor
         string make_do_filename = @"" + vrfFolderName + "make.do";
         string restart_do_filename = @"" + vrfFolderName + "restart.do";
         string addButton_do_filename = @"" + vrfFolderName + "addButton_" + mod_name + ".do";
+        string addwave_do_filename = @"" + vrfFolderName + "addwave" + ".do";
 
-      string trigModName = mod_name + "_trig";
+            string trigModName = mod_name + "_trig";
       string trigModFilename = @"" + vrfFolderName + trigModName + ".sv";
 
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
@@ -857,15 +858,69 @@ namespace TopEditor
           file.Close();
         }
 
-        using (System.IO.StreamWriter file = new System.IO.StreamWriter(make_do_filename))
+        using (System.IO.StreamWriter file = new System.IO.StreamWriter(addwave_do_filename))
+        {
+                file.WriteLine("#first you mast run simulate without optimization                                           ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("proc add_wave_breadthwiserecursive { instance_name prev_group_option } {                    ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  set breadthwise_instances [find instances $instance_name/*]                               ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("# IF there are items itterate through them breadthwise                                      ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  foreach inst $breadthwise_instances {                                                     ");
+                file.WriteLine("        # Separate \"/top/inst\"  from \"(MOD1)\"                                           ");
+                file.WriteLine("        # echo $inst                                                                        ");
+                file.WriteLine("        set inst_path [lindex [split $inst \" \"] 0]                                        ");
+                file.WriteLine("        echo $inst_path                                                                     ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("        # Get just the end word after last \"/\"                                            ");
+                file.WriteLine("        set gname     [lrange [split $inst_path \"/\"] end end]                             ");
+                file.WriteLine("        # echo $gname                                                                       ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("        add_wave_breadthwiserecursive  \"$inst_path\"  \"$prev_group_option -group $gname\" ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  }                                                                                         ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  # Avoid including your top level /* as we already have /top/*                             ");
+                file.WriteLine("  if { $instance_name != \"\" } {                                                           ");
+                file.WriteLine("      # Echo the wave add command, but you can turn this off                                ");
+                file.WriteLine("      echo add wave -noupdate $prev_group_option \"$instance_name/*\"                       ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("      set CMD \"add wave -noupdate -radix hex $prev_group_option $instance_name/*\"         ");
+                file.WriteLine("      eval $CMD                                                                             ");
+                file.WriteLine("  }                                                                                         ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  # Return up the recursing stack                                                           ");
+                file.WriteLine("  return                                                                                    ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("}                                                                                           ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("proc add_wave_groupedrecursive { } {                                                        ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  add_wave_breadthwiserecursive \"\" \"\"                                                   ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("  # Added all signals, now trigger a wave window update                                     ");
+                file.WriteLine("  wave refresh                                                                              ");
+                file.WriteLine("}                                                                                           ");
+                file.WriteLine("                                                                                            ");
+                file.WriteLine("add_wave_groupedrecursive                                                                   ");
+                file.Close();
+        }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(make_do_filename))
         {
           file.WriteLine("quit -sim");
           file.WriteLine("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
           file.WriteLine();
           file.WriteLine("vsim -novopt work." + test_top_mod_name);
           file.WriteLine();
-          file.WriteLine("add wave -divider -height 30 " + dut_inst_name);
-          file.WriteLine("add wave -radix hex sim:/" + test_top_mod_name + "/" + dut_inst_name + "/*");
+          file.WriteLine("# add wave -divider -height 30 " + dut_inst_name);
+          file.WriteLine("# add wave -radix hex sim:/" + test_top_mod_name + "/" + dut_inst_name + "/*");
+          file.WriteLine("do " + addwave_do_filename.Replace("\\", "\\\\"));
+          
           file.WriteLine("run 500");
           //file.WriteLine("#view wave");
           file.Close();
@@ -950,7 +1005,21 @@ namespace TopEditor
 
               file.Write(");\n\n");
 
-              file.WriteLine("/*DONT_DELETE2567*/");
+
+            file.WriteLine("// initial           ");
+            file.WriteLine("//   begin           ");
+            for (j = 0; j < module.listOfPorts.Length; j++)
+            {
+                if (module.listOfPorts[j] != null)
+                {
+                    if (module.listOfPorts[j].dir == "input")
+                    {
+                        file.Write("//     " + module.listOfPorts[j].name + " = '0;\n");
+                    }
+                }
+            }
+
+                        file.WriteLine("/*DONT_DELETE2567*/");
 
             //Пропускаем описание портов в старом тесте
             //while (sr.Read() != ';') ;
