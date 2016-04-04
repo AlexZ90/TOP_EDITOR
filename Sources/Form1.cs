@@ -27,7 +27,7 @@ namespace TopEditor
         DataTable dt3 = new DataTable();
         DataTable dt4 = new DataTable();
         Instance [] listOfInstances = new Instance [100];
-        Connection[] listOfConnections = new Connection[100];
+        Connection[] listOfConnections = new Connection[500];
         List<Connection_> listOfConnections_ = new List<Connection_>();
 
     string safeFileName = ""; //!Добавил

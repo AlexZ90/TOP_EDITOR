@@ -9,7 +9,7 @@ namespace TopEditor
   class Module
   {
     public string modName;
-    public Port[] listOfPorts = new Port [100];
+    public Port[] listOfPorts = new Port [500];
     int numOfPorts;
 
 
