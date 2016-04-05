@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Office.Interop;
 
 namespace TopEditor
 {
@@ -29,6 +30,8 @@ namespace TopEditor
         Instance [] listOfInstances = new Instance [100];
         Connection[] listOfConnections = new Connection[500];
         List<Connection_> listOfConnections_ = new List<Connection_>();
+
+
 
     string safeFileName = ""; //!Добавил
         string fileDirPath = ""; //!Добавил
@@ -1478,6 +1481,71 @@ namespace TopEditor
             }
             if (outputs_exists == 1) Clipboard.SetText(outputRTB.Text);
             //******************
+            
+            if (createDocCHB.Checked)
+            {
+
+              Microsoft.Office.Interop.Word._Application objApp;
+              Microsoft.Office.Interop.Word._Document objDoc;
+              objApp = new Microsoft.Office.Interop.Word.Application();
+              objApp.Visible = true;
+              objDoc = objApp.Documents.Add();
+
+              object objMiss = System.Reflection.Missing.Value;
+              object objEndOfDocFlag = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+              Microsoft.Office.Interop.Word.Paragraph objPara1; //define paragraph object
+              object oRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range; //go to end of the page
+              objPara1 = objDoc.Content.Paragraphs.Add(ref oRng); //add paragraph at end of document
+              objPara1.Range.Text = "Test Table Caption"; //add some text in paragraph
+              objPara1.Format.SpaceAfter = 10; //define some style
+              objPara1.Range.InsertParagraphAfter(); //insert paragraph
+
+              Microsoft.Office.Interop.Word.Table objTab1;
+              Microsoft.Office.Interop.Word.Range objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+
+
+              //Add text after the table.
+              //objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+              //objWordRng.InsertParagraphAfter();
+              //objWordRng.InsertAfter("THE END.");
+
+              int numOfOutPorts = module.getNumOfOutPorts();
+              
+              
+              objTab1 = objDoc.Tables.Add(objWordRng, numOfOutPorts + 1, 4, ref objMiss, ref objMiss);
+              objTab1.Range.ParagraphFormat.SpaceAfter = 6;
+              int iRow, iCols;
+              string strText;
+              iCols = 1;
+
+              objTab1.Cell(1, 1).Range.Text = "Наименование";
+              objTab1.Cell(1, 2).Range.Text = "Направление";
+              objTab1.Cell(1, 3).Range.Text = "Разрядность";
+              objTab1.Cell(1, 4).Range.Text = "Назначение";
+
+              iRow = 2;
+
+
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+
+                  if (module.listOfPorts[j].dir == "output")
+                  {
+                    objTab1.Cell(iRow, 1).Range.Text = module.listOfPorts[j].name;
+                    objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+                    iRow++;
+                  }
+                }
+              }
+
+              objTab1.Rows[1].Range.Font.Bold = 1;
+              objTab1.Rows[1].Range.Font.Italic = 0;
+            }
+            
+            
         }
 
         private void getInputsBtn_Click(object sender, EventArgs e)
@@ -1556,6 +1624,71 @@ namespace TopEditor
             }
             Clipboard.SetText(outputRTB.Text);
             //******************
+            
+            if (createDocCHB.Checked)
+            {
+
+              Microsoft.Office.Interop.Word._Application objApp;
+              Microsoft.Office.Interop.Word._Document objDoc;
+              objApp = new Microsoft.Office.Interop.Word.Application();
+              objApp.Visible = true;
+              objDoc = objApp.Documents.Add();
+
+              object objMiss = System.Reflection.Missing.Value;
+              object objEndOfDocFlag = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+              Microsoft.Office.Interop.Word.Paragraph objPara1; //define paragraph object
+              object oRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range; //go to end of the page
+              objPara1 = objDoc.Content.Paragraphs.Add(ref oRng); //add paragraph at end of document
+              objPara1.Range.Text = "Test Table Caption"; //add some text in paragraph
+              objPara1.Format.SpaceAfter = 10; //define some style
+              objPara1.Range.InsertParagraphAfter(); //insert paragraph
+
+              Microsoft.Office.Interop.Word.Table objTab1;
+              Microsoft.Office.Interop.Word.Range objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+
+
+              //Add text after the table.
+              //objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+              //objWordRng.InsertParagraphAfter();
+              //objWordRng.InsertAfter("THE END.");
+
+              int numOfInPorts = module.getNumOfInPorts();
+              
+              objTab1 = objDoc.Tables.Add(objWordRng, numOfInPorts + 1, 4, ref objMiss, ref objMiss);
+              objTab1.Range.ParagraphFormat.SpaceAfter = 6;
+              int iRow, iCols;
+              string strText;
+              iCols = 1;
+
+              objTab1.Cell(1, 1).Range.Text = "Наименование";
+              objTab1.Cell(1, 2).Range.Text = "Направление";
+              objTab1.Cell(1, 3).Range.Text = "Разрядность";
+              objTab1.Cell(1, 4).Range.Text = "Назначение";
+
+              iRow = 2;
+
+
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+
+                  if (module.listOfPorts[j].dir == "input")
+                  {
+                    objTab1.Cell(iRow, 1).Range.Text = module.listOfPorts[j].name;
+                    objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+                    iRow++;
+                  }
+                  
+                }
+              }
+
+              objTab1.Rows[1].Range.Font.Bold = 1;
+              objTab1.Rows[1].Range.Font.Italic = 0;
+            }
+            
+            
         }
 
         private void genInstBtn_Click(object sender, EventArgs e)
@@ -1706,8 +1839,7 @@ namespace TopEditor
             int j = 0;
             int k = 0;
             int m = 0;
-
-
+            
             module = getModule(listOfModuleLB.SelectedItem.ToString());
             mod_name = module.getModName();
             numOfPorts = module.getNumOfPorts();
@@ -1782,6 +1914,84 @@ namespace TopEditor
                 }
             }
             Clipboard.SetText(outputRTB.Text);
+
+            if (createDocCHB.Checked)
+            {
+
+              Microsoft.Office.Interop.Word._Application objApp;
+              Microsoft.Office.Interop.Word._Document objDoc;
+              objApp = new Microsoft.Office.Interop.Word.Application();
+              objApp.Visible = true;
+              objDoc = objApp.Documents.Add();
+
+              object objMiss = System.Reflection.Missing.Value;
+              object objEndOfDocFlag = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
+
+              Microsoft.Office.Interop.Word.Paragraph objPara1; //define paragraph object
+              object oRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range; //go to end of the page
+              objPara1 = objDoc.Content.Paragraphs.Add(ref oRng); //add paragraph at end of document
+              objPara1.Range.Text = "Test Table Caption"; //add some text in paragraph
+              objPara1.Format.SpaceAfter = 10; //define some style
+              objPara1.Range.InsertParagraphAfter(); //insert paragraph
+
+              Microsoft.Office.Interop.Word.Table objTab1;
+              Microsoft.Office.Interop.Word.Range objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+
+
+              //Add text after the table.
+              //objWordRng = objDoc.Bookmarks.get_Item(ref objEndOfDocFlag).Range;
+              //objWordRng.InsertParagraphAfter();
+              //objWordRng.InsertAfter("THE END.");
+
+
+              objTab1 = objDoc.Tables.Add(objWordRng, numOfPorts + 1, 4, ref objMiss, ref objMiss);
+              objTab1.Range.ParagraphFormat.SpaceAfter = 6;
+              int iRow, iCols;
+              string strText;
+              iCols = 1;
+
+              objTab1.Cell(1, 1).Range.Text = "Наименование";
+              objTab1.Cell(1, 2).Range.Text = "Направление";
+              objTab1.Cell(1, 3).Range.Text = "Разрядность";
+              objTab1.Cell(1, 4).Range.Text = "Назначение";
+
+              iRow = 2;
+
+
+              for (j = 0; j < module.listOfPorts.Length; j++)
+              {
+                if (module.listOfPorts[j] != null)
+                {
+                  strText = module.listOfPorts[j].name;
+                  objTab1.Cell(iRow, 1).Range.Text = strText;
+
+                  if (module.listOfPorts[j].dir == "output")
+                  {
+                    objTab1.Cell(iRow, 2).Range.Text = "Выход";
+                  }
+                  else if (module.listOfPorts[j].dir == "input")
+                  {
+                    objTab1.Cell(iRow, 2).Range.Text = "Вход";
+                  }
+                  else if (module.listOfPorts[j].dir == "inout")
+                  {
+                    objTab1.Cell(iRow, 2).Range.Text = "Вх/Вых";
+                  }
+                  else MessageBox.Show("Ошибка! Неизвестное направление порта !");
+
+                  objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+
+                  iRow++;
+
+                }
+              }
+
+              objTab1.Rows[1].Range.Font.Bold = 1;
+              objTab1.Rows[1].Range.Font.Italic = 0;
+            }
+
+            
+
             //******************
         }
 
