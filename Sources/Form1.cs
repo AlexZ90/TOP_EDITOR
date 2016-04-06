@@ -78,42 +78,110 @@ namespace TopEditor
 
         private void button1_Click(object sender, EventArgs e)
         {
-          int i = 0;
-          int j = 0;
-          int modAlrdyExist = 0;
-          Module[] newlistOfModules = new Module[100];
-          int funcRes = 0;
+            int i = 0;
+            int j = 0;
+            int modAlrdyExist = 0;
+            Module[] newlistOfModules = new Module[100];
+            int funcRes = 0;
 
-          bool onlyTest = false;
+            bool onlyTest = false;
 
-          funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules, cbOnlyForTest.Checked);
-          if (funcRes == 1)
-          {
-            for (i = 0; i < newlistOfModules.Length; i++)
-              if (newlistOfModules[i] != null)
-              {
-                modAlrdyExist = 0;
-                for (j = 0; j < listOfModules.Length; j++)
+            funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules, cbOnlyForTest.Checked);
+            if (funcRes == 1)
+            {
+                for (i = 0; i < newlistOfModules.Length; i++)
+                    if (newlistOfModules[i] != null)
+                    {
+                        modAlrdyExist = 0;
+                        for (j = 0; j < listOfModules.Length; j++)
+                        {
+                            if (listOfModules[j] != null && newlistOfModules[i].getModName() == listOfModules[j].getModName())
+                                modAlrdyExist++;
+                        }
+                        if (modAlrdyExist > 0)
+                            MessageBox.Show("Модуль " + newlistOfModules[i].getModName() + " уже существует.");
+                        else
+                        {
+                            listOfModules[curModNumber] = newlistOfModules[i];
+                            curModNumber++;
+                        }
+                        //newlistOfModules[i].showModDeclaration();
+                    }
+                this.updateListOfModules(listOfModules);
+            }
+            else if (funcRes == -1) MessageBox.Show("Ошибка обработки включений файлов");
+            else if (funcRes == -2) MessageBox.Show("Обнаружена синтаксическая ошибка в объявлении модуля или не найдено значение параметра");
+            else if (funcRes == -3) MessageBox.Show("Не удалось открыть файл " + textBox1.Text);
+
+            string line;
+            string[] substrings;
+            string[] separators_1 = { "<pCom>" };
+            string modName;
+            string portName;
+            string comment;
+            int mod_exists;
+            int port_exists;
+
+            mod_exists = 0;
+            port_exists = 0;
+            
+
+            if (File.Exists(textBox1.Text))
+            {
+                using (System.IO.StreamReader sr = new System.IO.StreamReader(textBox1.Text))
                 {
-                  if (listOfModules[j] != null && newlistOfModules[i].getModName() == listOfModules[j].getModName())
-                    modAlrdyExist++;
-                }
-                if (modAlrdyExist > 0)
-                  MessageBox.Show("Модуль " + newlistOfModules[i].getModName() + " уже существует.");
-                else
-                {
-                  listOfModules[curModNumber] = newlistOfModules[i];
-                  curModNumber++;
-                }
-                //newlistOfModules[i].showModDeclaration();
-              }
-            this.updateListOfModules(listOfModules);
-          }
-          else if (funcRes == -1) MessageBox.Show("Ошибка обработки включений файлов");
-          else if (funcRes == -2) MessageBox.Show("Обнаружена синтаксическая ошибка в объявлении модуля или не найдено значение параметра");
-          else if (funcRes == -3) MessageBox.Show("Не удалось открыть файл " + textBox1.Text);
-}
+                    while ((line = sr.ReadLine()) != null)
+                        if (line.Contains("<pCom>"))
+                        {
 
+                            substrings = line.Split(separators_1, 10, StringSplitOptions.RemoveEmptyEntries);
+                            if (substrings.Length < 4)
+                            {
+                                MessageBox.Show("Неверный формат комментария для порта!\n Верный формат:\n// <pCom>mod_name<pCom>port_name<pCom>your_comment<pCom>");
+                                return;
+
+                            }
+                            
+                            modName = substrings[1];
+                            portName = substrings[2];
+                            comment = substrings[3];
+
+                            mod_exists = 0;
+                            port_exists = 0;
+
+                            for (i = 0; i < newlistOfModules.Length; i++)
+                                if (newlistOfModules[i] != null)
+                                {
+                                    if (newlistOfModules[i].getModName() == modName)
+                                    {
+                                        mod_exists = 1;
+                                        for (j = 0; j < newlistOfModules[i].listOfPorts.Length; j++)
+                                            if (newlistOfModules[i].listOfPorts[j] != null)
+                                            {
+                                                if (newlistOfModules[i].listOfPorts[j].name == portName)
+                                                {
+                                                    port_exists = 1;
+                                                    newlistOfModules[i].listOfPorts[j].comment = comment;
+
+                                                }
+                                            }
+                                    }
+                                }
+                            if (mod_exists == 0)
+                            {
+                                MessageBox.Show("Приведен комметарий для порта несуществующего модуля!\n modName: "+ modName + " \n portName: "+portName);
+                                return;
+                            }
+
+                            if (port_exists == 0)
+                            {
+                                MessageBox.Show("Приведен комметарий для несуществующего порта!\n modName: " + modName + " \n portName: " + portName);
+                                return;
+                            }
+                        }
+                }
+            }
+        }
 
         private void updateListOfModules(Module[] listOfModules)
         {
@@ -1536,6 +1604,7 @@ namespace TopEditor
                   {
                     objTab1.Cell(iRow, 1).Range.Text = module.listOfPorts[j].name;
                     objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+                    objTab1.Cell(iRow, 4).Range.Text = module.listOfPorts[j].comment;
                     iRow++;
                   }
                 }
@@ -1678,6 +1747,7 @@ namespace TopEditor
                   {
                     objTab1.Cell(iRow, 1).Range.Text = module.listOfPorts[j].name;
                     objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+                    objTab1.Cell(iRow, 4).Range.Text = module.listOfPorts[j].comment;
                     iRow++;
                   }
                   
@@ -1980,6 +2050,7 @@ namespace TopEditor
                   else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
                   objTab1.Cell(iRow, 3).Range.Text = module.listOfPorts[j].dim.ToString();
+                  objTab1.Cell(iRow, 4).Range.Text = module.listOfPorts[j].comment;
 
                   iRow++;
 
@@ -2013,7 +2084,7 @@ namespace TopEditor
       }
       catch
       {
-        MessageBox.Show("Какая-то непонятная ошибка при попытке открыть папку!");
+        MessageBox.Show("Ошибка при открытии папки! \n Сначала нужно нажать кнопки Analize и Create test!");
       }
     }
 

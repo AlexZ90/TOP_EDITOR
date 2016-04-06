@@ -1863,7 +1863,7 @@ namespace TopEditor
                       file.Write(ports[i].data_type + " ");
                       file.Write(ports[i].name + " ");
                       file.Write(ports[i].dim.ToString() + " ");
-                      newPort = new Port(ports[i].dim, ports[i].dim_str, ports[i].name, ports[i].data_type, ports[i].dir); //!Добавил
+                      newPort = new Port(ports[i].dim, ports[i].dim_str, ports[i].name, ports[i].data_type, ports[i].dir, ""); //!Добавил
                       newModule.addPort(newPort);
                       //newModule.showModDeclaration();
                       file.WriteLine();

@@ -14,14 +14,16 @@ namespace TopEditor
         public string name;
         public string data_type;
         public string dir;
+        public string comment;
 
-        public Port (int dim_init, string dim_str_init, string name_init, string data_type_init, string dir_init) //!Добавил
+        public Port (int dim_init, string dim_str_init, string name_init, string data_type_init, string dir_init, string comment_init) //!Добавил
         {
           dim = dim_init;
           dim_str = dim_str_init; //!Добавил
           name = name_init;
           data_type = data_type_init;
           dir = dir_init;
+          comment = comment_init;
         }
 
         public string getPortId()
