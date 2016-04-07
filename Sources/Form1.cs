@@ -113,9 +113,12 @@ namespace TopEditor
             else if (funcRes == -2) MessageBox.Show("Обнаружена синтаксическая ошибка в объявлении модуля или не найдено значение параметра");
             else if (funcRes == -3) MessageBox.Show("Не удалось открыть файл " + textBox1.Text);
 
+            //Поиск комментариев с назначением портов
             string line;
             string[] substrings;
+            string[] temp_substrings;
             string[] separators_1 = { "<pCom>" };
+            string[] separators_2 = { " " };
             string modName;
             string portName;
             string comment;
@@ -141,9 +144,15 @@ namespace TopEditor
                                 return;
 
                             }
-                            
+
                             modName = substrings[1];
+                            temp_substrings = substrings[1].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
+                            modName = temp_substrings[0];
+
                             portName = substrings[2];
+                            temp_substrings = substrings[2].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
+                            portName = temp_substrings[0];
+
                             comment = substrings[3];
 
                             mod_exists = 0;
