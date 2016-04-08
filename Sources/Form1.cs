@@ -113,81 +113,84 @@ namespace TopEditor
             else if (funcRes == -2) MessageBox.Show("Обнаружена синтаксическая ошибка в объявлении модуля или не найдено значение параметра");
             else if (funcRes == -3) MessageBox.Show("Не удалось открыть файл " + textBox1.Text);
 
-            //Поиск комментариев с назначением портов
-            string line;
-            string[] substrings;
-            string[] temp_substrings;
-            string[] separators_1 = { "<pCom>" };
-            string[] separators_2 = { " " };
-            string modName;
-            string portName;
-            string comment;
-            int mod_exists;
-            int port_exists;
-
-            mod_exists = 0;
-            port_exists = 0;
-            
-
-            if (File.Exists(textBox1.Text))
+            if (funcRes == 1)
             {
-                using (System.IO.StreamReader sr = new System.IO.StreamReader(textBox1.Text))
+                //Поиск комментариев с назначением портов
+                string line;
+                string[] substrings;
+                string[] temp_substrings;
+                string[] separators_1 = { "<pCom>" };
+                string[] separators_2 = { " " };
+                string modName;
+                string portName;
+                string comment;
+                int mod_exists;
+                int port_exists;
+
+                mod_exists = 0;
+                port_exists = 0;
+
+
+                if (File.Exists(textBox1.Text))
                 {
-                    while ((line = sr.ReadLine()) != null)
-                        if (line.Contains("<pCom>"))
-                        {
-
-                            substrings = line.Split(separators_1, 10, StringSplitOptions.RemoveEmptyEntries);
-                            if (substrings.Length < 4)
+                    using (System.IO.StreamReader sr = new System.IO.StreamReader(textBox1.Text))
+                    {
+                        while ((line = sr.ReadLine()) != null)
+                            if (line.Contains("<pCom>"))
                             {
-                                MessageBox.Show("Неверный формат комментария для порта!\n Верный формат:\n// <pCom>mod_name<pCom>port_name<pCom>your_comment<pCom>");
-                                return;
 
-                            }
-
-                            modName = substrings[1];
-                            temp_substrings = substrings[1].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
-                            modName = temp_substrings[0];
-
-                            portName = substrings[2];
-                            temp_substrings = substrings[2].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
-                            portName = temp_substrings[0];
-
-                            comment = substrings[3];
-
-                            mod_exists = 0;
-                            port_exists = 0;
-
-                            for (i = 0; i < newlistOfModules.Length; i++)
-                                if (newlistOfModules[i] != null)
+                                substrings = line.Split(separators_1, 10, StringSplitOptions.RemoveEmptyEntries);
+                                if (substrings.Length < 4)
                                 {
-                                    if (newlistOfModules[i].getModName() == modName)
-                                    {
-                                        mod_exists = 1;
-                                        for (j = 0; j < newlistOfModules[i].listOfPorts.Length; j++)
-                                            if (newlistOfModules[i].listOfPorts[j] != null)
-                                            {
-                                                if (newlistOfModules[i].listOfPorts[j].name == portName)
-                                                {
-                                                    port_exists = 1;
-                                                    newlistOfModules[i].listOfPorts[j].comment = comment;
+                                    MessageBox.Show("Неверный формат комментария для порта!\n Верный формат:\n// <pCom>mod_name<pCom>port_name<pCom>your_comment<pCom>");
+                                    return;
 
-                                                }
-                                            }
-                                    }
                                 }
-                            if (mod_exists == 0)
-                            {
-                                MessageBox.Show("Приведен комметарий для порта несуществующего модуля!\n modName: "+ modName + " \n portName: "+portName);
-                                return;
-                            }
 
-                            if (port_exists == 0)
-                            {
-                                MessageBox.Show("Приведен комметарий для несуществующего порта!\n modName: " + modName + " \n portName: " + portName);
-                                return;
+                                modName = substrings[1];
+                                temp_substrings = substrings[1].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
+                                modName = temp_substrings[0];
+
+                                portName = substrings[2];
+                                temp_substrings = substrings[2].Split(separators_2, 10, StringSplitOptions.RemoveEmptyEntries);
+                                portName = temp_substrings[0];
+
+                                comment = substrings[3];
+
+                                mod_exists = 0;
+                                port_exists = 0;
+
+                                for (i = 0; i < newlistOfModules.Length; i++)
+                                    if (newlistOfModules[i] != null)
+                                    {
+                                        if (newlistOfModules[i].getModName() == modName)
+                                        {
+                                            mod_exists = 1;
+                                            for (j = 0; j < newlistOfModules[i].listOfPorts.Length; j++)
+                                                if (newlistOfModules[i].listOfPorts[j] != null)
+                                                {
+                                                    if (newlistOfModules[i].listOfPorts[j].name == portName)
+                                                    {
+                                                        port_exists = 1;
+                                                        newlistOfModules[i].listOfPorts[j].comment = comment;
+
+                                                    }
+                                                }
+                                        }
+                                    }
+                                if (mod_exists == 0)
+                                {
+                                    MessageBox.Show("Приведен комметарий для порта несуществующего модуля!\n modName: " + modName + " \n portName: " + portName);
+                                    return;
+                                }
+
+                                if (port_exists == 0)
+                                {
+                                    MessageBox.Show("Приведен комметарий для несуществующего порта!\n modName: " + modName + " \n portName: " + portName);
+                                    return;
+                                }
                             }
-                        }
+                    }
                 }
             }
         }
