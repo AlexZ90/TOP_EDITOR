@@ -2288,7 +2288,19 @@ namespace TopEditor
 
         if (onlyTest == false)
         {
-          if (findInclude(inFileWithoutComments, ref outFilePath) == -1)
+            FileStream fs = new FileStream(outFilePath, FileMode.Open);
+            macros = search_all_macro(fs);
+            fs.Close();
+
+            if (macros != null)
+            {
+                foreach (Macro m in macros)
+                {
+                    Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
+                }
+            }
+
+        if (findInclude(inFileWithoutComments, ref outFilePath) == -1)
           {
             Console.WriteLine("analizeFile: Include processing failed");
             return -1;
@@ -2309,15 +2321,6 @@ namespace TopEditor
               foreach (Parameter p in parameters)
               {
                 Console.WriteLine("Parameter = {0}, value = {1}", p.Name, p.Value);
-              }
-            }
-
-            macros = search_all_macro(fs);
-            if (macros != null)
-            {
-              foreach (Macro m in macros)
-              {
-                Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
               }
             }
           }
