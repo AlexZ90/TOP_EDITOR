@@ -1420,7 +1420,7 @@ namespace TopEditor
                 if (token == -1) return (-1);
                 if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
                 {
-                  Console.WriteLine("Error 704");
+                  //Console.WriteLine("Error 704");
                   data_type = id;
                   state = 2;
                 }
@@ -1957,11 +1957,12 @@ namespace TopEditor
                 if (token == -1) return (-2);
                 if (token == TOKEN_QUOTE)
                 {
-                  state = 2;
+                    state = 2;
                 }
                 else
                 {
-                  return (-2);
+                    start_pos = old_start_pos;
+                    return (-2);
                 }
                 break;
               }
@@ -1972,6 +1973,7 @@ namespace TopEditor
                 {
                   if ((readRes = fs.ReadByte()) == -1)
                   {
+                    start_pos = old_start_pos;
                     return (-2);
                   }
                   else
@@ -1993,6 +1995,123 @@ namespace TopEditor
           }
 		}
 
+        private int findInclMacro(ref string macroName, ref string macroArgument, FileStream fs, ref long start_pos)
+        {
+            char[] buf = new char[256];
+            int state = 0;
+            int func_res = 0;
+            int token = 0;
+            long old_start_pos = 0;
+            long new_start_pos = 0;
+            int d1 = 0;
+            int d2 = 0;
+            string id = "";
+            int readRes = 0;
+
+
+            old_start_pos = start_pos;
+
+            while (true)
+            {
+                //Console.WriteLine ("state = %d\n\r", state);
+                switch (state)
+                {
+                    case 0:
+                        {
+                            token = this.next_token(ref id, ref start_pos, fs);
+                            if (token == -1) return (-1);
+                            //Console.WriteLine(id);
+                            if (token == TOKEN_ID && id == "include")
+                            {
+                                state = 1;
+                            }
+                            else
+                            {
+                                start_pos = old_start_pos;
+                                return (-3);
+                            }
+                            break;
+                        }
+
+                    case 1:
+                        {
+                            new_start_pos = start_pos;
+                            token = this.next_token(ref id, ref start_pos, fs);
+                            if (token == -1) return (-2);
+                            if (token == TOKEN_GRAVE_ACCENT)
+                            {
+                                state = 2;
+                            }
+                            else
+                            {
+                                start_pos = old_start_pos;
+                                return (-3);
+                            }
+                            break;
+                        }
+
+                    case 2:
+                        {
+                            new_start_pos = start_pos;
+                            token = this.next_token(ref id, ref start_pos, fs);
+                            if (token == -1) return (-2);
+                            if (token == TOKEN_ID)
+                            {
+                                macroName = id;
+                                state = 3;
+                            }
+                            else
+                            {
+                                start_pos = old_start_pos;
+                                return (-3);
+                            }
+                            break;
+                        }
+
+                    case 3:
+                        {
+                            new_start_pos = start_pos;
+                            token = this.next_token(ref id, ref start_pos, fs);
+                            if (token == -1) return (-2);
+                            if (token == TOKEN_BR)
+                            {
+                                state = 4;
+                            }
+                            else
+                            {
+                                start_pos = old_start_pos;
+                                return (-3);
+                            }
+                            break;
+                        }
+
+                    case 4:
+                        {
+                            while (true)
+                            {
+                                if ((readRes = fs.ReadByte()) == -1)
+                                {
+                                    start_pos = old_start_pos;
+                                    return (-2);
+                                }
+                                else
+                                {
+                                    buf[0] = (char)readRes;
+                                    if (buf[0] == ')')
+                                    {
+                                        return 1;
+                                    }
+                                    else
+                                    {
+                                        macroArgument = macroArgument + buf[0].ToString();
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                }
+            }
+        }
 
         private int fileCopy (string includeFilePath, FileStream fsFileToCopy)
         {
@@ -2221,9 +2340,14 @@ namespace TopEditor
                       }
                       else if (func_res == -2)
                       {
-                        Console.WriteLine("findInclude: Error in `inculde declaration.");
-                        return (-1);
-                      }
+                        // Console.WriteLine("findInclude: Error in `inculde declaration.");
+                        // return (-1);
+
+                        //Игнорируем ошибки в инклудах, чтобы искать инклуды с макросами
+                        fsAuxFile.WriteByte((byte)readRes);
+                        fsOrgnFile.Seek(filePosition, SeekOrigin.Begin);
+
+                    }
                       else
                       {
                         Console.WriteLine(includeFilePath);
@@ -2260,7 +2384,132 @@ namespace TopEditor
 
 
         }
-      public int analizeFile(string path, ref Module[] listOfModules, bool onlyTest)
+
+        private int findIncludeMacro(string inFilePath, ref string outFilePath, List<Macro> macros)
+        {
+            string orgnFilePath = ""; //Исходный файл
+            string orgnFileDirPath = ""; //Директория исходного файла
+            string auxFilePath = ""; //Вспомогательный файл
+            int includeFound = 0; // 1 - ранее был найден и распознан include
+            int searchBegan = 0; //1 - Поиск includoв был начат
+            long filePosition = 0; //Позиция в файле
+            int auxFileNamePrefix = 123;
+            string inFileWithoutComments = "";
+            char[] buf = new char[1];
+            int readRes = 0;
+            int func_res = 0;
+            string macroName = "";
+            string macroArg = "";
+            string auxFileDirectory = System.IO.Path.Combine(current_dir, @".\auxFiles\");
+            bool absoluteIncludeFilePath = false; //true - путь абсолютный, false - относительный
+            string macroPath = "";
+            string includeStr = "";
+            bool replaceMacroDone = false;
+            int newIncludeExists = 0;
+            UnicodeEncoding uniEncoding = new UnicodeEncoding();
+
+            orgnFilePath = inFilePath;
+            auxFilePath = System.IO.Path.Combine(auxFileDirectory, @".\" + auxFileNamePrefix.ToString()) + ".txt";
+
+
+            inFileWithoutComments = System.IO.Path.Combine(auxFileDirectory, "inFileWithoutComments.txt");
+
+            //if (System.IO.Directory.Exists(auxFileDirectory)) System.IO.Directory.Delete(auxFileDirectory, true);
+            //System.IO.Directory.CreateDirectory(auxFileDirectory);
+
+            orgnFileDirPath = inFilePath.Substring(0, inFilePath.LastIndexOf('\\', inFilePath.Length - 1) + 1); //Директория исходного файла
+
+            // Console.WriteLine("Inclide in file path {0}", in.LastIndexOf('o', "Hello".Length-1));
+
+            //Осуществляем поиск в исходном файле инклудов, параллельно копируя его в дополнительный файл
+            //Если находим инклуд, открываем файл, который инклудится и копируем его тоже в дополнительный файл
+            //Когда весь исходный файл скопирован, то в дополнительном файле содержится исходный файл и то, что инклудилось в исходном файле
+            using (FileStream fsOrgnFile = File.Open(orgnFilePath, FileMode.Open, FileAccess.Read))
+            {
+                using (System.IO.StreamWriter fsAuxFile = new System.IO.StreamWriter(auxFilePath))
+                {
+                    while (true)
+                    {
+                        if ((readRes = fsOrgnFile.ReadByte()) == -1)
+                        {
+                            fsOrgnFile.Close();
+                            fsAuxFile.Close();
+                            //Console.Write("findInclude: End of fsOrgnFile has been reached\n\r");
+                            break;
+                            //return (-1);
+                        }
+                        else
+                        {
+                            buf[0] = (char)readRes;
+                            if (buf[0] != '`')
+                            {
+                                fsAuxFile.Write((char)readRes);
+                            }
+                            else
+                            {
+                                filePosition = fsOrgnFile.Position;
+                                macroName = "";
+                                func_res = findInclMacro(ref macroName, ref macroArg, fsOrgnFile, ref filePosition);
+                                if (func_res == -1 || func_res == -3) //-3 - not include, may be `ifdef
+                                {
+                                    fsAuxFile.Write((char)readRes);
+                                    fsOrgnFile.Seek(filePosition, SeekOrigin.Begin);
+                                }
+                                else if (func_res == -2)
+                                {
+                                    Console.WriteLine("findInclude: Error in `inculde declaration.");
+                                    return (-1);
+                                }
+                                else
+                                {
+                                    if (macros != null)
+                                    {
+                                        foreach (Macro m in macros)
+                                        {
+                                            if (m.Name == macroName)
+                                            {
+                                                macroPath = m.Value.Replace(m.Argument, macroArg);
+                                                Console.WriteLine("macroPath = " + macroPath);
+                                                replaceMacroDone = true;
+
+                                            }
+                                            //Console.WriteLine("macroName = {0}* macroArgument = {1}* macroValue = {2}* ", m.Name, m.Argument, m.Value);
+                                        }
+                                        if (replaceMacroDone)
+                                        {
+                                            replaceMacroDone = false;
+                                            includeStr = "`include \"" + macroPath + "\"";
+                                            fsAuxFile.WriteLine (includeStr);
+                                            newIncludeExists = 1;
+                                        }
+                                        else
+                                        {
+                                            fsAuxFile.Write((char)readRes);
+                                            fsOrgnFile.Seek(filePosition, SeekOrigin.Begin);
+                                        }
+                                    }
+                                    Console.WriteLine("Macroname: " + macroName + " MacroArg: " + macroArg);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            outFilePath = auxFilePath;
+            if (newIncludeExists == 1)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+
+        }
+
+
+        public int analizeFile(string path, ref Module[] listOfModules, bool onlyTest)
       {
         int func_res = 0;
         int i = 0;
@@ -2301,12 +2550,22 @@ namespace TopEditor
                 }
             }
 
-        if (findInclude(inFileWithoutComments, ref outFilePath) == -1)
-          {
+            if (findInclude(inFileWithoutComments, ref outFilePath) == -1)
+            {
+                Console.WriteLine("analizeFile: Include processing failed");
+                return -1;
+            }
+
+                inFileWithoutComments = outFilePath;
+                outFilePath = "";
+
+        if (findIncludeMacro(inFileWithoutComments, ref outFilePath, macros) == -1)
+        {
             Console.WriteLine("analizeFile: Include processing failed");
             return -1;
-          }
         }
+
+            }
           
         try
         {
