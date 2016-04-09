@@ -1359,7 +1359,7 @@ namespace TopEditor
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
-                if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == " inout")))
+                if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == "inout")))
                 {
                   dir = id;
                   data_type = "logic"; //Порт по умолчанию logic
@@ -1420,6 +1420,7 @@ namespace TopEditor
                 if (token == -1) return (-1);
                 if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
                 {
+                  Console.WriteLine("Error 704");
                   data_type = id;
                   state = 2;
                 }
@@ -1427,7 +1428,7 @@ namespace TopEditor
                 {
                   start_pos=new_start_pos;
                   state = 2;
-                  //Console.WriteLine ("Error 703");
+                  Console.WriteLine ("Error 703");
                 }
                 break;
               }
@@ -1449,7 +1450,7 @@ namespace TopEditor
                   }
                   else if (func_res == 0)
                   {
-                    //Console.WriteLine ("DIMENSION d=%d !!!!\n\r", *dim);
+                    Console.WriteLine ("DIMENSION !!!!\n\r");
                     state = 3;
                     break;
                   }
