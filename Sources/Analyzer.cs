@@ -1362,7 +1362,7 @@ namespace TopEditor
                 if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == "inout")))
                 {
                   dir = id;
-                  data_type = "logic"; //Порт по умолчанию logic
+                  data_type = ""; //Порт по умолчанию не logic (для поддержки verilog)
                   state = 1;
                 }
                 else if (port_declared == 1)
@@ -1418,14 +1418,21 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == TOKEN_KEYWORD) && (id == "logic") || (token == TOKEN_ID))
+                if ((token == TOKEN_KEYWORD) && (id == "logic"))
                 {
                   //Console.WriteLine("Error 704");
                   data_type = id;
                   state = 2;
                 }
-                else
+                else if (token == TOKEN_ID)
                 {
+                //Console.WriteLine("Error 704");
+                data_type = "";
+                name = id;
+                return 1;
+                }
+              else
+              {
                   start_pos=new_start_pos;
                   state = 2;
                   Console.WriteLine ("Error 703");
