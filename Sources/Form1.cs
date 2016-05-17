@@ -936,6 +936,7 @@ namespace TopEditor
 
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
         {
+          file.WriteLine("# project addfile \"" + addButton_do_filename.Replace("\\", "/") + "\"");
           file.WriteLine("quit -sim");
           file.WriteLine("add button make_" + mod_name + " {do " + make_do_filename.Replace("\\", "\\\\") + "} NoDisable");
           file.WriteLine("add button restart_" + mod_name + " {do " + restart_do_filename.Replace("\\", "\\\\") + "} NoDisable");
