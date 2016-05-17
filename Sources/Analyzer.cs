@@ -525,37 +525,37 @@ namespace TopEditor
                 else if (func_res == 1)
                 {
                   state = 0;
-                  if (id == "logic")
-				  {
-                    //Console.WriteLine ("fin KW: %s\n\r", id);
-                    return TOKEN_KEYWORD; //1 Token is keyword
-				  }
-                  else if (id == "module")
+                  // if (id == "logic")
+                  // {
+                    // //Console.WriteLine ("fin KW: %s\n\r", id);
+                    // return TOKEN_KEYWORD; //1 Token is keyword
+                  // }
+                  // else if (id == "module")
+                  // {
+                    // //Console.WriteLine ("fin KW: %s\n\r", id);
+                    // return TOKEN_KEYWORD;
+                  // }
+                  // else if (id == "input")
+                  // {
+                    // //Console.WriteLine ("fin KW: %s\n\r", id);
+                    // return TOKEN_KEYWORD;
+                  // }
+                  // else if (id == "output")
+                  // {
+                    // //Console.WriteLine ("fin KW: %s\n\r", id);
+                    // return TOKEN_KEYWORD;
+                  // }
+                  // else if (id == "inout")
+                  // {
+                    // //Console.WriteLine ("fin KW: %s\n\r", id);
+                    // return TOKEN_KEYWORD;
+                  // }
+                  // else
                   {
- 				     //Console.WriteLine ("fin KW: %s\n\r", id);
-                     return 1;
-				  }
-                  else if (id == "input")
-				  {
-                     //Console.WriteLine ("fin KW: %s\n\r", id);
-                     return 1;
+                    //Console.WriteLine ("fin ID: %s\n\r", id);
+                    return TOKEN_ID; //2 Token is ID
                   }
-				  else if (id == "output")
-                  {
-				   //Console.WriteLine ("fin KW: %s\n\r", id);
-                     return 1;
-                  }
-				  else if (id == "inout")
-                  {
-					 //Console.WriteLine ("fin KW: %s\n\r", id);
-                     return 1;
-                  }
-				  else
-				  {
-                     //Console.WriteLine ("fin ID: %s\n\r", id);
-                     return TOKEN_ID; //2 Token is ID
-				  }
-				}
+                }
                 break;
               }
 
@@ -1359,7 +1359,8 @@ namespace TopEditor
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
                 //Console.WriteLine(id);
-                if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == "inout")))
+                // if (token == TOKEN_KEYWORD && ((id == "input") || (id == "output") || (id == "inout")))
+                if (token == TOKEN_ID && ((id == "input") || (id == "output") || (id == "inout")))
                 {
                   dir = id;
                   data_type = ""; //Порт по умолчанию не logic (для поддержки verilog)
@@ -1394,7 +1395,7 @@ namespace TopEditor
                         if (id_detected) // первый токен - идентификатор, второй - нет => 1-ый токен - имя порта
                         {
                           id_detected = false;
-                          data_type = "logic";
+                          data_type = "";
                           start_pos = new_start_pos;
                           return 1;
                         }
@@ -1418,25 +1419,62 @@ namespace TopEditor
                 new_start_pos = start_pos;
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                // if ((token == TOKEN_KEYWORD) && (id == "logic"))
+                // {
+                  // //Console.WriteLine("Error 704");
+                  // data_type = id;
+                  // state = 2;
+                // }
+                // else if (token == TOKEN_ID)
+                // {
+                  // //Console.WriteLine("Error 704");
+                  // data_type = "";
+                  // name = id;
+                  // return 1;
+                // }
+                // else
+                // {
+                  // start_pos=new_start_pos;
+                  // state = 2;
+                  // Console.WriteLine ("Error 703");
+                // }
+                if (token == TOKEN_ID) //тип данных или имя порта
                 {
-                  //Console.WriteLine("Error 704");
-                  data_type = id;
+                  if (id_detected) // второй идентификатор => первый - тип, а второй имя
+                  {
+                    id_detected = false;
+                    name = id;
+                    return 1;
+                  }
+                  else // найден первый идентификатор после запятой, ищем следующий токен для проверки
+                  {
+                    id_detected = true;
+                    data_type = id;
+                    name = id;
+                    state = 1;
+                  }
+                }
+                else if (token == TOKEN_SQBR) // возможно, далее идет разрядность
+                {
+                  start_pos = new_start_pos;
                   state = 2;
                 }
-                else if (token == TOKEN_ID)
+                else 
                 {
-                //Console.WriteLine("Error 704");
-                data_type = "";
-                name = id;
-                return 1;
-                }
-              else
-              {
-                  start_pos=new_start_pos;
-                  state = 2;
-                  Console.WriteLine ("Error 703");
-                }
+                  if (id_detected) // первый токен - идентификатор, второй - нет => 1-ый токен - имя порта
+                  {
+                    id_detected = false;
+                    data_type = "";
+                    start_pos = new_start_pos;
+                    return 1;
+                  }
+                  else
+                  {
+                    start_pos = old_start_pos; //не найден ни один из допустимых идентификаторов после запятой при уже объявленном порте
+                    return 0;
+                  }
+                }                
+
                 break;
               }
  
@@ -1772,7 +1810,7 @@ namespace TopEditor
               case 0:
                 token = this.next_token (ref id, ref start_pos, fs);
                 if (token == -1) return (-1);
-                if ((token == TOKEN_KEYWORD) && (id == "module")) state = 7;
+                if ((token == TOKEN_ID) && (id == "module")) state = 7;
                 else if (token == 0) return 0;
                 break;
               case 7:
