@@ -9,6 +9,9 @@ namespace TopEditor
   class Module
   {
     public string modName;
+    public string filePath {set; get;}
+    public string fileFolderPath { set; get; }
+    public string vrfFolderPath { set; get; }
     public Port[] listOfPorts = new Port [500];
     int numOfPorts;
 

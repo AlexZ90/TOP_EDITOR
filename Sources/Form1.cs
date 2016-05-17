@@ -86,7 +86,7 @@ namespace TopEditor
 
             bool onlyTest = false;
 
-            funcRes = testAnalyzer.analizeFile(textBox1.Text, ref newlistOfModules, cbOnlyForTest.Checked);
+            funcRes = testAnalyzer.analizeFile(fullFilePath, fileDirPath, ref newlistOfModules, cbOnlyForTest.Checked);
             if (funcRes == 1)
             {
                 for (i = 0; i < newlistOfModules.Length; i++)
@@ -882,7 +882,9 @@ namespace TopEditor
         numOfPorts = module.getNumOfPorts();
 
         string vrfFolderName = @"" + fileDirPath + "VRF\\" + mod_name + "_VRF\\";
+
       vrfFolderNameGlbl = vrfFolderName;
+      module.vrfFolderPath = vrfFolderName;
 
 
       maxDataTypeLength = 0;
@@ -936,7 +938,7 @@ namespace TopEditor
 
       using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
         {
-          file.WriteLine("# project addfile \"" + addButton_do_filename.Replace("\\", "/") + "\"");
+          file.WriteLine("# project addfile \"" + addButton_do_filename.Replace("\\", "/") + "");
           file.WriteLine("quit -sim");
           file.WriteLine("add button make_" + mod_name + " {do " + make_do_filename.Replace("\\", "\\\\") + "} NoDisable");
           file.WriteLine("add button restart_" + mod_name + " {do " + restart_do_filename.Replace("\\", "\\\\") + "} NoDisable");
@@ -2137,9 +2139,13 @@ namespace TopEditor
 
     private void openVrfFldrBtn_Click(object sender, EventArgs e)
     {
+
+      Module module;
+
       try
       {
-        Process.Start(vrfFolderNameGlbl);
+        module = getModule(listOfModuleLB.SelectedItem.ToString());
+        Process.Start(module.vrfFolderPath);
       }
       catch
       {
@@ -2253,9 +2259,13 @@ namespace TopEditor
 
     private void openInFileFldrBtn_Click(object sender, EventArgs e)
     {
+
+      Module module;
+
       try
       {
-        Process.Start(fileDirPath);
+        module = getModule(listOfModuleLB.SelectedItem.ToString());
+        Process.Start(module.fileFolderPath);
       }
       catch
       {
@@ -2265,9 +2275,12 @@ namespace TopEditor
 
     private void openInFileBtn_Click(object sender, EventArgs e)
     {
+      Module module;
+
       try
       {
-        Process.Start(fullFilePath);
+        module = getModule(listOfModuleLB.SelectedItem.ToString());
+        Process.Start(module.filePath);
       }
       catch
       {

@@ -2554,7 +2554,7 @@ namespace TopEditor
         }
 
 
-        public int analizeFile(string path, ref Module[] listOfModules, bool onlyTest)
+        public int analizeFile(string path, string folderPath, ref Module[] listOfModules, bool onlyTest)
       {
         int func_res = 0;
         int i = 0;
@@ -2635,6 +2635,8 @@ namespace TopEditor
           while (true)
           {
             newModule = new Module();
+            newModule.filePath = path;
+            newModule.fileFolderPath = folderPath;
             func_res = this.search_module(ref newModule, ref start_pos, fs);
             if (func_res == -2)
             {
