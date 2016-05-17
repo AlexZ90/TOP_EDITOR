@@ -1170,16 +1170,22 @@ namespace TopEditor
                 else if (module.listOfPorts[j].dir == "inout") file.Write("inout  ");
                 else MessageBox.Show("Ошибка! Неизвестное направление порта !");
 
-                if (module.listOfPorts[j].data_type != "reg")
+                if (module.listOfPorts[j].data_type == "")
+                {
+                  file.Write("logic ");
+                  for (m = 0; m < maxDataTypeLength - 5; m++) file.Write(" ");
+                }
+                else if (module.listOfPorts[j].data_type != "reg")
                 {
                   file.Write(module.listOfPorts[j].data_type);
                   for (m = 0; m < (maxDataTypeLength - module.listOfPorts[j].data_type.Length); m++) file.Write(" ");
                 }
                 else
                 {
-                  if (module.listOfPorts[j].dir == "input") file.Write("logic");
+                  file.Write("logic ");
                   for (m = 0; m < maxDataTypeLength - 5; m++) file.Write(" ");
                 }
+                  
               //file.Write("logic " + module.listOfPorts[j].name);
               file.Write(module.listOfPorts[j].dim_str + " ");
               for (m = 0; m < (maxDirLength - module.listOfPorts[j].dim_str.Length); m++) file.Write(" ");
