@@ -2362,5 +2362,10 @@ namespace TopEditor
     {
       includeDirLB.Items.Clear();
     }
+
+    private void includeDirLB_DoubleClick(object sender, EventArgs e)
+    {
+      includeDirLB.Items.Add(Clipboard.GetText());
+    }
   }
 }

@@ -532,6 +532,7 @@
       this.includeDirLB.Name = "includeDirLB";
       this.includeDirLB.Size = new System.Drawing.Size(120, 160);
       this.includeDirLB.TabIndex = 34;
+      this.includeDirLB.DoubleClick += new System.EventHandler(this.includeDirLB_DoubleClick);
       // 
       // inclDirDelBtn
       // 
