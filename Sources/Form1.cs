@@ -1000,7 +1000,11 @@ namespace TopEditor
             using (System.IO.StreamWriter file = new System.IO.StreamWriter(make_do_filename))
         {
           file.WriteLine("quit -sim");
-          file.WriteLine("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
+          file.Write("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
+          foreach (object inclDir in includeDirLB.Items)
+          {
+          file.Write(" +incdir+" + inclDir.ToString().Replace("\\", "/") + " ");
+          }
           file.WriteLine();
           file.WriteLine("vsim -novopt work." + test_top_mod_name);
           file.WriteLine();
@@ -1015,8 +1019,13 @@ namespace TopEditor
 
         using (System.IO.StreamWriter file = new System.IO.StreamWriter(restart_do_filename))
         {
-          file.WriteLine("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
-          file.WriteLine("restart -force");
+        file.Write("vlog \"" + testTopFileName.Replace("\\", "\\\\") + "\"");
+        foreach (object inclDir in includeDirLB.Items)
+        {
+          file.Write(" +incdir+" + inclDir.ToString().Replace("\\", "/") + " ");
+        }
+        file.WriteLine();
+        file.WriteLine("restart -force");
           file.WriteLine("run 500");
           //file.WriteLine("#view wave");
           file.Close();
@@ -2332,5 +2341,26 @@ namespace TopEditor
             }
 
         }
+
+    private void addIncludeBtn_Click(object sender, EventArgs e)
+    {
+
+      string folder;
+      if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+      {
+        folder = folderBrowserDialog1.SelectedPath;
+        includeDirLB.Items.Add(folder);
+      }
     }
+
+    private void inclDirDelBtn_Click(object sender, EventArgs e)
+    {
+      includeDirLB.Items.Remove(includeDirLB.SelectedItem);
+    }
+
+    private void inclDirClearBtn_Click(object sender, EventArgs e)
+    {
+      includeDirLB.Items.Clear();
+    }
+  }
 }
