@@ -110,6 +110,7 @@
           this.textBox1.Size = new System.Drawing.Size(209, 20);
           this.textBox1.TabIndex = 3;
           this.textBox1.Text = "D:\\Downloads\\Test.txt";
+          this.textBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.textBox1_MouseDoubleClick);
           // 
           // browseBtn
           // 
@@ -340,6 +341,8 @@
           // cbOnlyForTest
           // 
           this.cbOnlyForTest.AutoSize = true;
+          this.cbOnlyForTest.Checked = true;
+          this.cbOnlyForTest.CheckState = System.Windows.Forms.CheckState.Checked;
           this.cbOnlyForTest.Location = new System.Drawing.Point(16, 148);
           this.cbOnlyForTest.Name = "cbOnlyForTest";
           this.cbOnlyForTest.Size = new System.Drawing.Size(115, 17);

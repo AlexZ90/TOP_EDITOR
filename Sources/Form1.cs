@@ -86,6 +86,26 @@ namespace TopEditor
 
             bool onlyTest = false;
 
+
+            string[] separators_ = { "\\" };
+            string[] substrings_;
+
+
+            fullFilePath = textBox1.Text;
+
+            // Удаляем имя файла из пути к файлу
+            fileDirPath = "";
+            substrings_ = textBox1.Text.Split(separators_, 10, StringSplitOptions.RemoveEmptyEntries);
+            fileDirPath = substrings_[0];
+            for (i = 1; i < substrings_.Length - 1; i++)
+            {
+              fileDirPath = fileDirPath + "\\" + substrings_[i];
+            }
+            fileDirPath = fileDirPath + "\\";
+            Console.WriteLine("fileDirPath = {0}", fileDirPath);
+            //
+
+
             funcRes = testAnalyzer.analizeFile(fullFilePath, fileDirPath, ref newlistOfModules, cbOnlyForTest.Checked);
             if (funcRes == 1)
             {
@@ -256,10 +276,17 @@ namespace TopEditor
         {
           if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
           {
-            fullFilePath = openFileDialog1.FileName;//!Добавил
-            textBox1.Text = fullFilePath;//!Добавил
-            safeFileName = openFileDialog1.SafeFileName;//!Добавил
-            fileDirPath = fullFilePath.Replace(safeFileName, "");//!Добавил
+
+
+
+            //fullFilePath = openFileDialog1.FileName;//!Добавил
+            textBox1.Text = openFileDialog1.FileName;//!Добавил
+            //safeFileName = openFileDialog1.SafeFileName;//!Добавил
+            //fileDirPath = fullFilePath.Replace(safeFileName, "");//!Добавил
+            //MessageBox.Show(fileDirPath);
+
+            
+
           }
         }
 
@@ -2375,6 +2402,23 @@ namespace TopEditor
     private void includeDirLB_DoubleClick(object sender, EventArgs e)
     {
       includeDirLB.Items.Add(Clipboard.GetText());
+    }
+
+    private void textBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+    {
+      string filePath = "";
+      if (Clipboard.ContainsText())
+      {
+        filePath = Clipboard.GetText();
+        if (filePath.Contains("\""))
+          filePath = filePath.Replace("\"", "");
+        textBox1.Text = filePath;
+      }
+      else
+      {
+        MessageBox.Show("В буфере обмена нет текста");
+      }
+
     }
   }
 }
