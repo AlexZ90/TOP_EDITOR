@@ -2151,14 +2151,23 @@ namespace TopEditor
 
       Module module;
 
+      string vrfFolderName;
+
       try
       {
         module = getModule(listOfModuleLB.SelectedItem.ToString());
-        Process.Start(module.vrfFolderPath);
+
+        vrfFolderName= @"" + module.fileFolderPath + "VRF\\" + module.getModName() + "_VRF\\";
+        if (Directory.Exists(vrfFolderName))
+          Process.Start(vrfFolderName);
+        else
+        {
+          MessageBox.Show("Ошибка при открытии папки! \n Сначала нужно нажать кнопки Analize и Create test!");
+        }
       }
       catch
       {
-        MessageBox.Show("Ошибка при открытии папки! \n Сначала нужно нажать кнопки Analize и Create test!");
+        MessageBox.Show("Ошибка при попытке открыть папку с тестом!");
       }
     }
 
