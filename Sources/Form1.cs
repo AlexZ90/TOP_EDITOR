@@ -1014,7 +1014,9 @@ namespace TopEditor
                 file.WriteLine("                                                                                            ");
                 file.WriteLine("proc add_wave_groupedrecursive { } {                                                        ");
                 file.WriteLine("                                                                                            ");
-                file.WriteLine("  add_wave_breadthwiserecursive \"\" \"\"                                                   ");
+                file.WriteLine("  set inst_path_1 [lindex [find instances /*] 0]                                            ");
+                file.WriteLine("  set inst_path_2 [lindex [split $inst_path_1 \" \"] 0]                                     ");
+                file.WriteLine("  add_wave_breadthwiserecursive $inst_path_2 \"\"                                           ");
                 file.WriteLine("                                                                                            ");
                 file.WriteLine("  # Added all signals, now trigger a wave window update                                     ");
                 file.WriteLine("  wave refresh                                                                              ");
