@@ -959,11 +959,22 @@ namespace TopEditor
         string restart_do_filename = @"" + vrfFolderName + "restart.do";
         string addButton_do_filename = @"" + vrfFolderName + "addButton_" + mod_name + ".do";
         string addwave_do_filename = @"" + vrfFolderName + "addwave" + ".do";
+        string readme_filename = @"" + vrfFolderName + "readme" + ".txt";
 
             string trigModName = mod_name + "_trig";
       string trigModFilename = @"" + vrfFolderName + trigModName + ".sv";
 
-      using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(readme_filename))
+            {
+                file.WriteLine("* Create new project in ModelSim");
+                file.WriteLine("* Add file addButton_... to project");
+                file.WriteLine("* Right click on addButton_... and click Execute. Two buttons (make_... and restart_...) should appear in top panel");
+                file.WriteLine("* Button make_... runs test");
+                file.WriteLine("* Button restart_... restarts test");
+                file.Close();
+            }
+
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter(addButton_do_filename))
         {
           file.WriteLine("# project addfile \"" + addButton_do_filename.Replace("\\", "/") + "");
           file.WriteLine("quit -sim");
